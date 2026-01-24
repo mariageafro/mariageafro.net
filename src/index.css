@@ -1,96 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* MariageAfro Design System - Luxury Afro Wedding Magazine Aesthetic */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core Warm Palette */
+    --background: 40 30% 97%;
+    --foreground: 25 35% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 40 25% 96%;
+    --card-foreground: 25 35% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 30% 98%;
+    --popover-foreground: 25 35% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Champagne Gold - Primary */
+    --primary: 38 45% 50%;
+    --primary-foreground: 40 30% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Warm Ivory - Secondary */
+    --secondary: 38 25% 92%;
+    --secondary-foreground: 25 35% 20%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Soft Cream - Muted */
+    --muted: 35 20% 93%;
+    --muted-foreground: 25 20% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Muted Gold - Accent */
+    --accent: 38 50% 60%;
+    --accent-foreground: 25 35% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Chocolate Brown - Destructive */
+    --destructive: 15 60% 35%;
+    --destructive-foreground: 40 30% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 35 20% 85%;
+    --input: 35 20% 90%;
+    --ring: 38 45% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom MariageAfro Colors */
+    --champagne: 38 45% 50%;
+    --champagne-light: 38 40% 70%;
+    --champagne-dark: 38 50% 35%;
+    --ivory: 40 30% 97%;
+    --cream: 35 25% 93%;
+    --chocolate: 25 35% 20%;
+    --chocolate-light: 25 25% 35%;
+    --gold: 43 75% 55%;
+    --gold-muted: 40 35% 65%;
+    --warm-beige: 30 20% 88%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(38 45% 50%) 0%, hsl(43 75% 55%) 50%, hsl(38 45% 50%) 100%);
+    --gradient-warm: linear-gradient(180deg, hsl(40 30% 97%) 0%, hsl(35 25% 93%) 100%);
+    --gradient-hero-overlay: linear-gradient(180deg, hsla(25 35% 15% / 0.3) 0%, hsla(25 35% 15% / 0.5) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(40 25% 96%) 0%, hsl(38 25% 92%) 100%);
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsla(25 35% 15% / 0.08);
+    --shadow-elegant: 0 10px 40px -10px hsla(38 45% 50% / 0.15);
+    --shadow-card: 0 2px 12px -2px hsla(25 35% 15% / 0.06);
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Typography */
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Lora', Georgia, serif;
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar */
+    --sidebar-background: 40 25% 96%;
+    --sidebar-foreground: 25 35% 20%;
+    --sidebar-primary: 38 45% 50%;
+    --sidebar-primary-foreground: 40 30% 98%;
+    --sidebar-accent: 38 25% 92%;
+    --sidebar-accent-foreground: 25 35% 20%;
+    --sidebar-border: 35 20% 85%;
+    --sidebar-ring: 38 45% 50%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 25 30% 8%;
+    --foreground: 40 25% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 25 25% 12%;
+    --card-foreground: 40 25% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 25 25% 10%;
+    --popover-foreground: 40 25% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 38 50% 55%;
+    --primary-foreground: 25 30% 8%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 25 20% 18%;
+    --secondary-foreground: 40 25% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 25 20% 15%;
+    --muted-foreground: 35 15% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 38 45% 45%;
+    --accent-foreground: 40 25% 95%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 15 50% 40%;
+    --destructive-foreground: 40 25% 95%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 25 20% 20%;
+    --input: 25 20% 18%;
+    --ring: 38 50% 55%;
+
+    --champagne: 38 50% 55%;
+    --champagne-light: 38 45% 65%;
+    --champagne-dark: 38 55% 40%;
+    --ivory: 40 20% 12%;
+    --cream: 30 15% 18%;
+    --chocolate: 35 20% 85%;
+    --chocolate-light: 35 15% 70%;
+    --gold: 43 70% 50%;
+    --gold-muted: 40 30% 55%;
+    --warm-beige: 30 15% 22%;
+
+    --sidebar-background: 25 25% 10%;
+    --sidebar-foreground: 40 20% 90%;
+    --sidebar-primary: 38 50% 55%;
+    --sidebar-primary-foreground: 25 30% 8%;
+    --sidebar-accent: 25 20% 15%;
+    --sidebar-accent-foreground: 40 20% 90%;
+    --sidebar-border: 25 20% 18%;
+    --sidebar-ring: 38 50% 55%;
   }
 }
 
@@ -99,7 +138,174 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    @apply font-medium tracking-tight;
+  }
+
+  h1 {
+    @apply text-5xl md:text-6xl lg:text-7xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+}
+
+@layer components {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--champagne)) 0%, hsl(var(--gold)) 50%, hsl(var(--champagne)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--champagne)) 0%, hsl(var(--gold)) 50%, hsl(var(--champagne)) 100%);
+  }
+
+  .bg-gradient-warm {
+    background: linear-gradient(180deg, hsl(var(--ivory)) 0%, hsl(var(--cream)) 100%);
+  }
+
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  /* Hero Section Styles */
+  .hero-title {
+    font-family: var(--font-serif);
+    @apply text-5xl md:text-6xl lg:text-7xl font-light tracking-tight;
+  }
+
+  .hero-title-accent {
+    font-family: var(--font-serif);
+    @apply italic font-light;
+    color: hsl(var(--gold));
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-body);
+    @apply text-lg md:text-xl font-light tracking-wide opacity-90;
+  }
+
+  /* Card Styles */
+  .card-premium {
+    @apply rounded-2xl overflow-hidden transition-all duration-500;
+    background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--secondary)) 100%);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elegant);
+  }
+
+  /* Button Styles */
+  .btn-gold {
+    background: linear-gradient(135deg, hsl(var(--champagne)) 0%, hsl(var(--gold)) 100%);
+    @apply text-primary-foreground font-medium px-8 py-3 rounded-full transition-all duration-300;
+    box-shadow: 0 4px 15px -3px hsla(38, 45%, 50%, 0.3);
+  }
+
+  .btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px hsla(38, 45%, 50%, 0.4);
+  }
+
+  /* Section Styles */
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .container-editorial {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Decorative Elements */
+  .divider-gold {
+    @apply w-24 h-px mx-auto;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--gold)) 50%, transparent 100%);
+  }
+
+  .badge-premium {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium;
+    background: hsla(var(--champagne) / 0.15);
+    color: hsl(var(--champagne-dark));
+    border: 1px solid hsla(var(--champagne) / 0.3);
+  }
+
+  /* Animation Classes */
+  .animate-fade-up {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Grain Texture Overlay */
+  .texture-grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }
