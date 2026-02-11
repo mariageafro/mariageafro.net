@@ -31,7 +31,7 @@ export function Header() {
     ? "bg-ivory/95 backdrop-blur-md shadow-soft"
     : "bg-transparent";
   const textColor = isScrolled || !isHomePage ? "text-chocolate" : "text-ivory";
-  const logoFilter = isScrolled || !isHomePage ? "" : "brightness-0 invert";
+  const logoFilter = "";
 
   return (
     <header
