@@ -129,6 +129,33 @@ export type Database = {
         }
         Relationships: []
       }
+      countries: {
+        Row: {
+          code: string
+          created_at: string
+          flag_emoji: string | null
+          id: string
+          name: string
+          priority: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          flag_emoji?: string | null
+          id?: string
+          name: string
+          priority?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          flag_emoji?: string | null
+          id?: string
+          name?: string
+          priority?: number | null
+        }
+        Relationships: []
+      }
       medias: {
         Row: {
           created_at: string
@@ -170,6 +197,7 @@ export type Database = {
       prestataires: {
         Row: {
           categorie_id: string | null
+          country_id: string | null
           created_at: string
           description: string | null
           id: string
@@ -192,6 +220,7 @@ export type Database = {
         }
         Insert: {
           categorie_id?: string | null
+          country_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -214,6 +243,7 @@ export type Database = {
         }
         Update: {
           categorie_id?: string | null
+          country_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -240,6 +270,13 @@ export type Database = {
             columns: ["categorie_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prestataires_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
             referencedColumns: ["id"]
           },
         ]
@@ -279,6 +316,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      sub_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sub_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
