@@ -10,6 +10,12 @@ import blogDiaspora from "@/assets/blog-diaspora.jpg";
 
 const inspirations = [
   {
+    title: "Mariage Congolais",
+    subtitle: "La Libanga et ses couleurs",
+    image: blogCongo,
+    slug: "congo",
+  },
+  {
     title: "Mariage Yoruba & Igbo",
     subtitle: "Les traditions du Nigeria",
     image: blogYoruba,
@@ -20,12 +26,6 @@ const inspirations = [
     subtitle: "L'élégance sénégalaise",
     image: blogWolof,
     slug: "wolof",
-  },
-  {
-    title: "Mariage Congolais",
-    subtitle: "La Libanga et ses couleurs",
-    image: blogCongo,
-    slug: "congo",
   },
   {
     title: "Mariage Maghrébin",
