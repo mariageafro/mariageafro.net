@@ -13,6 +13,7 @@ import Inspiration from "./pages/Inspiration";
 import APropos from "./pages/APropos";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import DashboardPrestataire from "./pages/DashboardPrestataire";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<DashboardPrestataire />} />
             <Route path="/prestataires" element={<Prestataires />} />
             <Route path="/prestataires/:id" element={<ProfilPrestataire />} />
             <Route path="/blog" element={<Blog />} />
