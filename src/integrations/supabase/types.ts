@@ -14,16 +14,334 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      abonnements: {
+        Row: {
+          actif: boolean
+          created_at: string
+          date_debut: string
+          date_fin: string | null
+          id: string
+          prestataire_id: string
+          prix: number | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          type: Database["public"]["Enums"]["subscription_type"]
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean
+          created_at?: string
+          date_debut?: string
+          date_fin?: string | null
+          id?: string
+          prestataire_id: string
+          prix?: number | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          type?: Database["public"]["Enums"]["subscription_type"]
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean
+          created_at?: string
+          date_debut?: string
+          date_fin?: string | null
+          id?: string
+          prestataire_id?: string
+          prix?: number | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          type?: Database["public"]["Enums"]["subscription_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abonnements_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      avis: {
+        Row: {
+          approved: boolean
+          client_id: string
+          commentaire: string | null
+          created_at: string
+          id: string
+          note: number
+          prestataire_id: string
+          updated_at: string
+        }
+        Insert: {
+          approved?: boolean
+          client_id: string
+          commentaire?: string | null
+          created_at?: string
+          id?: string
+          note: number
+          prestataire_id: string
+          updated_at?: string
+        }
+        Update: {
+          approved?: boolean
+          client_id?: string
+          commentaire?: string | null
+          created_at?: string
+          id?: string
+          note?: number
+          prestataire_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avis_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      medias: {
+        Row: {
+          created_at: string
+          id: string
+          ordre: number | null
+          prestataire_id: string
+          titre: string | null
+          type: Database["public"]["Enums"]["media_type"]
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ordre?: number | null
+          prestataire_id: string
+          titre?: string | null
+          type?: Database["public"]["Enums"]["media_type"]
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ordre?: number | null
+          prestataire_id?: string
+          titre?: string | null
+          type?: Database["public"]["Enums"]["media_type"]
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medias_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prestataires: {
+        Row: {
+          categorie_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          instagram: string | null
+          langues: string[] | null
+          nom_entreprise: string
+          origine_culturelle: string | null
+          pays: string | null
+          score_ranking: number | null
+          site_web: string | null
+          slug: string
+          sous_categorie: string | null
+          statut: Database["public"]["Enums"]["prestataire_statut"]
+          telephone: string | null
+          updated_at: string
+          user_id: string
+          verified: boolean
+          ville: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          categorie_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram?: string | null
+          langues?: string[] | null
+          nom_entreprise: string
+          origine_culturelle?: string | null
+          pays?: string | null
+          score_ranking?: number | null
+          site_web?: string | null
+          slug: string
+          sous_categorie?: string | null
+          statut?: Database["public"]["Enums"]["prestataire_statut"]
+          telephone?: string | null
+          updated_at?: string
+          user_id: string
+          verified?: boolean
+          ville?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          categorie_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram?: string | null
+          langues?: string[] | null
+          nom_entreprise?: string
+          origine_culturelle?: string | null
+          pays?: string | null
+          score_ranking?: number | null
+          site_web?: string | null
+          slug?: string
+          sous_categorie?: string | null
+          statut?: Database["public"]["Enums"]["prestataire_statut"]
+          telephone?: string | null
+          updated_at?: string
+          user_id?: string
+          verified?: boolean
+          ville?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestataires_categorie_id_fkey"
+            columns: ["categorie_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_ranking_score: {
+        Args: { _prestataire_id: string }
+        Returns: number
+      }
+      can_upload_media: {
+        Args: {
+          _media_type: Database["public"]["Enums"]["media_type"]
+          _prestataire_id: string
+        }
+        Returns: boolean
+      }
+      get_prestataire_id_for_user: {
+        Args: { _user_id: string }
+        Returns: string
+      }
+      get_subscription_type: {
+        Args: { _prestataire_id: string }
+        Returns: Database["public"]["Enums"]["subscription_type"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      owns_prestataire: {
+        Args: { _prestataire_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "client" | "prestataire"
+      media_type: "photo" | "video"
+      prestataire_statut: "actif" | "suspendu" | "en_attente"
+      subscription_type: "gratuit" | "pro" | "premium" | "elite"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +468,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "client", "prestataire"],
+      media_type: ["photo", "video"],
+      prestataire_statut: ["actif", "suspendu", "en_attente"],
+      subscription_type: ["gratuit", "pro", "premium", "elite"],
+    },
   },
 } as const
