@@ -22,9 +22,9 @@ const categories = [
   { name: "Wedding Planner", slug: "wedding-planner", image: categoryWeddingPlanner, count: 45, featured: true },
   { name: "Animation", slug: "animation", image: categoryAnimation, count: 58, featured: true },
   { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryCoiffureBeaute, count: 58, featured: true },
-  { name: "Décoration", slug: "decoration", image: categoryDecoration, count: 78, featured: false },
-  { name: "Traiteur", slug: "traiteur", image: categoryTraiteur, count: 65, featured: false },
   { name: "Salle & Lieu", slug: "salle-lieu", image: categorySalleLieu, count: 40, featured: false },
+  { name: "Traiteur", slug: "traiteur", image: categoryTraiteur, count: 65, featured: false },
+  { name: "Décoration", slug: "decoration", image: categoryDecoration, count: 78, featured: false },
   { name: "Tenues & Couture", slug: "tenues-couture", image: categoryTenuesCouture, count: 92, featured: false },
   { name: "Transport", slug: "transport", image: categoryTransport, count: 30, featured: false },
 ];
