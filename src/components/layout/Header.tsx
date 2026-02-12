@@ -14,37 +14,40 @@ const navLinks = [
 ];
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isScrolled = scrollY > 100;
   const isHomePage = location.pathname === "/";
-  const headerBg = isScrolled || !isHomePage
-    ? "bg-ivory/95 backdrop-blur-md shadow-soft"
-    : "bg-transparent";
-  const textColor = isScrolled || !isHomePage ? "text-chocolate" : "text-ivory";
-  const logoFilter = "";
+  const showSolid = isScrolled || !isHomePage;
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${headerBg}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
+        showSolid
+          ? "bg-ivory/80 backdrop-blur-xl shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_16px_-2px_rgba(0,0,0,0.06)] border-b border-border/40"
+          : "bg-transparent border-b border-transparent"
+      }`}
     >
       <div className="container-editorial">
-        <div className="flex items-center justify-between h-20">
+        <div className={`flex items-center justify-between transition-all duration-500 ease-out ${
+          isScrolled ? "h-14" : "h-20"
+        }`}>
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img
               src={logo}
               alt="MariageAfro"
-              className={`h-16 w-auto transition-all duration-300 ${logoFilter}`}
+              className={`w-auto transition-all duration-500 ease-out ${
+                isScrolled ? "h-9" : "h-16"
+              }`}
             />
           </Link>
 
@@ -54,8 +57,10 @@ export function Header() {
               <Link
                 key={link.name}
                 to={link.href}
-                className={`font-body text-sm tracking-wide transition-colors duration-300 hover:text-champagne ${textColor} ${
-                  location.pathname === link.href ? "text-champagne font-medium" : ""
+                className={`font-body text-[13px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
+                  showSolid ? "text-chocolate" : "text-ivory"
+                } ${
+                  location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
                 }`}
               >
                 {link.name}
@@ -63,24 +68,25 @@ export function Header() {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden lg:block">
+          {/* Right side: CTA + Mobile toggle */}
+          <div className="flex items-center gap-3">
             <Button
-              variant={isScrolled || !isHomePage ? "gold-outline" : "hero-outline"}
+              variant={showSolid ? "gold-outline" : "hero-outline"}
               size="sm"
+              className={`transition-all duration-500 ${isScrolled ? "text-xs px-3 h-8" : ""}`}
               asChild
             >
               <Link to="/espace-pro">Espace Pro</Link>
             </Button>
-          </div>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            className={`lg:hidden p-2 ${textColor}`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+            {/* Mobile Menu Toggle */}
+            <button
+              className={`lg:hidden p-2 transition-colors duration-300 ${showSolid ? "text-chocolate" : "text-ivory"}`}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
       </div>
 
