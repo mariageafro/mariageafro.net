@@ -44,16 +44,6 @@ export function useAuth() {
       if (signUpError) throw signUpError;
       if (!data.user) throw new Error('Signup failed');
 
-      // Set user role
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: data.user.id,
-          role: userType === 'prestataire' ? 'prestataire' : 'client',
-        });
-
-      if (roleError) throw roleError;
-
       return { success: true, message: 'Inscription réussie. Veuillez confirmer votre email.' };
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Une erreur est survenue';

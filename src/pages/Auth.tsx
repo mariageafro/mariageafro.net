@@ -4,13 +4,10 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth } from '@/hooks/use-auth';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { z } from 'zod';
 
 const signUpSchema = z.object({
   email: z.string().email('Email invalide'),
@@ -33,41 +30,61 @@ export default function Auth() {
   const [isSignIn, setIsSignIn] = useState(true);
   const [userType, setUserType] = useState<'client' | 'prestataire'>('client');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [signUpData, setSignUpData] = useState<SignUpFormValues>({ email: '', password: '', confirmPassword: '' });
+  const [signInData, setSignInData] = useState<SignInFormValues>({ email: '', password: '' });
   const { signUp, signIn, isLoading, error } = useAuth();
   const navigate = useNavigate();
 
-  const signUpForm = useForm<SignUpFormValues>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-  });
+  const validateSignUp = (data: SignUpFormValues): boolean => {
+    try {
+      signUpSchema.parse(data);
+      setFormError(null);
+      return true;
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        setFormError(err.errors[0].message);
+      }
+      return false;
+    }
+  };
 
-  const signInForm = useForm<SignInFormValues>({
-    resolver: zodResolver(signInSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
+  const validateSignIn = (data: SignInFormValues): boolean => {
+    try {
+      signInSchema.parse(data);
+      setFormError(null);
+      return true;
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        setFormError(err.errors[0].message);
+      }
+      return false;
+    }
+  };
 
-  const onSignUp = async (data: SignUpFormValues) => {
-    const result = await signUp(data.email, data.password, userType);
+  const onSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateSignUp(signUpData)) return;
+
+    const result = await signUp(signUpData.email, signUpData.password, userType);
     if (result.success) {
       setSuccessMessage(result.message);
-      signUpForm.reset();
+      setSignUpData({ email: '', password: '', confirmPassword: '' });
       setTimeout(() => setSuccessMessage(null), 5000);
     }
   };
 
-  const onSignIn = async (data: SignInFormValues) => {
-    const result = await signIn(data.email, data.password);
+  const onSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateSignIn(signInData)) return;
+
+    const result = await signIn(signInData.email, signInData.password);
     if (result.success) {
       navigate('/');
     }
   };
+
+  const displayError = formError || error;
 
   return (
     <Layout>
@@ -86,10 +103,10 @@ export default function Auth() {
 
           <CardContent className="space-y-6">
             {/* Error Alert */}
-            {error && (
+            {displayError && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription>{displayError}</AlertDescription>
               </Alert>
             )}
 
@@ -126,82 +143,67 @@ export default function Auth() {
             )}
 
             {isSignIn ? (
-              <form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4">
-                <FormField
-                  control={signInForm.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="votre@email.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <form onSubmit={onSignIn} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-chocolate mb-1">Email</label>
+                  <Input
+                    type="email"
+                    placeholder="votre@email.com"
+                    value={signInData.email}
+                    onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
+                    required
+                  />
+                </div>
 
-                <FormField
-                  control={signInForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mot de passe</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="••••••" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <label className="block text-sm font-medium text-chocolate mb-1">Mot de passe</label>
+                  <Input
+                    type="password"
+                    placeholder="••••••"
+                    value={signInData.password}
+                    onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
+                    required
+                  />
+                </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Connexion...' : 'Se connecter'}
                 </Button>
               </form>
             ) : (
-              <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4">
-                <FormField
-                  control={signUpForm.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="votre@email.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <form onSubmit={onSignUp} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-chocolate mb-1">Email</label>
+                  <Input
+                    type="email"
+                    placeholder="votre@email.com"
+                    value={signUpData.email}
+                    onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
+                    required
+                  />
+                </div>
 
-                <FormField
-                  control={signUpForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mot de passe</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="••••••" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <label className="block text-sm font-medium text-chocolate mb-1">Mot de passe</label>
+                  <Input
+                    type="password"
+                    placeholder="••••••"
+                    value={signUpData.password}
+                    onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
+                    required
+                  />
+                </div>
 
-                <FormField
-                  control={signUpForm.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirmer le mot de passe</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="••••••" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <label className="block text-sm font-medium text-chocolate mb-1">Confirmer le mot de passe</label>
+                  <Input
+                    type="password"
+                    placeholder="••••••"
+                    value={signUpData.confirmPassword}
+                    onChange={(e) => setSignUpData({ ...signUpData, confirmPassword: e.target.value })}
+                    required
+                  />
+                </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Inscription...' : "S'inscrire"}
@@ -227,8 +229,9 @@ export default function Auth() {
               onClick={() => {
                 setIsSignIn(!isSignIn);
                 setSuccessMessage(null);
-                signInForm.reset();
-                signUpForm.reset();
+                setFormError(null);
+                setSignInData({ email: '', password: '' });
+                setSignUpData({ email: '', password: '', confirmPassword: '' });
               }}
             >
               {isSignIn ? "S'inscrire" : 'Se connecter'}
