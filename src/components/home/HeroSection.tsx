@@ -285,18 +285,20 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="mt-20 grid grid-cols-3 gap-8 max-w-3xl mx-auto"
+          className="mt-20 max-w-3xl mx-auto"
         >
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-light text-gold mb-2">
-                {stat.number}
-              </p>
-              <p className="font-body text-xs md:text-sm text-ivory/70 uppercase tracking-wider">
-                {stat.label}
-              </p>
-            </div>
-          ))}
+          <div className="flex items-center justify-center divide-x divide-ivory/20">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center px-6 md:px-10">
+                <p className="font-serif text-3xl md:text-4xl font-light text-gold leading-none mb-1">
+                  {stat.number}
+                </p>
+                <p className="font-body text-[10px] md:text-xs text-ivory/60 uppercase tracking-widest leading-tight">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Scroll Indicator */}
