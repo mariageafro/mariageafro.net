@@ -5,26 +5,34 @@ import { Star, MapPin, Heart, Globe } from "lucide-react";
 import { usePrestataires } from "@/hooks/use-prestataires";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
-import categoryDj from "@/assets/category-dj.jpg";
 
-const categoryMeta: Record<string, { title: string; description: string }> = {
-  photo: { title: "Photographes", description: "Les meilleurs photographes de mariage afro, capturant l'émotion et la beauté de vos traditions." },
-  dj: { title: "DJ & Musique", description: "DJ spécialisés dans les sonorités afro, caribéennes et urbaines pour une ambiance inoubliable." },
-  planner: { title: "Wedding Planners", description: "Organisateurs de mariage experts en traditions et cultures afro." },
-  videographe: { title: "Vidéastes", description: "Vidéastes qui subliment vos moments précieux en films d'exception." },
-  mc: { title: "MC & Cérémonie", description: "Maîtres de cérémonie pour animer et coordonner votre journée spéciale." },
-  coordination: { title: "Coordination", description: "Coordinateurs jour-J pour un déroulement fluide et serein." },
-  traiteur: { title: "Traiteurs", description: "Traiteurs spécialisés dans les saveurs africaines et caribéennes." },
-  deco: { title: "Décoration", description: "Décorateurs qui créent des ambiances uniques inspirées de vos cultures." },
-  tenues: { title: "Tenues traditionnelles", description: "Créateurs de tenues traditionnelles pour un mariage authentique." },
-  beaute: { title: "Beauté", description: "Maquilleurs et coiffeurs experts en beauté afro." },
-  caraibes: { title: "Caraïbes", description: "Prestataires spécialisés dans les traditions et ambiances caribéennes : Zouk, Kompa, Bouyon, Dancehall, Soca." },
+import categoryDj from "@/assets/category-dj.jpg";
+import categoryPhoto from "@/assets/category-photo.jpg";
+import categoryTraiteur from "@/assets/category-traiteur.jpg";
+import categoryDeco from "@/assets/category-deco.jpg";
+import categoryPlanner from "@/assets/category-planner.jpg";
+import categoryTenues from "@/assets/category-tenues.jpg";
+import categoryBeaute from "@/assets/category-beaute.jpg";
+
+const categoryMeta: Record<string, { title: string; description: string; image: string }> = {
+  videaste: { title: "Vidéastes", description: "Vidéastes qui subliment vos moments précieux en films d'exception.", image: categoryDj },
+  photographe: { title: "Photographes", description: "Les meilleurs photographes de mariage afro, capturant l'émotion et la beauté de vos traditions.", image: categoryPhoto },
+  "dj-musique": { title: "DJ & Musique", description: "DJ spécialisés dans les sonorités afro, caribéennes et urbaines pour une ambiance inoubliable.", image: categoryDj },
+  "wedding-planner": { title: "Wedding Planners", description: "Organisateurs de mariage experts en traditions et cultures afro.", image: categoryPlanner },
+  animation: { title: "Animation", description: "Maîtres de cérémonie et animateurs pour un événement vibrant et mémorable.", image: categoryPhoto },
+  "coiffure-beaute": { title: "Coiffure & Beauté", description: "Maquilleurs et coiffeurs experts en beauté afro.", image: categoryBeaute },
+  decoration: { title: "Décoration", description: "Décorateurs qui créent des ambiances uniques inspirées de vos cultures.", image: categoryDeco },
+  traiteur: { title: "Traiteur", description: "Traiteurs spécialisés dans les saveurs africaines et caribéennes.", image: categoryTraiteur },
+  "salle-lieu": { title: "Salle & Lieu", description: "Les plus beaux lieux de réception pour votre mariage.", image: categoryPlanner },
+  "tenues-couture": { title: "Tenues & Couture", description: "Créateurs de tenues traditionnelles pour un mariage authentique.", image: categoryTenues },
+  transport: { title: "Transport", description: "Services de transport premium pour votre jour J.", image: categoryDj },
+  "faire-part": { title: "Faire-part & Papeterie", description: "Créations papetières élégantes pour vos invitations.", image: categoryPlanner },
 };
 
 export default function CategoryPage() {
   const { slug } = useParams<{ slug: string }>();
   const { prestataires, isLoading, categories, updateFilter } = usePrestataires();
-  const meta = categoryMeta[slug || ""] || { title: slug, description: "" };
+  const meta = categoryMeta[slug || ""] || { title: slug, description: "", image: categoryDj };
 
   useEffect(() => {
     const cat = categories.find(c => c.slug === slug);
@@ -36,7 +44,7 @@ export default function CategoryPage() {
       {/* Header */}
       <section className="pt-32 pb-16 bg-gradient-warm relative overflow-hidden">
         <div className="absolute inset-0">
-          <img src={categoryDj} alt="" className="w-full h-full object-cover opacity-20" />
+          <img src={meta.image} alt="" className="w-full h-full object-cover opacity-20" />
           <div className="absolute inset-0 bg-gradient-to-b from-ivory/80 to-ivory" />
         </div>
         <div className="container-editorial relative z-10">

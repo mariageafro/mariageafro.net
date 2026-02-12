@@ -22,12 +22,12 @@ const ratingOptions = [
 ];
 
 const featuredCategories = [
-  { name: "Photographes", slug: "photo", image: categoryPhoto },
-  { name: "DJ & Musique", slug: "dj", image: categoryDj },
-  { name: "Wedding Planners", slug: "planner", image: categoryPlanner },
-  { name: "Videographe", slug: "videographe", image: categoryDj },
-  { name: "MC & Cérémonie", slug: "mc", image: categoryPhoto },
-  { name: "Coordination", slug: "coordination", image: categoryPlanner },
+  { name: "Vidéaste", slug: "videaste", image: categoryDj },
+  { name: "Photographe", slug: "photographe", image: categoryPhoto },
+  { name: "DJ & Musique", slug: "dj-musique", image: categoryDj },
+  { name: "Wedding Planner", slug: "wedding-planner", image: categoryPlanner },
+  { name: "Animation", slug: "animation", image: categoryPhoto },
+  { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryPlanner },
 ];
 
 export default function Prestataires() {
@@ -326,10 +326,11 @@ export default function Prestataires() {
               Tous
             </button>
             {(() => {
-              const featured = ['Photographe', 'Videaste', 'DJ & Musique', 'Wedding Planner', 'Caraïbes'];
+              // Vidéaste first, then Photographe, then DJ, then Wedding Planner
+              const priorityOrder = ['Vidéaste', 'Photographe', 'DJ & Musique', 'Wedding Planner', 'Animation', 'Coiffure & Beauté'];
               const sorted = [
-                ...categories.filter(cat => featured.includes(cat.name)),
-                ...categories.filter(cat => !featured.includes(cat.name)),
+                ...priorityOrder.map(name => categories.find(cat => cat.name === name)).filter(Boolean) as typeof categories,
+                ...categories.filter(cat => !priorityOrder.includes(cat.name) && cat.name !== 'Caraïbes'),
               ];
               return sorted.map((cat) => (
                 <button

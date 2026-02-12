@@ -11,19 +11,19 @@ import categoryPlanner from "@/assets/category-planner.jpg";
 import categoryTenues from "@/assets/category-tenues.jpg";
 import categoryBeaute from "@/assets/category-beaute.jpg";
 
-// Catégories vedettes en premier, puis autres
+// Vidéaste FIRST, then Photographe — no Caraïbes here
 const categories = [
-  { name: "Photographes", slug: "photo", image: categoryPhoto, count: 120, featured: true },
-  { name: "DJ & Musique", slug: "dj", image: categoryDj, count: 85, featured: true },
-  { name: "Wedding Planners", slug: "planner", image: categoryPlanner, count: 45, featured: true },
-  { name: "Videographe", slug: "videographe", image: categoryDj, count: 72, featured: true },
-  { name: "MC & Cérémonie", slug: "mc", image: categoryPhoto, count: 58, featured: true },
-  { name: "Coordination", slug: "coordination", image: categoryPlanner, count: 48, featured: true },
-  { name: "Traiteurs", slug: "traiteur", image: categoryTraiteur, count: 65, featured: false },
-  { name: "Décoration", slug: "deco", image: categoryDeco, count: 78, featured: false },
-  { name: "Tenues traditionnelles", slug: "tenues", image: categoryTenues, count: 92, featured: false },
-  { name: "Beauté", slug: "beaute", image: categoryBeaute, count: 58, featured: false },
-  { name: "Caraïbes", slug: "caraibes", image: categoryDj, count: 40, featured: false },
+  { name: "Vidéaste", slug: "videaste", image: categoryDj, count: 72, featured: true },
+  { name: "Photographe", slug: "photographe", image: categoryPhoto, count: 120, featured: true },
+  { name: "DJ & Musique", slug: "dj-musique", image: categoryDj, count: 85, featured: true },
+  { name: "Wedding Planner", slug: "wedding-planner", image: categoryPlanner, count: 45, featured: true },
+  { name: "Animation", slug: "animation", image: categoryPhoto, count: 58, featured: true },
+  { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryBeaute, count: 58, featured: true },
+  { name: "Décoration", slug: "decoration", image: categoryDeco, count: 78, featured: false },
+  { name: "Traiteur", slug: "traiteur", image: categoryTraiteur, count: 65, featured: false },
+  { name: "Salle & Lieu", slug: "salle-lieu", image: categoryPlanner, count: 40, featured: false },
+  { name: "Tenues & Couture", slug: "tenues-couture", image: categoryTenues, count: 92, featured: false },
+  { name: "Transport", slug: "transport", image: categoryDj, count: 30, featured: false },
 ];
 
 export function CategoriesSection() {
@@ -94,7 +94,7 @@ export function CategoriesSection() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-               transition={{ duration: 0.5, delay: (index + 6) * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Link
                 to={`/categories/${category.slug}`}
@@ -125,7 +125,7 @@ export function CategoriesSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-             transition={{ duration: 0.5, delay: (categories.filter(c => !c.featured).length + 6) * 0.1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
           >
             <Link
               to="/prestataires"
@@ -135,7 +135,7 @@ export function CategoriesSection() {
                 <ArrowRight className="text-champagne" size={24} />
               </div>
               <span className="font-serif text-lg text-chocolate">Voir tout</span>
-              <span className="font-body text-xs text-muted-foreground mt-1">543 prestataires</span>
+              <span className="font-body text-xs text-muted-foreground mt-1">Tous les prestataires</span>
             </Link>
           </motion.div>
         </div>

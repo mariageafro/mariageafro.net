@@ -17,12 +17,12 @@ const navLinks = [
 ];
 
 const featuredCategories = [
-  { name: "Photographes", slug: "photo" },
-  { name: "DJ & Musique", slug: "dj" },
-  { name: "Wedding Planners", slug: "planner" },
-  { name: "Videographe", slug: "videographe" },
-  { name: "MC & Cérémonie", slug: "mc" },
-  { name: "Coordination", slug: "coordination" },
+  { name: "Vidéaste", slug: "videaste" },
+  { name: "Photographe", slug: "photographe" },
+  { name: "DJ & Musique", slug: "dj-musique" },
+  { name: "Wedding Planner", slug: "wedding-planner" },
+  { name: "Animation", slug: "animation" },
+  { name: "Beauté", slug: "coiffure-beaute" },
 ];
 
 export function Header() {
