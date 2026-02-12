@@ -76,7 +76,7 @@ export function InspirationSection() {
               <img
                 src={inspirations[0].image}
                 alt={inspirations[0].title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-chocolate/80 via-chocolate/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
@@ -105,7 +105,7 @@ export function InspirationSection() {
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-chocolate/80 via-chocolate/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -133,7 +133,7 @@ export function InspirationSection() {
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-chocolate/80 via-chocolate/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
