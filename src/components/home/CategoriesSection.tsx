@@ -14,6 +14,7 @@ import categoryTraiteur from "@/assets/category-traiteur2.jpg";
 import categorySalleLieu from "@/assets/category-sallelieu.jpg";
 import categoryTenuesCouture from "@/assets/category-tenuescouture.jpg";
 import categoryTransport from "@/assets/category-transport.jpg";
+import categoryRobes from "@/assets/category-robes.jpg";
 
 const categories = [
   { name: "Vidéaste", slug: "videaste", image: categoryVideaste, count: 72, featured: true },
@@ -25,6 +26,7 @@ const categories = [
   { name: "Salle & Lieu", slug: "salle-lieu", image: categorySalleLieu, count: 40, featured: false },
   { name: "Traiteur", slug: "traiteur", image: categoryTraiteur, count: 65, featured: false },
   { name: "Décoration", slug: "decoration", image: categoryDecoration, count: 78, featured: false },
+  { name: "Robes & Tenues", slug: "robes-tenues", image: categoryRobes, count: 55, featured: false },
   { name: "Tenues & Couture", slug: "tenues-couture", image: categoryTenuesCouture, count: 92, featured: false },
   { name: "Transport", slug: "transport", image: categoryTransport, count: 30, featured: false },
 ];
