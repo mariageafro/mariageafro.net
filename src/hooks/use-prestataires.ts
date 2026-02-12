@@ -2,12 +2,14 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
+import { haversineDistance } from './use-geolocation';
 
 type Prestataire = Tables<'prestataires'> & {
   categories: { name: string; slug: string } | null;
   avg_rating: number;
   review_count: number;
   cover_url: string | null;
+  distance?: number;
 };
 
 export type PrestatairesFilters = {
@@ -17,7 +19,7 @@ export type PrestatairesFilters = {
   culture: string;
   langue: string;
   noteMin: number;
-  sort: 'pertinence' | 'note' | 'avis';
+  sort: 'pertinence' | 'note' | 'avis' | 'distance';
   country: string;
 };
 
@@ -44,6 +46,7 @@ export function usePrestataires() {
   const [villes, setVilles] = useState<string[]>([]);
   const [cultures, setCultures] = useState<string[]>([]);
   const [langues, setLangues] = useState<string[]>([]);
+  const [geoLocation, setGeoLocation] = useState<{ lat: number; lng: number; radius: number } | null>(null);
 
   // Fetch filter options
   useEffect(() => {
@@ -56,24 +59,19 @@ export function usePrestataires() {
       ]);
 
       if (catRes.data) setCategories(catRes.data);
-
       if (villeRes.data) {
         const unique = [...new Set(villeRes.data.map(v => v.ville).filter(Boolean))] as string[];
         setVilles(unique.sort());
       }
-
       if (cultureRes.data) {
         const unique = [...new Set(cultureRes.data.map(c => c.origine_culturelle).filter(Boolean))] as string[];
         setCultures(unique.sort());
       }
-
       if (langueRes.data) {
         const allLangs = langueRes.data.flatMap(l => l.langues ?? []);
-        const unique = [...new Set(allLangs)].sort();
-        setLangues(unique);
+        setLangues([...new Set(allLangs)].sort());
       }
     };
-
     fetchOptions();
   }, []);
 
@@ -84,64 +82,33 @@ export function usePrestataires() {
 
       let query = supabase
         .from('prestataires')
-        .select(`
-          *,
-          categories(name, slug)
-        `)
+        .select(`*, categories(name, slug)`)
         .eq('statut', 'actif');
 
-      if (filters.ville) {
-        query = query.eq('ville', filters.ville);
-      }
-
-      if (filters.categorie) {
-        query = query.eq('categorie_id', filters.categorie);
-      }
-
-      if (filters.culture) {
-        query = query.ilike('origine_culturelle', `%${filters.culture}%`);
-      }
-
-      if (filters.langue) {
-        query = query.contains('langues', [filters.langue]);
-      }
-
-      if (filters.country) {
-        query = query.eq('country_id', filters.country);
-      }
-
-      if (filters.search) {
-        query = query.or(`nom_entreprise.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
-      }
-
-      if (filters.sort === 'pertinence') {
-        query = query.order('score_ranking', { ascending: false, nullsFirst: false });
-      }
+      if (filters.ville) query = query.eq('ville', filters.ville);
+      if (filters.categorie) query = query.eq('categorie_id', filters.categorie);
+      if (filters.culture) query = query.ilike('origine_culturelle', `%${filters.culture}%`);
+      if (filters.langue) query = query.contains('langues', [filters.langue]);
+      if (filters.country) query = query.eq('country_id', filters.country);
+      if (filters.search) query = query.or(`nom_entreprise.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      if (filters.sort === 'pertinence') query = query.order('score_ranking', { ascending: false, nullsFirst: false });
 
       const { data, error } = await query;
+      if (error) { console.error('Error fetching prestataires:', error); setIsLoading(false); return; }
 
-      if (error) {
-        console.error('Error fetching prestataires:', error);
-        setIsLoading(false);
-        return;
-      }
-
-      // Fetch ratings for each prestataire
       const ids = (data ?? []).map(p => p.id);
       let ratingsMap: Record<string, { avg: number; count: number }> = {};
+      let mediasMap: Record<string, string> = {};
 
       if (ids.length > 0) {
-        const { data: avisData } = await supabase
-          .from('avis')
-          .select('prestataire_id, note')
-          .eq('approved', true)
-          .in('prestataire_id', ids);
+        const [avisRes, mediasRes] = await Promise.all([
+          supabase.from('avis').select('prestataire_id, note').eq('approved', true).in('prestataire_id', ids),
+          supabase.from('medias').select('prestataire_id, url').eq('type', 'photo').in('prestataire_id', ids).order('ordre', { ascending: true }),
+        ]);
 
-        if (avisData) {
-          for (const a of avisData) {
-            if (!ratingsMap[a.prestataire_id]) {
-              ratingsMap[a.prestataire_id] = { avg: 0, count: 0 };
-            }
+        if (avisRes.data) {
+          for (const a of avisRes.data) {
+            if (!ratingsMap[a.prestataire_id]) ratingsMap[a.prestataire_id] = { avg: 0, count: 0 };
             ratingsMap[a.prestataire_id].count++;
             ratingsMap[a.prestataire_id].avg += a.note;
           }
@@ -149,41 +116,49 @@ export function usePrestataires() {
             ratingsMap[key].avg = ratingsMap[key].avg / ratingsMap[key].count;
           }
         }
-      }
-
-      // Fetch cover photos
-      let mediasMap: Record<string, string> = {};
-      if (ids.length > 0) {
-        const { data: mediasData } = await supabase
-          .from('medias')
-          .select('prestataire_id, url')
-          .eq('type', 'photo')
-          .in('prestataire_id', ids)
-          .order('ordre', { ascending: true });
-
-        if (mediasData) {
-          for (const m of mediasData) {
-            if (!mediasMap[m.prestataire_id]) {
-              mediasMap[m.prestataire_id] = m.url;
-            }
+        if (mediasRes.data) {
+          for (const m of mediasRes.data) {
+            if (!mediasMap[m.prestataire_id]) mediasMap[m.prestataire_id] = m.url;
           }
         }
       }
 
-      let results: Prestataire[] = (data ?? []).map(p => ({
-        ...p,
-        avg_rating: ratingsMap[p.id]?.avg ?? 0,
-        review_count: ratingsMap[p.id]?.count ?? 0,
-        cover_url: mediasMap[p.id] ?? null,
-      }));
+      let results: Prestataire[] = (data ?? []).map(p => {
+        const result: Prestataire = {
+          ...p,
+          avg_rating: ratingsMap[p.id]?.avg ?? 0,
+          review_count: ratingsMap[p.id]?.count ?? 0,
+          cover_url: mediasMap[p.id] ?? null,
+        };
+        // Calculate distance if geolocation is active and provider has coordinates
+        if (geoLocation && p.lat && p.lng) {
+          result.distance = haversineDistance(geoLocation.lat, geoLocation.lng, p.lat, p.lng);
+        }
+        return result;
+      });
 
       // Filter by minimum rating
       if (filters.noteMin > 0) {
         results = results.filter(p => p.avg_rating >= filters.noteMin);
       }
 
+      // Filter by radius when geolocation is active
+      if (geoLocation) {
+        results = results.filter(p => {
+          if (p.distance !== undefined) return p.distance <= geoLocation.radius;
+          return true; // Keep providers without coordinates
+        });
+      }
+
       // Sort
-      if (filters.sort === 'note') {
+      if (geoLocation && (filters.sort === 'distance' || filters.sort === 'pertinence')) {
+        results.sort((a, b) => {
+          const distA = a.distance ?? Infinity;
+          const distB = b.distance ?? Infinity;
+          if (distA !== distB) return distA - distB;
+          return (b.score_ranking ?? 0) - (a.score_ranking ?? 0);
+        });
+      } else if (filters.sort === 'note') {
         results.sort((a, b) => b.avg_rating - a.avg_rating);
       } else if (filters.sort === 'avis') {
         results.sort((a, b) => b.review_count - a.review_count);
@@ -194,7 +169,7 @@ export function usePrestataires() {
     };
 
     fetchPrestataires();
-  }, [filters]);
+  }, [filters, geoLocation]);
 
   return {
     prestataires,
@@ -204,10 +179,15 @@ export function usePrestataires() {
     updateFilter: <K extends keyof PrestatairesFilters>(key: K, value: PrestatairesFilters[K]) => {
       setFilters(prev => ({ ...prev, [key]: value }));
     },
-    resetFilters: () => setFilters(defaultFilters),
+    resetFilters: () => {
+      setFilters(defaultFilters);
+      setGeoLocation(null);
+    },
     categories,
     villes,
     cultures,
     langues,
+    geoLocation,
+    setGeoLocation,
   };
 }

@@ -18,6 +18,8 @@ import TrouverParPays from "./pages/TrouverParPays";
 import PreatairesPremium from "./pages/PreatairesPremium";
 import OutilsMaries from "./pages/OutilsMaries";
 import AdminDashboard from "./pages/AdminDashboard";
+import CategoryPage from "./pages/CategoryPage";
+import CityPage from "./pages/CityPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -38,7 +40,9 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/prestataires" element={<Prestataires />} />
+            <Route path="/prestataires/ville/:city" element={<CityPage />} />
             <Route path="/prestataires/:id" element={<ProfilPrestataire />} />
+            <Route path="/categories/:slug" element={<CategoryPage />} />
             <Route path="/trouver-par-pays" element={<TrouverParPays />} />
             <Route path="/prestataires-premium" element={<PreatairesPremium />} />
             <Route path="/outils-maries" element={<OutilsMaries />} />

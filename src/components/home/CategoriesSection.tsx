@@ -23,6 +23,7 @@ const categories = [
   { name: "Décoration", slug: "deco", image: categoryDeco, count: 78, featured: false },
   { name: "Tenues traditionnelles", slug: "tenues", image: categoryTenues, count: 92, featured: false },
   { name: "Beauté", slug: "beaute", image: categoryBeaute, count: 58, featured: false },
+  { name: "Caraïbes", slug: "caraibes", image: categoryDj, count: 40, featured: false },
 ];
 
 export function CategoriesSection() {
@@ -59,7 +60,7 @@ export function CategoriesSection() {
                 transition={{ duration: 0.5, delay: index * 0.08 }}
               >
                 <Link
-                  to={`/prestataires?category=${category.slug}`}
+                  to={`/categories/${category.slug}`}
                   className="group block card-premium overflow-hidden aspect-square"
                 >
                   <div className="relative h-full">
@@ -96,7 +97,7 @@ export function CategoriesSection() {
                transition={{ duration: 0.5, delay: (index + 6) * 0.1 }}
             >
               <Link
-                to={`/prestataires?category=${category.slug}`}
+                to={`/categories/${category.slug}`}
                 className="group block card-premium overflow-hidden aspect-[3/4]"
               >
                 <div className="relative h-full">

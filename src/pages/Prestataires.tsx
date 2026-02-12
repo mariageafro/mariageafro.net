@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { Search, MapPin, Star, Heart, Grid, List, X, SlidersHorizontal, Globe, Music, Palette } from "lucide-react";
+import { Search, MapPin, Star, Heart, Grid, List, X, SlidersHorizontal, Globe, Navigation, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { usePrestataires } from "@/hooks/use-prestataires";
+import { useGeolocation } from "@/hooks/use-geolocation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
+import { useEffect } from "react";
 
 import categoryDj from "@/assets/category-dj.jpg";
 import categoryPhoto from "@/assets/category-photo.jpg";
@@ -30,6 +33,7 @@ const featuredCategories = [
 export default function Prestataires() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const {
     prestataires,
@@ -41,15 +45,50 @@ export default function Prestataires() {
     villes,
     cultures,
     langues,
+    geoLocation,
+    setGeoLocation,
   } = usePrestataires();
 
-  const hasActiveFilters = filters.search || filters.ville || filters.categorie || filters.culture || filters.langue || filters.noteMin > 0 || filters.country;
+  const { geo, radius, setRadius, requestLocation, disableGeo } = useGeolocation();
+
+  // Sync URL category param
+  useEffect(() => {
+    const catSlug = searchParams.get("category");
+    if (catSlug && categories.length > 0) {
+      const cat = categories.find(c => c.slug === catSlug);
+      if (cat) updateFilter("categorie", cat.id);
+    }
+  }, [searchParams, categories]);
+
+  // Sync geolocation with hook
+  useEffect(() => {
+    if (geo.enabled && geo.lat && geo.lng) {
+      setGeoLocation({ lat: geo.lat, lng: geo.lng, radius });
+      updateFilter("sort", "distance");
+    }
+  }, [geo.enabled, geo.lat, geo.lng, radius]);
+
+  const handleToggleGeo = () => {
+    if (geo.enabled) {
+      disableGeo();
+      setGeoLocation(null);
+      updateFilter("sort", "pertinence");
+    } else {
+      requestLocation();
+    }
+  };
+
+  const hasActiveFilters = filters.search || filters.ville || filters.categorie || filters.culture || filters.langue || filters.noteMin > 0 || filters.country || geo.enabled;
 
   const selectClass = "px-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer";
 
+  // Priority cities for the ville dropdown
+  const priorityCityNames = PRIORITY_CITIES.map(c => c.name);
+  const otherVilles = villes.filter(v => !priorityCityNames.includes(v));
+
   return (
     <Layout>
-      {/* Hero */}
+      {/* Hero - DO NOT MODIFY */}
       <section className="pt-32 pb-12 bg-gradient-warm">
         <div className="container-editorial">
           <motion.div
@@ -66,46 +105,46 @@ export default function Prestataires() {
             </p>
           </motion.div>
         </div>
-       </section>
+      </section>
 
-       {/* Featured Categories */}
-       <section className="py-12 bg-white">
-         <div className="container-editorial">
-           <h2 className="font-serif text-2xl text-chocolate mb-8">Catégories vedettes</h2>
-           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-             {featuredCategories.map((category, index) => (
-               <motion.div
-                 key={category.slug}
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ duration: 0.4, delay: index * 0.08 }}
-               >
-                 <Link
-                   to={`/prestataires?category=${category.slug}`}
-                   className="group block rounded-lg overflow-hidden aspect-square"
-                 >
-                   <div className="relative h-full">
-                     <img
-                       src={category.image}
-                       alt={category.name}
-                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                     />
-                     <div className="absolute inset-0 bg-gradient-to-t from-chocolate/90 via-chocolate/40 to-transparent flex items-end">
-                       <p className="font-serif text-sm text-ivory p-3 group-hover:text-gold transition-colors">
-                         {category.name}
-                       </p>
-                     </div>
-                   </div>
-                 </Link>
-               </motion.div>
-             ))}
-           </div>
-         </div>
-       </section>
+      {/* Featured Categories - scrolls naturally */}
+      <section className="py-12 bg-background">
+        <div className="container-editorial">
+          <h2 className="font-serif text-2xl text-chocolate mb-8">Catégories vedettes</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+            {featuredCategories.map((category, index) => (
+              <motion.div
+                key={category.slug}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+              >
+                <Link
+                  to={`/categories/${category.slug}`}
+                  className="group block rounded-lg overflow-hidden aspect-square"
+                >
+                  <div className="relative h-full">
+                    <img
+                      src={category.image}
+                      alt={category.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-chocolate/90 via-chocolate/40 to-transparent flex items-end">
+                      <p className="font-serif text-sm text-ivory p-3 group-hover:text-gold transition-colors">
+                        {category.name}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-       {/* Filters */}
-      <section className="py-6 bg-ivory border-b border-border sticky top-14 z-40">
+      {/* Compact Filter Bar - sticky */}
+      <section className="py-4 bg-ivory/95 backdrop-blur-md border-b border-border sticky top-14 z-40">
         <div className="container-editorial">
           {/* Search bar + toggle */}
           <div className="flex gap-3 items-center">
@@ -119,6 +158,18 @@ export default function Prestataires() {
                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50"
               />
             </div>
+
+            {/* Geolocation Button */}
+            <Button
+              variant={geo.enabled ? "default" : "outline"}
+              size="sm"
+              onClick={handleToggleGeo}
+              className={`shrink-0 gap-1.5 ${geo.enabled ? "bg-champagne text-primary-foreground hover:bg-champagne-dark" : ""}`}
+              disabled={geo.loading}
+            >
+              {geo.loading ? <Loader2 size={16} className="animate-spin" /> : <Navigation size={16} />}
+              <span className="hidden sm:inline">Autour de moi</span>
+            </Button>
 
             {/* Mobile filter toggle */}
             <Button
@@ -146,18 +197,53 @@ export default function Prestataires() {
             </div>
           </div>
 
+          {/* Geo status messages */}
+          {geo.error && (
+            <p className="mt-2 text-sm font-body text-destructive">{geo.error}</p>
+          )}
+
+          {/* Radius selector when geo is active */}
+          {geo.enabled && (
+            <div className="flex items-center gap-2 mt-3">
+              <span className="font-body text-sm text-muted-foreground">Rayon :</span>
+              {RADIUS_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => { setRadius(opt.value); setGeoLocation({ lat: geo.lat!, lng: geo.lng!, radius: opt.value }); }}
+                  className={`px-3 py-1 rounded-full font-body text-xs transition-all ${
+                    radius === opt.value
+                      ? "bg-champagne text-primary-foreground shadow-md"
+                      : "bg-secondary text-muted-foreground hover:bg-champagne/10"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Desktop Filters */}
-          <div className={`mt-4 gap-3 flex-wrap items-center ${showMobileFilters ? 'flex' : 'hidden lg:flex'}`}>
-            {/* Ville */}
+          <div className={`mt-3 gap-3 flex-wrap items-center ${showMobileFilters ? 'flex' : 'hidden lg:flex'}`}>
+            {/* Ville with priority cities */}
             <select
               value={filters.ville}
               onChange={(e) => updateFilter('ville', e.target.value)}
               className={selectClass}
+              disabled={geo.enabled}
             >
               <option value="">📍 Toutes les villes</option>
-              {villes.map((v) => (
-                <option key={v} value={v}>{v}</option>
-              ))}
+              <optgroup label="Villes principales">
+                {PRIORITY_CITIES.map((c) => (
+                  <option key={c.name} value={c.name}>{c.name} ({c.country})</option>
+                ))}
+              </optgroup>
+              {otherVilles.length > 0 && (
+                <optgroup label="Autres villes">
+                  {otherVilles.map((v) => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </optgroup>
+              )}
             </select>
 
             {/* Catégorie */}
@@ -214,51 +300,52 @@ export default function Prestataires() {
               className={selectClass}
             >
               <option value="pertinence">Pertinence</option>
+              {geo.enabled && <option value="distance">Distance</option>}
               <option value="note">Note (décroissant)</option>
               <option value="avis">Avis (décroissant)</option>
             </select>
 
             {hasActiveFilters && (
-              <Button variant="ghost" size="sm" onClick={resetFilters} className="text-muted-foreground">
+              <Button variant="ghost" size="sm" onClick={() => { resetFilters(); disableGeo(); }} className="text-muted-foreground">
                 <X size={16} className="mr-1" />
                 Réinitialiser
               </Button>
             )}
           </div>
 
-           {/* Category Pills */}
-           <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-             <button
-               onClick={() => updateFilter('categorie', '')}
-               className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
-                 !filters.categorie
-                   ? "bg-champagne text-primary-foreground shadow-md"
-                   : "bg-secondary text-muted-foreground hover:bg-champagne/10"
-               }`}
-             >
-               Tous
-             </button>
-             {(() => {
-               const featured = ['Photographe', 'Videaste', 'DJ & Musique', 'Wedding Planner'];
-               const sorted = [
-                 ...categories.filter(cat => featured.includes(cat.name)),
-                 ...categories.filter(cat => !featured.includes(cat.name)),
-               ];
-               return sorted.map((cat) => (
-                 <button
-                   key={cat.id}
-                   onClick={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
-                   className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
-                     filters.categorie === cat.id
-                       ? "bg-champagne text-primary-foreground shadow-md"
-                       : "bg-secondary text-muted-foreground hover:bg-champagne/10"
-                   }`}
-                 >
-                   {cat.name}
-                 </button>
-               ));
-             })()}
-           </div>
+          {/* Category Pills - scroll naturally */}
+          <div className="flex gap-2 mt-3 overflow-x-auto pb-2 -mx-1 px-1">
+            <button
+              onClick={() => updateFilter('categorie', '')}
+              className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
+                !filters.categorie
+                  ? "bg-champagne text-primary-foreground shadow-md"
+                  : "bg-secondary text-muted-foreground hover:bg-champagne/10"
+              }`}
+            >
+              Tous
+            </button>
+            {(() => {
+              const featured = ['Photographe', 'Videaste', 'DJ & Musique', 'Wedding Planner', 'Caraïbes'];
+              const sorted = [
+                ...categories.filter(cat => featured.includes(cat.name)),
+                ...categories.filter(cat => !featured.includes(cat.name)),
+              ];
+              return sorted.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
+                  className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
+                    filters.categorie === cat.id
+                      ? "bg-champagne text-primary-foreground shadow-md"
+                      : "bg-secondary text-muted-foreground hover:bg-champagne/10"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ));
+            })()}
+          </div>
         </div>
       </section>
 
@@ -268,6 +355,7 @@ export default function Prestataires() {
           <div className="flex items-center justify-between mb-8">
             <p className="font-body text-muted-foreground">
               <span className="font-medium text-foreground">{prestataires.length}</span> prestataire{prestataires.length !== 1 ? 's' : ''} trouvé{prestataires.length !== 1 ? 's' : ''}
+              {geo.enabled && ` dans un rayon de ${radius} km`}
             </p>
           </div>
 
@@ -291,7 +379,7 @@ export default function Prestataires() {
               <p className="font-body text-muted-foreground mb-6">
                 Essayez de modifier vos filtres pour élargir la recherche.
               </p>
-              <Button variant="gold" onClick={resetFilters}>
+              <Button variant="gold" onClick={() => { resetFilters(); disableGeo(); }}>
                 Réinitialiser les filtres
               </Button>
             </div>
@@ -339,6 +427,9 @@ export default function Prestataires() {
                         <div className="flex items-center gap-1.5 text-muted-foreground font-body text-sm mb-2">
                           <MapPin size={14} />
                           {p.ville}{p.pays ? `, ${p.pays}` : ''}
+                          {p.distance !== undefined && (
+                            <span className="ml-1 text-champagne-dark font-medium">· {p.distance < 1 ? '<1' : Math.round(p.distance)} km</span>
+                          )}
                         </div>
                       )}
                       {p.origine_culturelle && (
