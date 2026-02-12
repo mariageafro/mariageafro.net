@@ -11,18 +11,17 @@ import categoryPlanner from "@/assets/category-planner.jpg";
 import categoryTenues from "@/assets/category-tenues.jpg";
 import categoryBeaute from "@/assets/category-beaute.jpg";
 
-// Catégories vedettes en premier, puis autres
+// Catégories dans l'ordre de priorité défini
 const categories = [
-  { name: "Photographes", slug: "photo", image: categoryPhoto, count: 120, featured: true },
-  { name: "DJ & Musique", slug: "dj", image: categoryDj, count: 85, featured: true },
-  { name: "Wedding Planners", slug: "planner", image: categoryPlanner, count: 45, featured: true },
-  { name: "Videographe", slug: "videographe", image: categoryDj, count: 72, featured: true },
-  { name: "MC & Cérémonie", slug: "mc", image: categoryPhoto, count: 58, featured: true },
-  { name: "Coordination", slug: "coordination", image: categoryPlanner, count: 48, featured: true },
-  { name: "Traiteurs", slug: "traiteur", image: categoryTraiteur, count: 65, featured: false },
-  { name: "Décoration", slug: "deco", image: categoryDeco, count: 78, featured: false },
-  { name: "Tenues traditionnelles", slug: "tenues", image: categoryTenues, count: 92, featured: false },
-  { name: "Beauté", slug: "beaute", image: categoryBeaute, count: 58, featured: false },
+  { name: "Vidéaste mariage", slug: "videographe", image: categoryDj, count: 72, featured: true },
+  { name: "Photographe mariage", slug: "photo", image: categoryPhoto, count: 120, featured: true },
+  { name: "DJ mariage", slug: "dj", image: categoryDj, count: 85, featured: true },
+  { name: "Wedding Planner", slug: "planner", image: categoryPlanner, count: 45, featured: true },
+  { name: "MC / Animateur", slug: "mc", image: categoryPhoto, count: 58, featured: true },
+  { name: "Décoration", slug: "deco", image: categoryDeco, count: 78, featured: true },
+  { name: "Traiteur", slug: "traiteur", image: categoryTraiteur, count: 65, featured: true },
+  { name: "Tenues traditionnelles", slug: "tenues", image: categoryTenues, count: 92, featured: true },
+  { name: "Beauté", slug: "beaute", image: categoryBeaute, count: 58, featured: true },
 ];
 
 export function CategoriesSection() {
@@ -47,53 +46,15 @@ export function CategoriesSection() {
         </motion.div>
 
         {/* Featured Categories Grid */}
-        <div className="mb-12">
-          <h3 className="font-serif text-xl text-chocolate mb-8">Catégories vedettes</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.filter(c => c.featured).map((category, index) => (
-              <motion.div
-                key={category.slug}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-              >
-                <Link
-                  to={`/prestataires?category=${category.slug}`}
-                  className="group block card-premium overflow-hidden aspect-square"
-                >
-                  <div className="relative h-full">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-chocolate/90 via-chocolate/30 to-transparent" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <h3 className="font-serif text-sm md:text-base text-ivory text-center px-2 group-hover:text-gold transition-colors">
-                        {category.name}
-                      </h3>
-                      <p className="font-body text-xs text-ivory/70 mt-1">{category.count}</p>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Other Categories Grid */}
-        <div>
-          <h3 className="font-serif text-xl text-chocolate mb-8">Toutes les catégories</h3>
-        </div>
+        {/* Categories Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {categories.filter(c => !c.featured).map((category, index) => (
+          {categories.map((category, index) => (
             <motion.div
               key={category.slug}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-               transition={{ duration: 0.5, delay: (index + 6) * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.08 }}
             >
               <Link
                 to={`/prestataires?category=${category.slug}`}
@@ -124,7 +85,7 @@ export function CategoriesSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-             transition={{ duration: 0.5, delay: (categories.filter(c => !c.featured).length + 6) * 0.1 }}
+            transition={{ duration: 0.5, delay: categories.length * 0.08 }}
           >
             <Link
               to="/prestataires"
