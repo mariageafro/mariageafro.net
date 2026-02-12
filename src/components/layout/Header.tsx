@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/contexts/auth-context";
+import { useUserRole } from "@/hooks/use-user-role";
 import logo from "@/assets/logo-mariageafro.png";
 
 const navLinks = [
@@ -19,6 +20,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useAuthContext();
+  const { role } = useUserRole(user?.id);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -74,14 +76,26 @@ export function Header() {
            <div className="flex items-center gap-3">
              {isAuthenticated ? (
                <div className="flex items-center gap-2">
-                 <Link
-                   to="/espace-pro"
-                   className={`text-sm font-medium px-3 py-1 rounded transition-colors ${
-                     showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
-                   }`}
-                 >
-                   {user?.email}
-                 </Link>
+                 {role === 'prestataire' ? (
+                   <Link
+                     to="/dashboard"
+                     className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
+                       showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                     }`}
+                   >
+                     <LayoutDashboard className="w-4 h-4" />
+                     Espace Pro
+                   </Link>
+                 ) : (
+                   <Link
+                     to="/espace-pro"
+                     className={`text-sm font-medium px-3 py-1.5 rounded transition-colors ${
+                       showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                     }`}
+                   >
+                     {user?.email}
+                   </Link>
+                 )}
                  <Button
                    variant="ghost"
                    size="sm"
