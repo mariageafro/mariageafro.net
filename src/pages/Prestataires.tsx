@@ -239,7 +239,7 @@ export default function Prestataires() {
                Tous
              </button>
              {(() => {
-               const featured = ['Videaste', 'Photographe', 'DJ & Musique', 'Wedding Planner'];
+               const featured = ['Photographe', 'Videaste', 'DJ & Musique', 'Wedding Planner'];
                const sorted = [
                  ...categories.filter(cat => featured.includes(cat.name)),
                  ...categories.filter(cat => !featured.includes(cat.name)),
