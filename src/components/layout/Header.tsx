@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/contexts/auth-context";
@@ -10,9 +10,10 @@ import logo from "@/assets/logo-mariageafro.png";
 const navLinks = [
   { name: "Accueil", href: "/" },
   { name: "Prestataires", href: "/prestataires" },
-  { name: "Inspiration", href: "/inspiration" },
+  { name: "Par Pays", href: "/trouver-par-pays" },
+  { name: "Premium", href: "/prestataires-premium" },
   { name: "Blog", href: "/blog" },
-  { name: "Contact", href: "/contact" },
+  { name: "💍 Outils Mariés", href: "/outils-maries" },
 ];
 
 export function Header() {
@@ -56,12 +57,12 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.href}
-                className={`font-body text-[13px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
+                className={`font-body text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
                   showSolid ? "text-chocolate" : "text-ivory"
                 } ${
                   location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
@@ -76,26 +77,32 @@ export function Header() {
            <div className="flex items-center gap-3">
              {isAuthenticated ? (
                <div className="flex items-center gap-2">
-                 {role === 'prestataire' ? (
-                   <Link
-                     to="/dashboard"
-                     className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
-                       showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
-                     }`}
-                   >
-                     <LayoutDashboard className="w-4 h-4" />
-                     Espace Pro
-                   </Link>
-                 ) : (
-                   <Link
-                     to="/espace-pro"
-                     className={`text-sm font-medium px-3 py-1.5 rounded transition-colors ${
-                       showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
-                     }`}
-                   >
-                     {user?.email}
-                   </Link>
-                 )}
+                 {role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
+                        showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                      }`}
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span className="hidden xl:inline">Admin</span>
+                    </Link>
+                  )}
+                  {role === 'prestataire' ? (
+                    <Link
+                      to="/dashboard"
+                      className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
+                        showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                      }`}
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      <span className="hidden xl:inline">Espace Pro</span>
+                    </Link>
+                  ) : role !== 'admin' ? (
+                    <span className={`text-sm px-3 py-1.5 hidden xl:inline ${showSolid ? "text-chocolate" : "text-ivory"}`}>
+                      {user?.email}
+                    </span>
+                  ) : null}
                  <Button
                    variant="ghost"
                    size="sm"
@@ -151,6 +158,16 @@ export function Header() {
                ))}
                {isAuthenticated ? (
                  <div className="flex flex-col gap-3 mt-4 border-t border-border pt-4">
+                   {role === 'admin' && (
+                     <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-base py-2 text-chocolate hover:text-champagne flex items-center gap-2">
+                       <Shield className="w-4 h-4" /> Admin
+                     </Link>
+                   )}
+                   {role === 'prestataire' && (
+                     <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-base py-2 text-chocolate hover:text-champagne flex items-center gap-2">
+                       <LayoutDashboard className="w-4 h-4" /> Espace Pro
+                     </Link>
+                   )}
                    <div className="text-sm text-muted-foreground">{user?.email}</div>
                    <Button
                      variant="outline"
