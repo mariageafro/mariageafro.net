@@ -290,10 +290,10 @@ export function HeroSection() {
           <div className="flex items-center justify-center gap-8 md:gap-12">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <p className="font-serif text-2xl md:text-3xl font-light text-gold leading-none">
+                <p className="font-serif text-3xl md:text-4xl font-light text-gold leading-none">
                   {stat.number}
                 </p>
-                <p className="font-body text-[9px] md:text-[11px] text-ivory/50 uppercase tracking-[0.2em] mt-1">
+                <p className="font-body text-[10px] md:text-xs text-ivory/50 uppercase tracking-[0.2em] mt-1.5">
                   {stat.label}
                 </p>
               </div>
