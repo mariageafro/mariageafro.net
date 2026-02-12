@@ -56,10 +56,10 @@ export function QuickSearchBar() {
       className={`w-full z-40 transition-all duration-300 ${
         isSticky
           ? "fixed top-14 left-0 bg-ivory/95 backdrop-blur-md shadow-elegant border-b border-border"
-          : "relative bg-background"
+          : "relative -mt-8 bg-background"
       }`}
     >
-      <div className="container-editorial py-3">
+      <div className="container-editorial py-1.5">
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center">
           {/* Location */}
           <div className="flex-1 relative flex items-center gap-2">
