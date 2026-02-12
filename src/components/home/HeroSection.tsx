@@ -285,36 +285,19 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="mt-20 max-w-3xl mx-auto"
+          className="mt-16 mb-24 max-w-2xl mx-auto"
         >
-          <div className="flex items-center justify-center divide-x divide-ivory/20">
+          <div className="flex items-center justify-center gap-8 md:gap-12">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center px-6 md:px-10">
-                <p className="font-serif text-3xl md:text-4xl font-light text-gold leading-none mb-1">
+              <div key={index} className="text-center">
+                <p className="font-serif text-2xl md:text-3xl font-light text-gold leading-none">
                   {stat.number}
                 </p>
-                <p className="font-body text-[10px] md:text-xs text-ivory/60 uppercase tracking-widest leading-tight">
+                <p className="font-body text-[9px] md:text-[11px] text-ivory/50 uppercase tracking-[0.2em] mt-1">
                   {stat.label}
                 </p>
               </div>
             ))}
-          </div>
-        </motion.div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <div className="flex flex-col items-center gap-2 text-ivory/60">
-            <span className="font-body text-xs uppercase tracking-widest">Découvrir</span>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className="w-px h-8 bg-gradient-to-b from-ivory/60 to-transparent"
-            />
           </div>
         </motion.div>
       </div>
