@@ -56,7 +56,7 @@ export function QuickSearchBar() {
       className={`w-full z-40 transition-all duration-300 ${
         isSticky
           ? "fixed top-14 left-0 bg-ivory/95 backdrop-blur-md shadow-elegant border-b border-border"
-          : "relative -mt-8 bg-background"
+          : "relative -mt-20 bg-background"
       }`}
     >
       <div className="container-editorial py-1.5">
