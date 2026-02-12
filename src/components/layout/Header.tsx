@@ -16,6 +16,15 @@ const navLinks = [
   { name: "💍 Outils Mariés", href: "/outils-maries" },
 ];
 
+const featuredCategories = [
+  { name: "Photographes", slug: "photo" },
+  { name: "DJ & Musique", slug: "dj" },
+  { name: "Wedding Planners", slug: "planner" },
+  { name: "Videographe", slug: "videographe" },
+  { name: "MC & Cérémonie", slug: "mc" },
+  { name: "Coordination", slug: "coordination" },
+];
+
 export function Header() {
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -72,6 +81,21 @@ export function Header() {
               </Link>
             ))}
           </nav>
+
+           {/* Featured categories quick links + Right side: Auth + Mobile toggle */}
+           <div className="hidden xl:flex items-center gap-2 mx-6 border-l border-champagne/20 pl-6">
+             {featuredCategories.slice(0, 3).map((cat) => (
+               <Link
+                 key={cat.slug}
+                 to={`/prestataires?category=${cat.slug}`}
+                 className={`text-xs font-medium px-2 py-1 rounded transition-colors ${
+                   showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                 }`}
+               >
+                 {cat.name}
+               </Link>
+             ))}
+           </div>
 
            {/* Right side: Auth + Mobile toggle */}
            <div className="flex items-center gap-3">

@@ -8,12 +8,23 @@ import { usePrestataires } from "@/hooks/use-prestataires";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import categoryDj from "@/assets/category-dj.jpg";
+import categoryPhoto from "@/assets/category-photo.jpg";
+import categoryPlanner from "@/assets/category-planner.jpg";
 
 const ratingOptions = [
   { label: "Toutes", value: 0 },
   { label: "4+ ★", value: 4 },
   { label: "4.5+ ★", value: 4.5 },
   { label: "5 ★", value: 5 },
+];
+
+const featuredCategories = [
+  { name: "Photographes", slug: "photo", image: categoryPhoto },
+  { name: "DJ & Musique", slug: "dj", image: categoryDj },
+  { name: "Wedding Planners", slug: "planner", image: categoryPlanner },
+  { name: "Videographe", slug: "videographe", image: categoryDj },
+  { name: "MC & Cérémonie", slug: "mc", image: categoryPhoto },
+  { name: "Coordination", slug: "coordination", image: categoryPlanner },
 ];
 
 export default function Prestataires() {
@@ -55,9 +66,45 @@ export default function Prestataires() {
             </p>
           </motion.div>
         </div>
-      </section>
+       </section>
 
-      {/* Filters */}
+       {/* Featured Categories */}
+       <section className="py-12 bg-white">
+         <div className="container-editorial">
+           <h2 className="font-serif text-2xl text-chocolate mb-8">Catégories vedettes</h2>
+           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+             {featuredCategories.map((category, index) => (
+               <motion.div
+                 key={category.slug}
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ duration: 0.4, delay: index * 0.08 }}
+               >
+                 <Link
+                   to={`/prestataires?category=${category.slug}`}
+                   className="group block rounded-lg overflow-hidden aspect-square"
+                 >
+                   <div className="relative h-full">
+                     <img
+                       src={category.image}
+                       alt={category.name}
+                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-t from-chocolate/90 via-chocolate/40 to-transparent flex items-end">
+                       <p className="font-serif text-sm text-ivory p-3 group-hover:text-gold transition-colors">
+                         {category.name}
+                       </p>
+                     </div>
+                   </div>
+                 </Link>
+               </motion.div>
+             ))}
+           </div>
+         </div>
+       </section>
+
+       {/* Filters */}
       <section className="py-6 bg-ivory border-b border-border sticky top-14 z-40">
         <div className="container-editorial">
           {/* Search bar + toggle */}
