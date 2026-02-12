@@ -77,7 +77,7 @@ export function CategoriesSection() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-chocolate/90 via-chocolate/30 to-transparent" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <h3 className="font-serif text-base md:text-lg text-ivory text-center px-2 group-hover:text-gold transition-colors">
+                      <h3 className="font-serif text-base md:text-lg font-bold text-ivory text-center px-2 group-hover:text-gold transition-colors">
                         {category.name}
                       </h3>
                       <p className="font-body text-xs text-ivory/70 mt-1">{category.count}</p>
