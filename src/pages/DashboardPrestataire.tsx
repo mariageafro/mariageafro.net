@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/contexts/auth-context';
-import { useUserRole } from '@/hooks/use-user-role';
 import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/layout/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,22 +12,9 @@ import { Loader2, LayoutDashboard, User, Image, CreditCard, Star } from 'lucide-
 import type { Tables } from '@/integrations/supabase/types';
 
 export default function DashboardPrestataire() {
-  const { user, isLoading: authLoading } = useAuthContext();
-  const { role, isLoading: roleLoading } = useUserRole(user?.id);
-  const navigate = useNavigate();
+  const { user } = useAuthContext();
   const [prestataire, setPrestataire] = useState<Tables<'prestataires'> | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
-      return;
-    }
-    if (!authLoading && !roleLoading && role !== 'prestataire' && role !== 'admin') {
-      navigate('/');
-      return;
-    }
-  }, [user, authLoading, role, roleLoading, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -45,7 +30,7 @@ export default function DashboardPrestataire() {
     fetchPrestataire();
   }, [user]);
 
-  if (authLoading || roleLoading || loading) {
+  if (loading) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center pt-24">
