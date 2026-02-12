@@ -3,27 +3,30 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import categoryDj from "@/assets/category-dj.jpg";
-import categoryPhoto from "@/assets/category-photo.jpg";
-import categoryTraiteur from "@/assets/category-traiteur.jpg";
-import categoryDeco from "@/assets/category-deco.jpg";
-import categoryPlanner from "@/assets/category-planner.jpg";
-import categoryTenues from "@/assets/category-tenues.jpg";
-import categoryBeaute from "@/assets/category-beaute.jpg";
+import categoryVideaste from "@/assets/category-videaste.jpg";
+import categoryPhotographe from "@/assets/category-photographe.jpg";
+import categoryDjMusique from "@/assets/category-djmusique.jpg";
+import categoryWeddingPlanner from "@/assets/category-weddingplanner.jpg";
+import categoryAnimation from "@/assets/category-animation.jpg";
+import categoryCoiffureBeaute from "@/assets/category-coiffurebeaute.jpg";
+import categoryDecoration from "@/assets/category-decoration.jpg";
+import categoryTraiteur from "@/assets/category-traiteur2.jpg";
+import categorySalleLieu from "@/assets/category-sallelieu.jpg";
+import categoryTenuesCouture from "@/assets/category-tenuescouture.jpg";
+import categoryTransport from "@/assets/category-transport.jpg";
 
-// Vidéaste FIRST, then Photographe — no Caraïbes here
 const categories = [
-  { name: "Vidéaste", slug: "videaste", image: categoryDj, count: 72, featured: true },
-  { name: "Photographe", slug: "photographe", image: categoryPhoto, count: 120, featured: true },
-  { name: "DJ & Musique", slug: "dj-musique", image: categoryDj, count: 85, featured: true },
-  { name: "Wedding Planner", slug: "wedding-planner", image: categoryPlanner, count: 45, featured: true },
-  { name: "Animation", slug: "animation", image: categoryPhoto, count: 58, featured: true },
-  { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryBeaute, count: 58, featured: true },
-  { name: "Décoration", slug: "decoration", image: categoryDeco, count: 78, featured: false },
+  { name: "Vidéaste", slug: "videaste", image: categoryVideaste, count: 72, featured: true },
+  { name: "Photographe", slug: "photographe", image: categoryPhotographe, count: 120, featured: true },
+  { name: "DJ & Musique", slug: "dj-musique", image: categoryDjMusique, count: 85, featured: true },
+  { name: "Wedding Planner", slug: "wedding-planner", image: categoryWeddingPlanner, count: 45, featured: true },
+  { name: "Animation", slug: "animation", image: categoryAnimation, count: 58, featured: true },
+  { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryCoiffureBeaute, count: 58, featured: true },
+  { name: "Décoration", slug: "decoration", image: categoryDecoration, count: 78, featured: false },
   { name: "Traiteur", slug: "traiteur", image: categoryTraiteur, count: 65, featured: false },
-  { name: "Salle & Lieu", slug: "salle-lieu", image: categoryPlanner, count: 40, featured: false },
-  { name: "Tenues & Couture", slug: "tenues-couture", image: categoryTenues, count: 92, featured: false },
-  { name: "Transport", slug: "transport", image: categoryDj, count: 30, featured: false },
+  { name: "Salle & Lieu", slug: "salle-lieu", image: categorySalleLieu, count: 40, featured: false },
+  { name: "Tenues & Couture", slug: "tenues-couture", image: categoryTenuesCouture, count: 92, featured: false },
+  { name: "Transport", slug: "transport", image: categoryTransport, count: 30, featured: false },
 ];
 
 export function CategoriesSection() {
@@ -68,6 +71,7 @@ export function CategoriesSection() {
                       src={category.image}
                       alt={category.name}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-chocolate/90 via-chocolate/30 to-transparent" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -105,6 +109,7 @@ export function CategoriesSection() {
                     src={category.image}
                     alt={category.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-chocolate/80 via-chocolate/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
