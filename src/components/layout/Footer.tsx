@@ -37,7 +37,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <img src={logo} alt="MariageAfro" className="h-20 w-auto mb-6 brightness-0 invert" />
+            <img src={logo} alt="MariageAfro" className="h-20 w-auto mb-6" />
             <p className="font-body text-sm leading-relaxed text-ivory/70 mb-6">
               La plateforme de référence pour votre mariage afro. Trouvez les meilleurs prestataires qui comprennent vos traditions et célèbrent votre culture.
             </p>
