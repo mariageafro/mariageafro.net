@@ -17,11 +17,12 @@ const navLinks = [
 ];
 
 const featuredCategories = [
-  { name: "Vidéaste", slug: "videographe" },
-  { name: "Photographe", slug: "photo" },
-  { name: "DJ", slug: "dj" },
-  { name: "Wedding Planner", slug: "planner" },
-  { name: "MC / Animateur", slug: "mc" },
+  { name: "Photographes", slug: "photo" },
+  { name: "DJ & Musique", slug: "dj" },
+  { name: "Wedding Planners", slug: "planner" },
+  { name: "Videographe", slug: "videographe" },
+  { name: "MC & Cérémonie", slug: "mc" },
+  { name: "Coordination", slug: "coordination" },
 ];
 
 export function Header() {

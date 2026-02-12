@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { usePrestataires } from "@/hooks/use-prestataires";
 import { Skeleton } from "@/components/ui/skeleton";
-import { sortByPriority } from "@/config/category-order";
 
 import categoryDj from "@/assets/category-dj.jpg";
 import categoryPhoto from "@/assets/category-photo.jpg";
@@ -20,12 +19,12 @@ const ratingOptions = [
 ];
 
 const featuredCategories = [
-  { name: "Vidéaste mariage", slug: "videographe", image: categoryDj },
-  { name: "Photographe mariage", slug: "photo", image: categoryPhoto },
-  { name: "DJ mariage", slug: "dj", image: categoryDj },
-  { name: "Wedding Planner", slug: "planner", image: categoryPlanner },
-  { name: "MC / Animateur", slug: "mc", image: categoryPhoto },
-  { name: "Décoration", slug: "coordination", image: categoryPlanner },
+  { name: "Photographes", slug: "photo", image: categoryPhoto },
+  { name: "DJ & Musique", slug: "dj", image: categoryDj },
+  { name: "Wedding Planners", slug: "planner", image: categoryPlanner },
+  { name: "Videographe", slug: "videographe", image: categoryDj },
+  { name: "MC & Cérémonie", slug: "mc", image: categoryPhoto },
+  { name: "Coordination", slug: "coordination", image: categoryPlanner },
 ];
 
 export default function Prestataires() {
@@ -168,9 +167,9 @@ export default function Prestataires() {
               className={selectClass}
             >
               <option value="">🏷️ Toutes les catégories</option>
-              {sortByPriority(categories).map((cat) => (
-                 <option key={cat.id} value={cat.id}>{cat.name}</option>
-               ))}
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
             </select>
 
             {/* Culture */}
@@ -239,7 +238,13 @@ export default function Prestataires() {
              >
                Tous
              </button>
-             {sortByPriority(categories).map((cat) => (
+             {(() => {
+               const featured = ['Photographe', 'Videaste', 'DJ & Musique', 'Wedding Planner'];
+               const sorted = [
+                 ...categories.filter(cat => featured.includes(cat.name)),
+                 ...categories.filter(cat => !featured.includes(cat.name)),
+               ];
+               return sorted.map((cat) => (
                  <button
                    key={cat.id}
                    onClick={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
@@ -251,7 +256,8 @@ export default function Prestataires() {
                  >
                    {cat.name}
                  </button>
-               ))}
+               ));
+             })()}
            </div>
         </div>
       </section>
