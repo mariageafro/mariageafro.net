@@ -15,7 +15,7 @@ const heroCategories = [
   { name: "Décoration", slug: "decoration" },
   { name: "Traiteur", slug: "traiteur" },
   { name: "Salle & Lieu", slug: "salle-lieu" },
-  { name: "Robes & Tenues", slug: "robes-tenues" },
+  { name: "Robes", slug: "robes" },
   { name: "Tenues & Couture", slug: "tenues-couture" },
   { name: "Transport", slug: "transport" },
 ];
