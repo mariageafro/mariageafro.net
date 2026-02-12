@@ -10,9 +10,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
 import { useEffect } from "react";
 
-import categoryDj from "@/assets/category-dj.jpg";
-import categoryPhoto from "@/assets/category-photo.jpg";
-import categoryPlanner from "@/assets/category-planner.jpg";
+import categoryVideaste from "@/assets/category-videaste.jpg";
+import categoryPhotographe from "@/assets/category-photographe.jpg";
+import categoryDjMusique from "@/assets/category-djmusique.jpg";
+import categoryWeddingPlanner from "@/assets/category-weddingplanner.jpg";
+import categoryAnimation from "@/assets/category-animation.jpg";
+import categoryCoiffureBeaute from "@/assets/category-coiffurebeaute.jpg";
 
 const ratingOptions = [
   { label: "Toutes", value: 0 },
@@ -22,12 +25,12 @@ const ratingOptions = [
 ];
 
 const featuredCategories = [
-  { name: "Vidéaste", slug: "videaste", image: categoryDj },
-  { name: "Photographe", slug: "photographe", image: categoryPhoto },
-  { name: "DJ & Musique", slug: "dj-musique", image: categoryDj },
-  { name: "Wedding Planner", slug: "wedding-planner", image: categoryPlanner },
-  { name: "Animation", slug: "animation", image: categoryPhoto },
-  { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryPlanner },
+  { name: "Vidéaste", slug: "videaste", image: categoryVideaste },
+  { name: "Photographe", slug: "photographe", image: categoryPhotographe },
+  { name: "DJ & Musique", slug: "dj-musique", image: categoryDjMusique },
+  { name: "Wedding Planner", slug: "wedding-planner", image: categoryWeddingPlanner },
+  { name: "Animation", slug: "animation", image: categoryAnimation },
+  { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryCoiffureBeaute },
 ];
 
 export default function Prestataires() {
@@ -397,7 +400,7 @@ export default function Prestataires() {
                   <Link to={`/prestataires/${p.slug}`} className={`group block card-premium ${viewMode === 'list' ? 'flex' : ''}`}>
                     <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 shrink-0' : 'aspect-[4/3]'}`}>
                       <img
-                        src={p.cover_url || categoryDj}
+                        src={p.cover_url || categoryVideaste}
                         alt={p.nom_entreprise}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
