@@ -84,58 +84,99 @@ export function HeroSection() {
           </motion.p>
 
           {/* Search Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="bg-ivory/95 backdrop-blur-sm rounded-full p-2 shadow-elegant max-w-3xl mx-auto"
-          >
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-0">
-              {/* Location */}
-              <div className="flex-1 flex items-center gap-3 px-6 py-3 border-b sm:border-b-0 sm:border-r border-border">
-                <MapPin className="text-champagne" size={20} />
-                <div className="text-left">
-                  <p className="font-body text-xs text-muted-foreground uppercase tracking-wider">
-                    Localisation
-                  </p>
-                  <select className="w-full bg-transparent font-body text-sm text-chocolate focus:outline-none cursor-pointer">
-                    <option value="">Choisir une ville</option>
-                    <option value="paris">Paris</option>
-                    <option value="lyon">Lyon</option>
-                    <option value="marseille">Marseille</option>
-                    <option value="bordeaux">Bordeaux</option>
-                    <option value="lille">Lille</option>
-                  </select>
-                </div>
-              </div>
+           <motion.div
+             initial={{ opacity: 0, y: 30 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.8, delay: 0.8 }}
+             className="max-w-3xl mx-auto"
+           >
+             <div className="hidden sm:flex bg-ivory/95 backdrop-blur-sm rounded-full p-2 shadow-elegant gap-0">
+               {/* Location */}
+               <div className="flex-1 flex items-center gap-3 px-6 py-3 border-r border-border">
+                 <MapPin className="text-champagne" size={20} />
+                 <div className="text-left">
+                   <p className="font-body text-xs text-muted-foreground uppercase tracking-wider">
+                     Localisation
+                   </p>
+                   <select className="w-full bg-transparent font-body text-sm text-chocolate focus:outline-none cursor-pointer">
+                     <option value="">Choisir une ville</option>
+                     <option value="paris">Paris</option>
+                     <option value="lyon">Lyon</option>
+                     <option value="marseille">Marseille</option>
+                     <option value="bordeaux">Bordeaux</option>
+                     <option value="lille">Lille</option>
+                   </select>
+                 </div>
+               </div>
 
-              {/* Category */}
-              <div className="flex-1 flex items-center gap-3 px-6 py-3">
-                <Search className="text-champagne" size={20} />
-                <div className="text-left">
-                  <p className="font-body text-xs text-muted-foreground uppercase tracking-wider">
-                    Catégorie
-                  </p>
-                  <select className="w-full bg-transparent font-body text-sm text-chocolate focus:outline-none cursor-pointer">
-                    <option value="">Choisir un prestataire</option>
-                    <option value="dj">DJ & Musique</option>
-                    <option value="photo">Photographes</option>
-                    <option value="traiteur">Traiteurs</option>
-                    <option value="deco">Décoration</option>
-                    <option value="planner">Wedding Planners</option>
-                    <option value="tenues">Tenues traditionnelles</option>
-                    <option value="beaute">Beauté</option>
-                  </select>
-                </div>
-              </div>
+               {/* Category */}
+               <div className="flex-1 flex items-center gap-3 px-6 py-3">
+                 <Search className="text-champagne" size={20} />
+                 <div className="text-left">
+                   <p className="font-body text-xs text-muted-foreground uppercase tracking-wider">
+                     Catégorie
+                   </p>
+                   <select className="w-full bg-transparent font-body text-sm text-chocolate focus:outline-none cursor-pointer">
+                     <option value="">Choisir un prestataire</option>
+                     <option value="dj">DJ & Musique</option>
+                     <option value="photo">Photographes</option>
+                     <option value="traiteur">Traiteurs</option>
+                     <option value="deco">Décoration</option>
+                     <option value="planner">Wedding Planners</option>
+                     <option value="tenues">Tenues traditionnelles</option>
+                     <option value="beaute">Beauté</option>
+                   </select>
+                 </div>
+               </div>
 
-              {/* Search Button */}
-              <Button variant="hero" className="m-1 sm:m-0">
-                <Search size={18} />
-                Rechercher
-              </Button>
-            </div>
-          </motion.div>
+               {/* Search Button */}
+               <Button variant="hero" className="m-0">
+                 <Search size={18} />
+                 Rechercher
+               </Button>
+             </div>
+
+             {/* Mobile Search Card */}
+             <div className="sm:hidden bg-ivory/98 rounded-3xl p-6 shadow-elegant space-y-4">
+               {/* Location */}
+               <div>
+                 <p className="font-body text-xs text-muted-foreground uppercase tracking-wider mb-2">
+                   Localisation
+                 </p>
+                 <select className="w-full bg-transparent font-body text-sm text-chocolate focus:outline-none cursor-pointer border-b border-border pb-2">
+                   <option value="">Choisir une ville</option>
+                   <option value="paris">Paris</option>
+                   <option value="lyon">Lyon</option>
+                   <option value="marseille">Marseille</option>
+                   <option value="bordeaux">Bordeaux</option>
+                   <option value="lille">Lille</option>
+                 </select>
+               </div>
+
+               {/* Category */}
+               <div>
+                 <p className="font-body text-xs text-muted-foreground uppercase tracking-wider mb-2">
+                   Catégorie
+                 </p>
+                 <select className="w-full bg-transparent font-body text-sm text-chocolate focus:outline-none cursor-pointer border-b border-border pb-2">
+                   <option value="">Choisir un prestataire</option>
+                   <option value="dj">DJ & Musique</option>
+                   <option value="photo">Photographes</option>
+                   <option value="traiteur">Traiteurs</option>
+                   <option value="deco">Décoration</option>
+                   <option value="planner">Wedding Planners</option>
+                   <option value="tenues">Tenues traditionnelles</option>
+                   <option value="beaute">Beauté</option>
+                 </select>
+               </div>
+
+               {/* Search Button */}
+               <Button variant="hero" className="w-full mt-4">
+                 <Search size={18} />
+                 Rechercher
+               </Button>
+             </div>
+           </motion.div>
         </div>
 
         {/* Stats */}
