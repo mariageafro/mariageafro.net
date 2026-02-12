@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuthContext } from "@/contexts/auth-context";
 import logo from "@/assets/logo-mariageafro.png";
 
 const navLinks = [
@@ -17,6 +18,7 @@ export function Header() {
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, user, signOut } = useAuthContext();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -68,25 +70,46 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Right side: CTA + Mobile toggle */}
-          <div className="flex items-center gap-3">
-            <Button
-              variant={showSolid ? "gold-outline" : "hero-outline"}
-              size="sm"
-              className={`transition-all duration-500 ${isScrolled ? "text-xs px-3 h-8" : ""}`}
-              asChild
-            >
-              <Link to="/espace-pro">Espace Pro</Link>
-            </Button>
+           {/* Right side: Auth + Mobile toggle */}
+           <div className="flex items-center gap-3">
+             {isAuthenticated ? (
+               <div className="flex items-center gap-2">
+                 <Link
+                   to="/espace-pro"
+                   className={`text-sm font-medium px-3 py-1 rounded transition-colors ${
+                     showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                   }`}
+                 >
+                   {user?.email}
+                 </Link>
+                 <Button
+                   variant="ghost"
+                   size="sm"
+                   onClick={signOut}
+                   className={`transition-all duration-500 ${isScrolled ? "text-xs" : ""}`}
+                 >
+                   <LogOut className="w-4 h-4" />
+                 </Button>
+               </div>
+             ) : (
+               <Button
+                 variant={showSolid ? "gold-outline" : "hero-outline"}
+                 size="sm"
+                 className={`transition-all duration-500 ${isScrolled ? "text-xs px-3 h-8" : ""}`}
+                 asChild
+               >
+                 <Link to="/auth">Connexion</Link>
+               </Button>
+             )}
 
-            {/* Mobile Menu Toggle */}
-            <button
-              className={`lg:hidden p-2 transition-colors duration-300 ${showSolid ? "text-chocolate" : "text-ivory"}`}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
+             {/* Mobile Menu Toggle */}
+             <button
+               className={`lg:hidden p-2 transition-colors duration-300 ${showSolid ? "text-chocolate" : "text-ivory"}`}
+               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+             >
+               {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+             </button>
+           </div>
         </div>
       </div>
 
@@ -101,21 +124,38 @@ export function Header() {
           >
             <nav className="container-editorial py-6 flex flex-col gap-4">
               {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`font-body text-base py-2 text-chocolate hover:text-champagne transition-colors ${
-                    location.pathname === link.href ? "text-champagne font-medium" : ""
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <Button variant="gold" className="mt-4" asChild>
-                <Link to="/espace-pro">Espace Pro</Link>
-              </Button>
-            </nav>
+                 <Link
+                   key={link.name}
+                   to={link.href}
+                   onClick={() => setIsMobileMenuOpen(false)}
+                   className={`font-body text-base py-2 text-chocolate hover:text-champagne transition-colors ${
+                     location.pathname === link.href ? "text-champagne font-medium" : ""
+                   }`}
+                 >
+                   {link.name}
+                 </Link>
+               ))}
+               {isAuthenticated ? (
+                 <div className="flex flex-col gap-3 mt-4 border-t border-border pt-4">
+                   <div className="text-sm text-muted-foreground">{user?.email}</div>
+                   <Button
+                     variant="outline"
+                     className="w-full justify-start"
+                     onClick={() => {
+                       signOut();
+                       setIsMobileMenuOpen(false);
+                     }}
+                   >
+                     <LogOut className="w-4 h-4 mr-2" />
+                     Déconnexion
+                   </Button>
+                 </div>
+               ) : (
+                 <Button variant="gold" className="mt-4 w-full" asChild>
+                   <Link to="/auth">Connexion</Link>
+                 </Button>
+               )}
+             </nav>
           </motion.div>
         )}
       </AnimatePresence>
