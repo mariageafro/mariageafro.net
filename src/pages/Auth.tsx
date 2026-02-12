@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -80,6 +81,15 @@ export default function Auth() {
 
     const result = await signIn(signInData.email, signInData.password);
     if (result.success) {
+      // Check user role to redirect appropriately
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', currentUser.id).maybeSingle();
+        if (roleData?.role === 'prestataire') {
+          navigate('/dashboard');
+          return;
+        }
+      }
       navigate('/');
     }
   };
