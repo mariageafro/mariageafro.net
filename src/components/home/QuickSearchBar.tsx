@@ -25,7 +25,7 @@ export function QuickSearchBar() {
   const [ville, setVille] = useState("");
   const [categorie, setCategorie] = useState("");
   const [isSticky, setIsSticky] = useState(false);
-  const { geo, radius, setRadius, requestLocation } = useGeolocation();
+  const { geo, radius, setRadius, requestLocation, disableGeo } = useGeolocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,14 +71,14 @@ export function QuickSearchBar() {
               </optgroup>
             </select>
             <button
-              onClick={requestLocation}
+              onClick={() => geo.enabled ? disableGeo() : requestLocation()}
               disabled={geo.loading}
               className={`shrink-0 p-2 rounded-full transition-colors ${
                 geo.enabled
                   ? "bg-champagne/20 text-champagne"
                   : "text-muted-foreground hover:text-champagne hover:bg-champagne/10"
               }`}
-              title="Autour de moi"
+              title={geo.enabled ? "Désactiver la géolocalisation" : "Autour de moi"}
             >
               {geo.loading ? (
                 <Loader2 size={16} className="animate-spin" />
