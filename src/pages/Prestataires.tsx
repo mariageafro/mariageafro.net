@@ -226,32 +226,39 @@ export default function Prestataires() {
             )}
           </div>
 
-          {/* Category Pills */}
-          <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-            <button
-              onClick={() => updateFilter('categorie', '')}
-              className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
-                !filters.categorie
-                  ? "bg-champagne text-primary-foreground shadow-md"
-                  : "bg-secondary text-muted-foreground hover:bg-champagne/10"
-              }`}
-            >
-              Tous
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
-                className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
-                  filters.categorie === cat.id
-                    ? "bg-champagne text-primary-foreground shadow-md"
-                    : "bg-secondary text-muted-foreground hover:bg-champagne/10"
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
+           {/* Category Pills */}
+           <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+             <button
+               onClick={() => updateFilter('categorie', '')}
+               className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
+                 !filters.categorie
+                   ? "bg-champagne text-primary-foreground shadow-md"
+                   : "bg-secondary text-muted-foreground hover:bg-champagne/10"
+               }`}
+             >
+               Tous
+             </button>
+             {(() => {
+               const featured = ['Videaste', 'Photographe', 'DJ & Musique', 'Wedding Planner'];
+               const sorted = [
+                 ...categories.filter(cat => featured.includes(cat.name)),
+                 ...categories.filter(cat => !featured.includes(cat.name)),
+               ];
+               return sorted.map((cat) => (
+                 <button
+                   key={cat.id}
+                   onClick={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
+                   className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
+                     filters.categorie === cat.id
+                       ? "bg-champagne text-primary-foreground shadow-md"
+                       : "bg-secondary text-muted-foreground hover:bg-champagne/10"
+                   }`}
+                 >
+                   {cat.name}
+                 </button>
+               ));
+             })()}
+           </div>
         </div>
       </section>
 
