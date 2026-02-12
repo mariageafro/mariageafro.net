@@ -6,7 +6,8 @@ const footerLinks = {
   navigation: [
     { name: "Accueil", href: "/" },
     { name: "Prestataires", href: "/prestataires" },
-    { name: "Inspiration", href: "/inspiration" },
+    { name: "Par Pays", href: "/trouver-par-pays" },
+    { name: "Premium", href: "/prestataires-premium" },
     { name: "Blog", href: "/blog" },
   ],
   services: [

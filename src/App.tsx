@@ -14,6 +14,10 @@ import APropos from "./pages/APropos";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import DashboardPrestataire from "./pages/DashboardPrestataire";
+import TrouverParPays from "./pages/TrouverParPays";
+import PreatairesPremium from "./pages/PreatairesPremium";
+import OutilsMaries from "./pages/OutilsMaries";
+import AdminDashboard from "./pages/AdminDashboard";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -35,10 +39,18 @@ const App = () => (
             } />
             <Route path="/prestataires" element={<Prestataires />} />
             <Route path="/prestataires/:id" element={<ProfilPrestataire />} />
+            <Route path="/trouver-par-pays" element={<TrouverParPays />} />
+            <Route path="/prestataires-premium" element={<PreatairesPremium />} />
+            <Route path="/outils-maries" element={<OutilsMaries />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/inspiration" element={<Inspiration />} />
             <Route path="/a-propos" element={<APropos />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

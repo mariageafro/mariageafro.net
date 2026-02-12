@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -17,6 +18,7 @@ export type PrestatairesFilters = {
   langue: string;
   noteMin: number;
   sort: 'pertinence' | 'note' | 'avis';
+  country: string;
 };
 
 const defaultFilters: PrestatairesFilters = {
@@ -27,12 +29,17 @@ const defaultFilters: PrestatairesFilters = {
   langue: '',
   noteMin: 0,
   sort: 'pertinence',
+  country: '',
 };
 
 export function usePrestataires() {
+  const [searchParams] = useSearchParams();
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filters, setFilters] = useState<PrestatairesFilters>(defaultFilters);
+  const [filters, setFilters] = useState<PrestatairesFilters>(() => ({
+    ...defaultFilters,
+    country: searchParams.get('country') || '',
+  }));
   const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
   const [villes, setVilles] = useState<string[]>([]);
   const [cultures, setCultures] = useState<string[]>([]);
@@ -97,6 +104,10 @@ export function usePrestataires() {
 
       if (filters.langue) {
         query = query.contains('langues', [filters.langue]);
+      }
+
+      if (filters.country) {
+        query = query.eq('country_id', filters.country);
       }
 
       if (filters.search) {
