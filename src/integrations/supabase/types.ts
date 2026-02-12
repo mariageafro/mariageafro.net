@@ -196,6 +196,8 @@ export type Database = {
       }
       prestataires: {
         Row: {
+          caribbean_origins: string[] | null
+          caribbean_styles: string[] | null
           categorie_id: string | null
           country_id: string | null
           created_at: string
@@ -203,6 +205,8 @@ export type Database = {
           id: string
           instagram: string | null
           langues: string[] | null
+          lat: number | null
+          lng: number | null
           nom_entreprise: string
           origine_culturelle: string | null
           pays: string | null
@@ -219,6 +223,8 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          caribbean_origins?: string[] | null
+          caribbean_styles?: string[] | null
           categorie_id?: string | null
           country_id?: string | null
           created_at?: string
@@ -226,6 +232,8 @@ export type Database = {
           id?: string
           instagram?: string | null
           langues?: string[] | null
+          lat?: number | null
+          lng?: number | null
           nom_entreprise: string
           origine_culturelle?: string | null
           pays?: string | null
@@ -242,6 +250,8 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+          caribbean_origins?: string[] | null
+          caribbean_styles?: string[] | null
           categorie_id?: string | null
           country_id?: string | null
           created_at?: string
@@ -249,6 +259,8 @@ export type Database = {
           id?: string
           instagram?: string | null
           langues?: string[] | null
+          lat?: number | null
+          lng?: number | null
           nom_entreprise?: string
           origine_culturelle?: string | null
           pays?: string | null

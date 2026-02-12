@@ -87,7 +87,7 @@ export function Header() {
              {featuredCategories.slice(0, 3).map((cat) => (
                <Link
                  key={cat.slug}
-                 to={`/prestataires?category=${cat.slug}`}
+                 to={`/categories/${cat.slug}`}
                  className={`text-xs font-medium px-2 py-1 rounded transition-colors ${
                    showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
                  }`}
