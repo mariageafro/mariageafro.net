@@ -15,8 +15,6 @@ import categorySalleLieu from "@/assets/category-sallelieu.jpg";
 import categoryTenuesCouture from "@/assets/category-tenuescouture.jpg";
 import categoryTransport from "@/assets/category-transport.jpg";
 import categoryRobes from "@/assets/category-robes.jpg";
-import categoryPhoto from "@/assets/category-photo.jpg";
-import categoryDj from "@/assets/category-dj.jpg";
 
 const categories = [
   { name: "Vidéaste", slug: "videaste", image: categoryVideaste, count: 72, featured: true },
@@ -24,21 +22,13 @@ const categories = [
   { name: "DJ & Musique", slug: "dj-musique", image: categoryDjMusique, count: 85, featured: true },
   { name: "Wedding Planner", slug: "wedding-planner", image: categoryWeddingPlanner, count: 45, featured: true },
   { name: "Animation", slug: "animation", image: categoryAnimation, count: 58, featured: true },
-  { name: "Chorégraphie / Flashmob", slug: "choregraphie-flashmob", image: categoryCoiffureBeaute, count: 30, featured: true },
-  { name: "Photo Booth / Vidéo Booth", slug: "photo-booth-video-booth", image: categoryPhoto, count: 35, featured: false },
-  { name: "Vidéo Live / Diffusion en direct", slug: "video-live-diffusion", image: categoryVideaste, count: 20, featured: false },
-  { name: "Atalaku / Sebene", slug: "atalaku-sebene", image: categoryDjMusique, count: 25, featured: false },
-  { name: "Gospel / Chorale", slug: "gospel-chorale", image: categoryDj, count: 18, featured: false },
-  { name: "Groupe musical (violon/flûte/guitare)", slug: "groupe-musical", image: categoryDjMusique, count: 22, featured: false },
-  { name: "Groupe folklorique", slug: "groupe-folklorique", image: categoryAnimation, count: 15, featured: false },
-  { name: "Pasteur / Prédicateur (Église)", slug: "pasteur-predicateur", image: categorySalleLieu, count: 12, featured: false },
-  { name: "Location matériel", slug: "location-materiel", image: categoryTransport, count: 28, featured: false },
-  { name: "Sonorisation", slug: "sonorisation", image: categoryDj, count: 32, featured: false },
-  { name: "Lumières / Éclairage", slug: "lumieres-eclairage", image: categoryDecoration, count: 24, featured: false },
-  { name: "Décoration", slug: "decoration", image: categoryDecoration, count: 78, featured: false },
+  { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryCoiffureBeaute, count: 58, featured: true },
+  { name: "Salle & Lieu", slug: "salle-lieu", image: categorySalleLieu, count: 40, featured: false },
   { name: "Traiteur", slug: "traiteur", image: categoryTraiteur, count: 65, featured: false },
+  { name: "Décoration", slug: "decoration", image: categoryDecoration, count: 78, featured: false },
+  { name: "Robes", slug: "robes", image: categoryRobes, count: 55, featured: false },
   { name: "Tenues & Couture", slug: "tenues-couture", image: categoryTenuesCouture, count: 92, featured: false },
-  { name: "Demande en mariage surprise", slug: "demande-mariage-surprise", image: categoryRobes, count: 10, featured: false },
+  { name: "Transport", slug: "transport", image: categoryTransport, count: 30, featured: false },
 ];
 
 export function CategoriesSection() {

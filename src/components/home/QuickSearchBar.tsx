@@ -37,7 +37,7 @@ export function QuickSearchBar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsSticky(window.scrollY > 200);
+      setIsSticky(window.scrollY > window.innerHeight - 100);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -55,7 +55,7 @@ export function QuickSearchBar() {
     <div
       className={`w-full z-40 transition-all duration-300 ${
         isSticky
-          ? "hidden"
+          ? "fixed top-14 left-0 bg-ivory/95 backdrop-blur-md shadow-elegant border-b border-border"
           : "relative bg-background"
       }`}
     >
