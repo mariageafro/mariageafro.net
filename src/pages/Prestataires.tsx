@@ -1,41 +1,40 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { Search, MapPin, Filter, Star, Heart, Grid, List } from "lucide-react";
+import { Search, MapPin, Star, Heart, Grid, List, X, SlidersHorizontal, Globe, Music, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { usePrestataires } from "@/hooks/use-prestataires";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import categoryDj from "@/assets/category-dj.jpg";
-import categoryPhoto from "@/assets/category-photo.jpg";
-import categoryTraiteur from "@/assets/category-traiteur.jpg";
-import categoryDeco from "@/assets/category-deco.jpg";
-import categoryPlanner from "@/assets/category-planner.jpg";
-import categoryTenues from "@/assets/category-tenues.jpg";
-import categoryBeaute from "@/assets/category-beaute.jpg";
 
-const vendors = [
-  { id: 1, name: "DJ Kwame", category: "DJ & Musique", city: "Paris", country: "France", rating: 4.9, reviews: 87, image: categoryDj, culture: "Ghana, Afrobeats" },
-  { id: 2, name: "Studio Lumière Afrique", category: "Photographe", city: "Lyon", country: "France", rating: 4.8, reviews: 124, image: categoryPhoto, culture: "Multi-culturel" },
-  { id: 3, name: "Saveurs d'Afrique", category: "Traiteur", city: "Marseille", country: "France", rating: 4.9, reviews: 56, image: categoryTraiteur, culture: "Sénégal, Côte d'Ivoire" },
-  { id: 4, name: "Déco Royale", category: "Décoration", city: "Paris", country: "France", rating: 4.7, reviews: 43, image: categoryDeco, culture: "Nigeria, Ghana" },
-  { id: 5, name: "Wedding by Ama", category: "Wedding Planner", city: "Bordeaux", country: "France", rating: 5.0, reviews: 32, image: categoryPlanner, culture: "Cameroun, Congo" },
-  { id: 6, name: "Tenues Royales", category: "Tenues traditionnelles", city: "Paris", country: "France", rating: 4.8, reviews: 78, image: categoryTenues, culture: "Nigeria, Sénégal" },
-  { id: 7, name: "Beauté Afro Luxe", category: "Beauté", city: "Paris", country: "France", rating: 4.9, reviews: 95, image: categoryBeaute, culture: "Multi-culturel" },
-  { id: 8, name: "DJ Selassie", category: "DJ & Musique", city: "Lille", country: "France", rating: 4.6, reviews: 41, image: categoryDj, culture: "Éthiopie, Érythrée" },
+const ratingOptions = [
+  { label: "Toutes", value: 0 },
+  { label: "4+ ★", value: 4 },
+  { label: "4.5+ ★", value: 4.5 },
+  { label: "5 ★", value: 5 },
 ];
-
-const categories = [
-  "Tous", "DJ & Musique", "Photographe", "Traiteur", "Décoration", "Wedding Planner", "Tenues traditionnelles", "Beauté"
-];
-
-const cities = ["Toutes les villes", "Paris", "Lyon", "Marseille", "Bordeaux", "Lille", "Toulouse", "Nantes"];
-
-const cultures = ["Toutes les cultures", "Nigeria", "Sénégal", "Ghana", "Cameroun", "Congo", "Côte d'Ivoire", "Mali", "Maghreb"];
 
 export default function Prestataires() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [selectedCategory, setSelectedCategory] = useState("Tous");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  const {
+    prestataires,
+    isLoading,
+    filters,
+    updateFilter,
+    resetFilters,
+    categories,
+    villes,
+    cultures,
+    langues,
+  } = usePrestataires();
+
+  const hasActiveFilters = filters.search || filters.ville || filters.categorie || filters.culture || filters.langue || filters.noteMin > 0;
+
+  const selectClass = "px-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer";
 
   return (
     <Layout>
@@ -59,41 +58,32 @@ export default function Prestataires() {
       </section>
 
       {/* Filters */}
-      <section className="py-8 bg-ivory border-b border-border sticky top-20 z-40">
+      <section className="py-6 bg-ivory border-b border-border sticky top-14 z-40">
         <div className="container-editorial">
-          <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
-            {/* Search */}
+          {/* Search bar + toggle */}
+          <div className="flex gap-3 items-center">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
               <input
                 type="text"
                 placeholder="Rechercher un prestataire..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={filters.search}
+                onChange={(e) => updateFilter('search', e.target.value)}
                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50"
               />
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap gap-3">
-              <select className="px-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50">
-                {cities.map((city) => (
-                  <option key={city} value={city}>{city}</option>
-                ))}
-              </select>
-              <select className="px-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50">
-                {cultures.map((culture) => (
-                  <option key={culture} value={culture}>{culture}</option>
-                ))}
-              </select>
-              <Button variant="outline" size="lg">
-                <Filter size={18} />
-                Plus de filtres
-              </Button>
-            </div>
+            {/* Mobile filter toggle */}
+            <Button
+              variant="outline"
+              className="lg:hidden"
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+            >
+              <SlidersHorizontal size={18} />
+            </Button>
 
             {/* View Toggle */}
-            <div className="flex gap-1 p-1 bg-secondary rounded-lg">
+            <div className="hidden sm:flex gap-1 p-1 bg-secondary rounded-lg">
               <button
                 onClick={() => setViewMode("grid")}
                 className={`p-2 rounded-md transition-colors ${viewMode === "grid" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
@@ -109,19 +99,109 @@ export default function Prestataires() {
             </div>
           </div>
 
+          {/* Desktop Filters */}
+          <div className={`mt-4 gap-3 flex-wrap items-center ${showMobileFilters ? 'flex' : 'hidden lg:flex'}`}>
+            {/* Ville */}
+            <select
+              value={filters.ville}
+              onChange={(e) => updateFilter('ville', e.target.value)}
+              className={selectClass}
+            >
+              <option value="">📍 Toutes les villes</option>
+              {villes.map((v) => (
+                <option key={v} value={v}>{v}</option>
+              ))}
+            </select>
+
+            {/* Catégorie */}
+            <select
+              value={filters.categorie}
+              onChange={(e) => updateFilter('categorie', e.target.value)}
+              className={selectClass}
+            >
+              <option value="">🏷️ Toutes les catégories</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+
+            {/* Culture */}
+            <select
+              value={filters.culture}
+              onChange={(e) => updateFilter('culture', e.target.value)}
+              className={selectClass}
+            >
+              <option value="">🌍 Toutes les cultures</option>
+              {cultures.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+
+            {/* Langue */}
+            <select
+              value={filters.langue}
+              onChange={(e) => updateFilter('langue', e.target.value)}
+              className={selectClass}
+            >
+              <option value="">💬 Toutes les langues</option>
+              {langues.map((l) => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
+
+            {/* Note minimum */}
+            <select
+              value={filters.noteMin}
+              onChange={(e) => updateFilter('noteMin', Number(e.target.value))}
+              className={selectClass}
+            >
+              {ratingOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>⭐ {opt.label}</option>
+              ))}
+            </select>
+
+            {/* Sort */}
+            <select
+              value={filters.sort}
+              onChange={(e) => updateFilter('sort', e.target.value as any)}
+              className={selectClass}
+            >
+              <option value="pertinence">Pertinence</option>
+              <option value="note">Note (décroissant)</option>
+              <option value="avis">Avis (décroissant)</option>
+            </select>
+
+            {hasActiveFilters && (
+              <Button variant="ghost" size="sm" onClick={resetFilters} className="text-muted-foreground">
+                <X size={16} className="mr-1" />
+                Réinitialiser
+              </Button>
+            )}
+          </div>
+
           {/* Category Pills */}
-          <div className="flex gap-2 mt-6 overflow-x-auto pb-2">
+          <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+            <button
+              onClick={() => updateFilter('categorie', '')}
+              className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
+                !filters.categorie
+                  ? "bg-champagne text-primary-foreground shadow-md"
+                  : "bg-secondary text-muted-foreground hover:bg-champagne/10"
+              }`}
+            >
+              Tous
+            </button>
             {categories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                key={cat.id}
+                onClick={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
                 className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
-                  selectedCategory === cat
+                  filters.categorie === cat.id
                     ? "bg-champagne text-primary-foreground shadow-md"
                     : "bg-secondary text-muted-foreground hover:bg-champagne/10"
                 }`}
               >
-                {cat}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -133,76 +213,122 @@ export default function Prestataires() {
         <div className="container-editorial">
           <div className="flex items-center justify-between mb-8">
             <p className="font-body text-muted-foreground">
-              <span className="font-medium text-foreground">{vendors.length}</span> prestataires trouvés
+              <span className="font-medium text-foreground">{prestataires.length}</span> prestataire{prestataires.length !== 1 ? 's' : ''} trouvé{prestataires.length !== 1 ? 's' : ''}
             </p>
-            <select className="px-4 py-2 rounded-lg border border-border bg-background font-body text-sm">
-              <option>Pertinence</option>
-              <option>Note (décroissant)</option>
-              <option>Avis (décroissant)</option>
-            </select>
           </div>
 
-          {/* Grid */}
-          <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"}`}>
-            {vendors.map((vendor, index) => (
-              <motion.div
-                key={vendor.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-              >
-                <Link to={`/prestataires/${vendor.id}`} className="group block card-premium">
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={vendor.image}
-                      alt={vendor.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-ivory/90 flex items-center justify-center hover:bg-ivory transition-colors">
-                      <Heart size={18} className="text-chocolate" />
-                    </button>
-                    <div className="absolute bottom-4 left-4">
-                      <span className="px-3 py-1 rounded-full bg-ivory/90 font-body text-xs font-medium text-chocolate">
-                        {vendor.category}
-                      </span>
-                    </div>
+          {isLoading ? (
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="card-premium">
+                  <Skeleton className="aspect-[4/3] w-full" />
+                  <div className="p-5 space-y-3">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-full" />
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-serif text-lg text-chocolate mb-1 group-hover:text-champagne transition-colors">
-                      {vendor.name}
-                    </h3>
-                    <div className="flex items-center gap-2 text-muted-foreground font-body text-sm mb-3">
-                      <MapPin size={14} />
-                      {vendor.city}, {vendor.country}
+                </div>
+              ))}
+            </div>
+          ) : prestataires.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="font-serif text-chocolate mb-2">Aucun prestataire trouvé</h3>
+              <p className="font-body text-muted-foreground mb-6">
+                Essayez de modifier vos filtres pour élargir la recherche.
+              </p>
+              <Button variant="gold" onClick={resetFilters}>
+                Réinitialiser les filtres
+              </Button>
+            </div>
+          ) : (
+            <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"}`}>
+              {prestataires.map((p, index) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.03 }}
+                >
+                  <Link to={`/prestataires/${p.slug}`} className={`group block card-premium ${viewMode === 'list' ? 'flex' : ''}`}>
+                    <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 shrink-0' : 'aspect-[4/3]'}`}>
+                      <img
+                        src={p.cover_url || categoryDj}
+                        alt={p.nom_entreprise}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                      <button className="absolute top-3 right-3 w-9 h-9 rounded-full bg-ivory/90 flex items-center justify-center hover:bg-ivory transition-colors">
+                        <Heart size={16} className="text-chocolate" />
+                      </button>
+                      {p.categories && (
+                        <div className="absolute bottom-3 left-3">
+                          <span className="px-3 py-1 rounded-full bg-ivory/90 font-body text-xs font-medium text-chocolate">
+                            {p.categories.name}
+                          </span>
+                        </div>
+                      )}
+                      {p.verified && (
+                        <div className="absolute top-3 left-3">
+                          <span className="px-2 py-1 rounded-full bg-champagne/90 font-body text-[10px] font-semibold text-primary-foreground uppercase tracking-wider">
+                            Vérifié
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    <p className="font-body text-xs text-muted-foreground mb-3">
-                      {vendor.culture}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Star size={16} className="text-gold fill-gold" />
-                        <span className="font-body text-sm font-medium">{vendor.rating}</span>
-                        <span className="font-body text-xs text-muted-foreground">({vendor.reviews} avis)</span>
+                    <div className="p-5 flex-1">
+                      <h3 className="font-serif text-lg text-chocolate mb-1 group-hover:text-champagne transition-colors">
+                        {p.nom_entreprise}
+                      </h3>
+                      {p.ville && (
+                        <div className="flex items-center gap-1.5 text-muted-foreground font-body text-sm mb-2">
+                          <MapPin size={14} />
+                          {p.ville}{p.pays ? `, ${p.pays}` : ''}
+                        </div>
+                      )}
+                      {p.origine_culturelle && (
+                        <p className="font-body text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+                          <Globe size={12} />
+                          {p.origine_culturelle}
+                        </p>
+                      )}
+                      {p.langues && p.langues.length > 0 && (
+                        <div className="flex gap-1 flex-wrap mb-3">
+                          {p.langues.slice(0, 3).map(l => (
+                            <span key={l} className="px-2 py-0.5 rounded-full bg-secondary font-body text-[11px] text-muted-foreground">
+                              {l}
+                            </span>
+                          ))}
+                          {p.langues.length > 3 && (
+                            <span className="px-2 py-0.5 rounded-full bg-secondary font-body text-[11px] text-muted-foreground">
+                              +{p.langues.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          {p.review_count > 0 ? (
+                            <>
+                              <Star size={16} className="text-gold fill-gold" />
+                              <span className="font-body text-sm font-medium">{p.avg_rating.toFixed(1)}</span>
+                              <span className="font-body text-xs text-muted-foreground">({p.review_count} avis)</span>
+                            </>
+                          ) : (
+                            <span className="font-body text-xs text-muted-foreground italic">Nouveau</span>
+                          )}
+                        </div>
+                        <span className="font-body text-xs text-champagne font-medium group-hover:underline">
+                          Voir le profil →
+                        </span>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-champagne hover:text-champagne-dark">
-                        Voir le profil
-                      </Button>
                     </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Pagination */}
-          <div className="flex justify-center gap-2 mt-12">
-            <Button variant="outline" disabled>Précédent</Button>
-            <Button variant="gold">1</Button>
-            <Button variant="outline">2</Button>
-            <Button variant="outline">3</Button>
-            <Button variant="outline">Suivant</Button>
-          </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </Layout>
