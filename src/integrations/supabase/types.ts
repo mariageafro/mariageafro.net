@@ -393,6 +393,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_approve_review: {
+        Args: { _approved: boolean; _review_id: string }
+        Returns: undefined
+      }
+      admin_update_prestataire: {
+        Args: { _prestataire_id: string; _updates: Json }
+        Returns: undefined
+      }
       calculate_ranking_score: {
         Args: { _prestataire_id: string }
         Returns: number
