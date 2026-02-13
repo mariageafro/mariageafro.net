@@ -9,6 +9,7 @@ import { useGeolocation } from "@/hooks/use-geolocation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
 import { useEffect } from "react";
+import { DevenirPrestatairePopup } from "@/components/home/DevenirPrestatairePopup";
 
 import categoryVideaste from "@/assets/category-videaste.jpg";
 import categoryPhotographe from "@/assets/category-photographe.jpg";
@@ -480,6 +481,7 @@ export default function Prestataires() {
           )}
         </div>
       </section>
+      <DevenirPrestatairePopup />
     </Layout>
   );
 }
