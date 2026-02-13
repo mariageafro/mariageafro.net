@@ -5,6 +5,7 @@ import { CategoriesSection } from "@/components/home/CategoriesSection";
 import { WhySection } from "@/components/home/WhySection";
 import { InspirationSection } from "@/components/home/InspirationSection";
 import { ProSection } from "@/components/home/ProSection";
+import { DevenirPrestatairePopup } from "@/components/home/DevenirPrestatairePopup";
 
 const Index = () => {
   return (
@@ -15,6 +16,7 @@ const Index = () => {
       <WhySection />
       <InspirationSection />
       <ProSection />
+      <DevenirPrestatairePopup />
     </Layout>
   );
 };
