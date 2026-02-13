@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,21 @@ import { toast } from 'sonner';
 import { Loader2, Save, MapPin } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { PRIORITY_CITIES } from '@/lib/priority-cities';
+
+const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/;
+
+const prestataireSchema = z.object({
+  nom_entreprise: z.string().trim().min(1, "Le nom d'entreprise est requis").max(100, "100 caractères max"),
+  description: z.string().max(5000, "5000 caractères max").optional().or(z.literal('')),
+  ville: z.string().max(100).optional().or(z.literal('')),
+  pays: z.string().max(100).optional().or(z.literal('')),
+  telephone: z.string().regex(phoneRegex, "Format de téléphone invalide").optional().or(z.literal('')),
+  whatsapp: z.string().regex(phoneRegex, "Format WhatsApp invalide").optional().or(z.literal('')),
+  site_web: z.string().url("URL invalide").optional().or(z.literal('')),
+  instagram: z.string().max(100).optional().or(z.literal('')),
+  origine_culturelle: z.string().max(100).optional().or(z.literal('')),
+  sous_categorie: z.string().max(100).optional().or(z.literal('')),
+});
 
 interface DashboardProfilProps {
   prestataire: Tables<'prestataires'> | null;
@@ -66,7 +82,24 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
   };
 
   const handleSave = async () => {
-    if (!form.nom_entreprise.trim()) { toast.error("Le nom d'entreprise est requis"); return; }
+    // Validate inputs
+    const validation = prestataireSchema.safeParse({
+      nom_entreprise: form.nom_entreprise,
+      description: form.description,
+      ville: form.ville,
+      pays: form.pays,
+      telephone: form.telephone,
+      whatsapp: form.whatsapp,
+      site_web: form.site_web,
+      instagram: form.instagram,
+      origine_culturelle: form.origine_culturelle,
+      sous_categorie: form.sous_categorie,
+    });
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast.error(firstError.message);
+      return;
+    }
     setSaving(true);
     const slug = form.nom_entreprise.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const langues = form.langues.split(',').map(l => l.trim()).filter(Boolean);

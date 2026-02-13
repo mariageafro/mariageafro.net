@@ -84,13 +84,19 @@ export default function AdminDashboard() {
   };
 
   const updatePrestataire = async (id: string, updates: Record<string, unknown>) => {
-    const { error } = await supabase.from("prestataires").update(updates).eq("id", id);
+    const { error } = await supabase.rpc('admin_update_prestataire', {
+      _prestataire_id: id,
+      _updates: updates as Record<string, string | boolean>,
+    });
     if (error) { toast({ title: "Erreur", description: error.message, variant: "destructive" }); }
     else { toast({ title: "Succès", description: "Prestataire mis à jour." }); fetchAll(); }
   };
 
   const approveReview = async (id: string, approved: boolean) => {
-    const { error } = await supabase.from("avis").update({ approved }).eq("id", id);
+    const { error } = await supabase.rpc('admin_approve_review', {
+      _review_id: id,
+      _approved: approved,
+    });
     if (error) { toast({ title: "Erreur", description: error.message, variant: "destructive" }); }
     else { toast({ title: "Succès", description: approved ? "Avis approuvé." : "Avis rejeté." }); fetchAll(); }
   };
