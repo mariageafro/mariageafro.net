@@ -20,6 +20,7 @@ import OutilsMaries from "./pages/OutilsMaries";
 import AdminDashboard from "./pages/AdminDashboard";
 import CategoryPage from "./pages/CategoryPage";
 import CityPage from "./pages/CityPage";
+import DevenirPrestataire from "./pages/DevenirPrestataire";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/inspiration" element={<Inspiration />} />
             <Route path="/a-propos" element={<APropos />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/devenir-prestataire" element={<DevenirPrestataire />} />
             <Route path="/admin" element={
               <ProtectedRoute requiredRole="admin">
                 <AdminDashboard />
