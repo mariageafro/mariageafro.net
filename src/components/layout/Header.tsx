@@ -14,6 +14,7 @@ const navLinks = [
   { name: "Premium", href: "/prestataires-premium" },
   { name: "Blog", href: "/blog" },
   { name: "💍 Outils Mariés", href: "/outils-maries" },
+  { name: "Devenir Prestataire", href: "/devenir-prestataire" },
 ];
 
 const featuredCategories = [
