@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Users, GripVertical, Save, RotateCcw } from "lucide-react";
+import { Plus, Trash2, Users, GripVertical, Save, RotateCcw, Printer } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -109,6 +109,49 @@ export default function SeatingChart() {
   const unassigned = confirmedGuests.filter(g => !assignedIds.has(g.id));
   const guestMap = new Map(confirmedGuests.map(g => [g.id, g]));
 
+  const exportPdf = () => {
+    const tablesHtml = tables.map(table => {
+      const tGuests = table.guests.map(id => guestMap.get(id)).filter(Boolean);
+      const emptySlots = Math.max(0, table.capacity - tGuests.length);
+      return `
+        <div style="break-inside:avoid;border:2px solid #c9a96e;border-radius:12px;padding:16px;margin-bottom:16px;background:#fffbf5;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:1px solid #e8dcc8;padding-bottom:8px;">
+            <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:20px;color:#5c4033;">${table.name}</h3>
+            <span style="font-size:12px;color:#8b7355;font-family:'Lora',serif;">${tGuests.length}/${table.capacity} places</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+            ${tGuests.map(g => `<div style="padding:4px 8px;font-size:13px;font-family:'Lora',serif;color:#3d2b1f;">\u2022 ${g!.first_name} ${g!.last_name || ''}</div>`).join('')}
+            ${Array(emptySlots).fill('<div style="padding:4px 8px;font-size:12px;color:#ccc;font-style:italic;">\u2014 libre \u2014</div>').join('')}
+          </div>
+        </div>`;
+    }).join('');
+
+    const unassignedHtml = unassigned.length > 0 ? `
+      <div style="break-inside:avoid;border:1px dashed #ccc;border-radius:12px;padding:16px;margin-top:24px;">
+        <h3 style="margin:0 0 8px;font-family:'Cormorant Garamond',serif;font-size:18px;color:#8b7355;">Invit\u00e9s non plac\u00e9s (${unassigned.length})</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
+          ${unassigned.map(g => `<div style="padding:2px 6px;font-size:12px;font-family:'Lora',serif;color:#666;">\u2022 ${g.first_name} ${g.last_name || ''}</div>`).join('')}
+        </div>
+      </div>` : '';
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>Plan de table</title>
+      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+      <style>@page{margin:20mm;}body{font-family:'Lora',serif;color:#3d2b1f;max-width:800px;margin:0 auto;padding:20px;}</style>
+    </head><body>
+      <div style="text-align:center;margin-bottom:32px;border-bottom:2px solid #c9a96e;padding-bottom:16px;">
+        <h1 style="font-family:'Cormorant Garamond',serif;font-size:32px;color:#5c4033;margin:0;">Plan de table</h1>
+        <p style="font-size:14px;color:#8b7355;margin:8px 0 0;">${confirmedGuests.length} invit\u00e9(s) confirm\u00e9(s) \u00b7 ${tables.length} table(s)</p>
+      </div>
+      <div style="columns:2;column-gap:20px;">${tablesHtml}</div>
+      ${unassignedHtml}
+      <div style="text-align:center;margin-top:32px;font-size:11px;color:#bbb;">Imprim\u00e9 le ${new Date().toLocaleDateString('fr-FR')}</div>
+    </body></html>`);
+    printWindow.document.close();
+    printWindow.onload = () => { printWindow.print(); };
+  };
+
   if (authLoading) return null;
   if (!user) return <Navigate to="/auth" replace />;
 
@@ -121,9 +164,16 @@ export default function SeatingChart() {
           </Link>
           <div className="flex items-center justify-between mt-2">
             <h1 className="font-serif text-chocolate text-3xl md:text-4xl">Plan de table</h1>
-            <Button onClick={saveData} disabled={saving} className="btn-gold gap-2">
-              <Save size={14} />{saving ? "Sauvegarde..." : "Sauvegarder"}
-            </Button>
+            <div className="flex gap-2">
+              {tables.length > 0 && (
+                <Button onClick={exportPdf} variant="outline" className="gap-2">
+                  <Printer size={14} />Imprimer / PDF
+                </Button>
+              )}
+              <Button onClick={saveData} disabled={saving} className="btn-gold gap-2">
+                <Save size={14} />{saving ? "Sauvegarde..." : "Sauvegarder"}
+              </Button>
+            </div>
           </div>
           <p className="font-body text-sm text-muted-foreground mt-1">
             {confirmedGuests.length} invité(s) confirmé(s) · {unassigned.length} non placé(s)
