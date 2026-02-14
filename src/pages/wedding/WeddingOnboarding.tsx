@@ -15,8 +15,9 @@ import { CalendarDays, Heart, ArrowRight, ArrowLeft, Sparkles } from "lucide-rea
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
+import { CulturalRecommendations } from "@/components/wedding/CulturalRecommendations";
 
-const STEPS = ["Couple", "Mariage", "Style"];
+const STEPS = ["Couple", "Mariage", "Style", "Recommandations"];
 
 export default function WeddingOnboarding() {
   const { user } = useAuthContext();
@@ -46,7 +47,7 @@ export default function WeddingOnboarding() {
 
   const set = (key: string, value: any) => setForm(prev => ({ ...prev, [key]: value }));
 
-  const handleFinish = async () => {
+  const handleSaveAndShowReco = async () => {
     if (!form.partner_one_first_name || !form.partner_two_first_name) {
       toast({ title: "Veuillez remplir les prénoms des deux partenaires", variant: "destructive" });
       return;
@@ -70,6 +71,15 @@ export default function WeddingOnboarding() {
     await generateTasks();
     toast({ title: "✨ Votre profil de couple est prêt !" });
     setSaving(false);
+    // Show recommendations step if cultural origins are set
+    if (form.origin_partner_one || form.origin_partner_two) {
+      setStep(3);
+    } else {
+      navigate("/mon-mariage");
+    }
+  };
+
+  const handleFinish = () => {
     navigate("/mon-mariage");
   };
 
@@ -234,9 +244,29 @@ export default function WeddingOnboarding() {
                 </>
               )}
 
+              {step === 3 && (
+                <>
+                  <h2 className="font-serif text-xl text-chocolate">✨ Recommandé pour votre culture</h2>
+                  <p className="font-body text-sm text-muted-foreground mb-4">
+                    Suggestions personnalisées basées sur vos origines et votre style de mariage
+                  </p>
+                  <CulturalRecommendations
+                    originOne={form.origin_partner_one || "Afrique"}
+                    originTwo={form.origin_partner_two || "France"}
+                    weddingType={form.wedding_type}
+                    country={form.country}
+                    budget={form.estimated_budget}
+                    guestCount={form.guest_count}
+                    weddingStyle={form.wedding_style}
+                    autoLoad={true}
+                    showVendorLinks={true}
+                  />
+                </>
+              )}
+
               {/* Navigation */}
               <div className="flex justify-between pt-4 border-t border-border">
-                {step > 0 ? (
+                {step > 0 && step < 3 ? (
                   <Button variant="outline" onClick={() => setStep(step - 1)} className="font-body">
                     <ArrowLeft size={16} className="mr-1" /> Retour
                   </Button>
@@ -245,9 +275,13 @@ export default function WeddingOnboarding() {
                   <Button onClick={() => setStep(step + 1)} className="btn-gold" disabled={step === 0 && (!form.partner_one_first_name || !form.partner_two_first_name)}>
                     Suivant <ArrowRight size={16} className="ml-1" />
                   </Button>
-                ) : (
-                  <Button onClick={handleFinish} className="btn-gold" disabled={saving}>
+                ) : step === 2 ? (
+                  <Button onClick={handleSaveAndShowReco} className="btn-gold" disabled={saving}>
                     <Sparkles size={16} className="mr-1" /> {saving ? "Création..." : "Créer mon mariage"}
+                  </Button>
+                ) : (
+                  <Button onClick={handleFinish} className="btn-gold">
+                    Accéder à mon mariage <ArrowRight size={16} className="ml-1" />
                   </Button>
                 )}
               </div>

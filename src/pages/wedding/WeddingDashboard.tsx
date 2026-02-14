@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { RsvpLiveCounters } from "@/components/wedding/RsvpLiveCounters";
+import { CulturalRecommendations } from "@/components/wedding/CulturalRecommendations";
 import { differenceInDays, format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -146,6 +147,25 @@ export default function WeddingDashboard() {
 
           {/* RSVP Live Counters */}
           <RsvpLiveCounters />
+
+          {/* Cultural Recommendations */}
+          {(profile.origin_partner_one || profile.origin_partner_two) && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+              <h3 className="font-serif text-lg text-chocolate mb-4 flex items-center gap-2">
+                <Sparkles size={16} className="text-primary" /> Recommandé pour votre culture
+              </h3>
+              <CulturalRecommendations
+                originOne={profile.origin_partner_one || ""}
+                originTwo={profile.origin_partner_two || ""}
+                weddingType={profile.wedding_type || "mixte"}
+                country={profile.country || "France"}
+                budget={profile.estimated_budget || 15000}
+                guestCount={profile.guest_count || 100}
+                weddingStyle={profile.wedding_style || "moderne"}
+                showVendorLinks={true}
+              />
+            </motion.div>
+          )}
 
           {/* Upcoming Tasks */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>

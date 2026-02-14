@@ -62,6 +62,11 @@ export default function Prestataires() {
       const cat = categories.find(c => c.slug === catSlug);
       if (cat) updateFilter("categorie", cat.id);
     }
+    // Sync search param from AI recommendations
+    const searchQuery = searchParams.get("search");
+    if (searchQuery) {
+      updateFilter("search", searchQuery);
+    }
   }, [searchParams, categories]);
 
   // Sync geolocation with hook
