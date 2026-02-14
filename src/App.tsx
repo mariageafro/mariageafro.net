@@ -35,6 +35,7 @@ import DayOfTimeline from "./pages/wedding/DayOfTimeline";
 import RsvpManager from "./pages/wedding/RsvpManager";
 import SeatingChart from "./pages/wedding/SeatingChart";
 import RsvpPublic from "./pages/RsvpPublic";
+import DemoMariage from "./pages/DemoMariage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import AdminOverview from "./pages/admin/AdminOverview";
@@ -84,6 +85,7 @@ const App = () => (
             <Route path="/mon-mariage/rsvp" element={<RsvpManager />} />
             <Route path="/mon-mariage/plan-de-table" element={<SeatingChart />} />
             <Route path="/rsvp/:token" element={<RsvpPublic />} />
+            <Route path="/demo-mariage" element={<DemoMariage />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/inspiration" element={<Inspiration />} />
             <Route path="/a-propos" element={<APropos />} />
