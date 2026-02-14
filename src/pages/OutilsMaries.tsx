@@ -148,11 +148,17 @@ export default function OutilsMaries() {
               {/* CTA Row */}
               <div className="flex flex-wrap gap-3 items-center">
                 {user && profile ? (
-                  <Button variant="gold" asChild className="gap-2">
-                    <Link to="/outils-maries/dashboard">
-                      <FileDown size={16} />
-                      {isEn ? "Export Wedding Book" : "Exporter le Book Mariage"}
-                    </Link>
+                  <Button variant="gold" className="gap-2" onClick={async () => {
+                    const { data: { session } } = await (await import("@/integrations/supabase/client")).supabase.auth.getSession();
+                    if (!session) return;
+                    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/export-book`;
+                    const res = await fetch(url, { headers: { Authorization: `Bearer ${session.access_token}` } });
+                    const html = await res.text();
+                    const w = window.open("", "_blank");
+                    if (w) { w.document.write(html); w.document.close(); }
+                  }}>
+                    <FileDown size={16} />
+                    {isEn ? "Export Wedding Book" : "Exporter le Book Mariage"}
                   </Button>
                 ) : user ? (
                   <Button variant="gold" asChild className="gap-2">
