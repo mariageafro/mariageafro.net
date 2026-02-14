@@ -19,6 +19,11 @@ import DashboardPrestataire from "./pages/DashboardPrestataire";
 import TrouverParPays from "./pages/TrouverParPays";
 import PreatairesPremium from "./pages/PreatairesPremium";
 import OutilsMaries from "./pages/OutilsMaries";
+import PlanningPage from "./pages/tools/PlanningPage";
+import ChecklistPage from "./pages/tools/ChecklistPage";
+import BudgetPage from "./pages/tools/BudgetPage";
+import WishlistPage from "./pages/tools/WishlistPage";
+import RemindersPage from "./pages/tools/RemindersPage";
 import CategoryPage from "./pages/CategoryPage";
 import CityPage from "./pages/CityPage";
 import DevenirPrestataire from "./pages/DevenirPrestataire";
@@ -58,6 +63,11 @@ const App = () => (
             <Route path="/trouver-par-pays" element={<TrouverParPays />} />
             <Route path="/prestataires-premium" element={<PreatairesPremium />} />
             <Route path="/outils-maries" element={<OutilsMaries />} />
+            <Route path="/outils-maries/planning" element={<PlanningPage />} />
+            <Route path="/outils-maries/checklist" element={<ChecklistPage />} />
+            <Route path="/outils-maries/budget" element={<BudgetPage />} />
+            <Route path="/outils-maries/liste-de-souhaits" element={<WishlistPage />} />
+            <Route path="/outils-maries/rappels" element={<RemindersPage />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/inspiration" element={<Inspiration />} />
             <Route path="/a-propos" element={<APropos />} />

@@ -1,0 +1,52 @@
+import { useLanguage } from "@/contexts/language-context";
+
+const T: Record<string, { fr: string; en: string }> = {
+  "Ajouter": { fr: "Ajouter", en: "Add" },
+  "Modifier": { fr: "Modifier", en: "Edit" },
+  "Supprimer": { fr: "Supprimer", en: "Delete" },
+  "Enregistrer": { fr: "Enregistrer", en: "Save" },
+  "Annuler": { fr: "Annuler", en: "Cancel" },
+  "Titre": { fr: "Titre", en: "Title" },
+  "Date": { fr: "Date", en: "Date" },
+  "Note": { fr: "Note", en: "Note" },
+  "Priorité": { fr: "Priorité", en: "Priority" },
+  "Basse": { fr: "Basse", en: "Low" },
+  "Moyenne": { fr: "Moyenne", en: "Medium" },
+  "Haute": { fr: "Haute", en: "High" },
+  "À faire": { fr: "À faire", en: "To do" },
+  "Terminé": { fr: "Terminé", en: "Done" },
+  "Tous": { fr: "Tous", en: "All" },
+  "Catégorie": { fr: "Catégorie", en: "Category" },
+  "Montant": { fr: "Montant", en: "Amount" },
+  "Payé": { fr: "Payé", en: "Paid" },
+  "Non payé": { fr: "Non payé", en: "Unpaid" },
+  "Budget cible": { fr: "Budget cible", en: "Target budget" },
+  "Total dépensé": { fr: "Total dépensé", en: "Total spent" },
+  "Reste": { fr: "Reste", en: "Remaining" },
+  "Lien URL": { fr: "Lien URL", en: "URL link" },
+  "Prix": { fr: "Prix", en: "Price" },
+  "Réservé": { fr: "Réservé", en: "Reserved" },
+  "Rappel": { fr: "Rappel", en: "Reminder" },
+  "À venir": { fr: "À venir", en: "Upcoming" },
+  "Passé": { fr: "Passé", en: "Past" },
+  "Échéance": { fr: "Échéance", en: "Deadline" },
+  "Libellé": { fr: "Libellé", en: "Label" },
+  "Se connecter pour enregistrer": { fr: "Se connecter pour enregistrer vos données", en: "Sign in to save your data" },
+  "Planning du mariage": { fr: "Planning du mariage", en: "Wedding Planning" },
+  "Checklist": { fr: "Checklist", en: "Checklist" },
+  "Budget": { fr: "Budget", en: "Budget" },
+  "Liste de souhaits": { fr: "Liste de souhaits", en: "Wishlist" },
+  "Rappels": { fr: "Rappels", en: "Reminders" },
+  "Outils Mariés": { fr: "Outils Mariés", en: "Wedding Tools" },
+  "Retour aux outils": { fr: "← Retour aux outils", en: "← Back to tools" },
+  "Aucun élément": { fr: "Aucun élément pour le moment", en: "No items yet" },
+  "Sauvegardé": { fr: "Sauvegardé !", en: "Saved!" },
+  "Élément ajouté": { fr: "Élément ajouté", en: "Item added" },
+  "Élément supprimé": { fr: "Élément supprimé", en: "Item deleted" },
+  "Mes outils": { fr: "Mes outils", en: "My tools" },
+};
+
+export function useToolTranslations() {
+  const { lang } = useLanguage();
+  return (key: string) => T[key]?.[lang] || key;
+}
