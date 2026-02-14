@@ -594,6 +594,107 @@ export type Database = {
         }
         Relationships: []
       }
+      rsvp_events: {
+        Row: {
+          created_at: string
+          deadline: string | null
+          event_date: string | null
+          event_location: string | null
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+          welcome_message: string | null
+        }
+        Insert: {
+          created_at?: string
+          deadline?: string | null
+          event_date?: string | null
+          event_location?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+          welcome_message?: string | null
+        }
+        Update: {
+          created_at?: string
+          deadline?: string | null
+          event_date?: string | null
+          event_location?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          welcome_message?: string | null
+        }
+        Relationships: []
+      }
+      rsvp_guests: {
+        Row: {
+          companions: Json | null
+          created_at: string
+          dietary_restrictions: string | null
+          email: string | null
+          event_id: string
+          first_name: string
+          group_name: string | null
+          guest_message: string | null
+          id: string
+          last_name: string | null
+          max_companions: number
+          phone: string | null
+          responded_at: string | null
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          companions?: Json | null
+          created_at?: string
+          dietary_restrictions?: string | null
+          email?: string | null
+          event_id: string
+          first_name: string
+          group_name?: string | null
+          guest_message?: string | null
+          id?: string
+          last_name?: string | null
+          max_companions?: number
+          phone?: string | null
+          responded_at?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          companions?: Json | null
+          created_at?: string
+          dietary_restrictions?: string | null
+          email?: string | null
+          event_id?: string
+          first_name?: string
+          group_name?: string | null
+          guest_message?: string | null
+          id?: string
+          last_name?: string | null
+          max_companions?: number
+          phone?: string | null
+          responded_at?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rsvp_guests_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "rsvp_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sub_categories: {
         Row: {
           category_id: string
