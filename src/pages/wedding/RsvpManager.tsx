@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Link2, Copy, Users, CheckCircle2, XCircle, Clock, CalendarDays, MapPin, Send, Download, Filter, Pencil, Check, X } from "lucide-react";
+import { Plus, Trash2, Link2, Copy, Users, CheckCircle2, XCircle, Clock, CalendarDays, MapPin, Send, Download, Filter, Pencil, Check, X, TableProperties } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
+import { RsvpCsvImport } from "@/components/wedding/RsvpCsvImport";
 
 const GROUPS = ["Famille", "Amis", "Collègues", "Voisins", "Autre"];
 
@@ -108,10 +109,11 @@ export default function RsvpManager() {
     }
   };
 
-  const confirmed = guests.filter(g => g.status === "confirmed").length;
+  const confirmedGuests = guests.filter(g => g.status === "confirmed");
+  const confirmed = confirmedGuests.length;
   const declined = guests.filter(g => g.status === "declined").length;
   const pending = guests.filter(g => g.status === "pending").length;
-  const totalCompanions = guests.filter(g => g.status === "confirmed").reduce((sum, g) => sum + (g.companions?.length || 0), 0);
+  const totalCompanions = confirmedGuests.reduce((sum, g) => sum + (g.companions?.length || 0), 0);
 
   const startEdit = (guest: any) => {
     setEditingId(guest.id);
@@ -232,8 +234,26 @@ export default function RsvpManager() {
                 </Select>
                 <Input type="number" min="0" max="10" placeholder="Accompagnants max" value={maxCompanions} onChange={e => setMaxCompanions(e.target.value)} />
               </div>
-              <Button onClick={handleAddGuest} className="btn-gold"><Plus size={16} className="mr-1" />Ajouter l'invité</Button>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={handleAddGuest} className="btn-gold"><Plus size={16} className="mr-1" />Ajouter l'invité</Button>
+              </div>
+              <RsvpCsvImport onImport={async (csvGuests) => {
+                for (const g of csvGuests) {
+                  await addGuest(g);
+                }
+              }} />
             </div>
+          )}
+
+          {/* Seating Chart Link */}
+          {event && confirmedGuests.length > 0 && (
+            <Link to="/mon-mariage/plan-de-table" className="card-glass p-4 flex items-center gap-3 hover:border-primary/30 transition-colors group">
+              <TableProperties size={20} className="text-primary" />
+              <div>
+                <p className="font-serif text-base text-foreground group-hover:text-primary transition-colors">Plan de table</p>
+                <p className="text-xs text-muted-foreground font-body">{confirmedGuests.length} invité(s) confirmé(s) à placer</p>
+              </div>
+            </Link>
           )}
 
           {/* Generated Link Modal */}
