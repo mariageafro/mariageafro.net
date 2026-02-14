@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogOut, LayoutDashboard, Shield, Globe } from "lucide-react";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/contexts/auth-context";
@@ -128,8 +129,9 @@ export function Header() {
                </button>
              </div>
 
-             {isAuthenticated ? (
-               <div className="flex items-center gap-2">
+              {isAuthenticated ? (
+                <div className="flex items-center gap-2">
+                  <NotificationBell showSolid={showSolid} />
                  {role === 'admin' && (
                     <Link
                       to="/admin"
