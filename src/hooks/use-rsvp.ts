@@ -137,6 +137,21 @@ export function useRsvpGuests(eventId: string | undefined) {
     setGuests(prev => prev.filter(g => g.id !== id));
   };
 
+  const updateGuest = async (id: string, updates: Partial<Pick<RsvpGuest, 'first_name' | 'last_name' | 'email' | 'group_name' | 'max_companions'>>) => {
+    const { data, error } = await supabase
+      .from("rsvp_guests")
+      .update(updates)
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return null;
+    }
+    setGuests(prev => prev.map(g => g.id === id ? { ...g, ...data } as unknown as RsvpGuest : g));
+    return data;
+  };
+
   const generateLink = async (guestId: string): Promise<string | null> => {
     const session = (await supabase.auth.getSession()).data.session;
     if (!session) return null;
@@ -161,7 +176,7 @@ export function useRsvpGuests(eventId: string | undefined) {
     return data.link;
   };
 
-  return { guests, loading, addGuest, deleteGuest, generateLink, refetch: fetchGuests };
+  return { guests, loading, addGuest, updateGuest, deleteGuest, generateLink, refetch: fetchGuests };
 }
 
 // Public API (no auth needed)
