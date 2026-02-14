@@ -467,6 +467,16 @@ export default function DemoMariage() {
                     <Heart className="mr-2" size={16} /> Créer mon mariage
                   </Button>
                 </Link>
+                <Button
+                  variant="gold-outline"
+                  className="font-body text-sm px-8 py-3"
+                  onClick={() => {
+                    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/export-book?demo=true`;
+                    window.open(url, "_blank");
+                  }}
+                >
+                  <FileText className="mr-2" size={16} /> Télécharger le Book Mariage
+                </Button>
                 <Link to="/prestataires">
                   <Button variant="outline" className="font-body text-sm px-8 py-3">
                     Découvrir les prestataires

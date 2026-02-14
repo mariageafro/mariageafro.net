@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   Heart, CalendarDays, ListChecks, Calculator, Users, Clock,
-  MapPin, Sparkles, ChevronRight, CheckCircle2
+  MapPin, Sparkles, ChevronRight, CheckCircle2, FileText
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { RsvpLiveCounters } from "@/components/wedding/RsvpLiveCounters";
 import { differenceInDays, format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -181,8 +182,26 @@ export default function WeddingDashboard() {
             )}
           </motion.div>
 
-          {/* Edit profile link */}
-          <div className="text-center pt-4">
+          {/* Export + Edit profile */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+            <Button
+              variant="gold"
+              className="font-body text-sm"
+              onClick={async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) return;
+                const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/export-book`;
+                const res = await fetch(url, { headers: { Authorization: `Bearer ${session.access_token}` } });
+                const html = await res.text();
+                const blob = new Blob([html], { type: "text/html" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "book-mariage.html";
+                a.click();
+              }}
+            >
+              <FileText className="mr-2" size={16} /> Exporter mon Book Mariage
+            </Button>
             <Link to="/mon-mariage/onboarding">
               <Button variant="outline" className="font-body text-sm">Modifier le profil du couple</Button>
             </Link>
