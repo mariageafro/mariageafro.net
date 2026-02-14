@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Link2, Copy, Users, CheckCircle2, XCircle, Clock, CalendarDays, MapPin } from "lucide-react";
+import { Plus, Trash2, Link2, Copy, Users, CheckCircle2, XCircle, Clock, CalendarDays, MapPin, Send } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 
 const GROUPS = ["Famille", "Amis", "Collègues", "Voisins", "Autre"];
@@ -37,6 +37,7 @@ export default function RsvpManager() {
 
   // Link modal
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const [sendingReminders, setSendingReminders] = useState(false);
 
   if (authLoading) return null;
   if (!user) return <Navigate to="/auth" replace />;
@@ -74,6 +75,36 @@ export default function RsvpManager() {
     }
   };
 
+  const handleSendReminders = async () => {
+    if (!event) return;
+    setSendingReminders(true);
+    try {
+      const session = (await (await import("@/integrations/supabase/client")).supabase.auth.getSession()).data.session;
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rsvp-emails`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ action: "send-manual-reminders", event_id: event.id }),
+        }
+      );
+      const data = await res.json();
+      if (data.error) {
+        toast({ title: "Erreur", description: data.error, variant: "destructive" });
+      } else {
+        toast({ title: `${data.sent} rappel(s) envoyé(s) !`, description: `Sur ${data.total_pending} invité(s) en attente avec email.` });
+      }
+    } catch {
+      toast({ title: "Erreur", description: "Impossible d'envoyer les rappels", variant: "destructive" });
+    } finally {
+      setSendingReminders(false);
+    }
+  };
+
   const confirmed = guests.filter(g => g.status === "confirmed").length;
   const declined = guests.filter(g => g.status === "declined").length;
   const pending = guests.filter(g => g.status === "pending").length;
@@ -93,8 +124,9 @@ export default function RsvpManager() {
       <section className="section-padding bg-gradient-warm !py-8 md:!py-12">
         <div className="container-editorial max-w-5xl space-y-8">
 
-          {/* KPIs */}
+          {/* KPIs + Reminder Button */}
           {guests.length > 0 && (
+            <div className="space-y-3">
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <div className="kpi-card">
                 <Users size={18} className="text-primary mb-1" />
@@ -121,6 +153,13 @@ export default function RsvpManager() {
                 <p className="text-xs text-muted-foreground font-body">+ Accompagnants</p>
                 <p className="font-serif text-2xl text-foreground">{confirmed + totalCompanions}</p>
               </div>
+            </div>
+            {pending > 0 && (
+              <Button onClick={handleSendReminders} disabled={sendingReminders} variant="outline" className="w-full sm:w-auto gap-2">
+                <Send size={14} />
+                {sendingReminders ? "Envoi en cours..." : `Envoyer un rappel aux ${pending} invité(s) en attente`}
+              </Button>
+            )}
             </div>
           )}
 
