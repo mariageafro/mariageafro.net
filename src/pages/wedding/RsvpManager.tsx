@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Link2, Copy, Users, CheckCircle2, XCircle, Clock, CalendarDays, MapPin, Send } from "lucide-react";
+import { Plus, Trash2, Link2, Copy, Users, CheckCircle2, XCircle, Clock, CalendarDays, MapPin, Send, Download, Filter } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 
 const GROUPS = ["Famille", "Amis", "Collègues", "Voisins", "Autre"];
@@ -38,6 +38,7 @@ export default function RsvpManager() {
   // Link modal
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [sendingReminders, setSendingReminders] = useState(false);
+  const [groupFilter, setGroupFilter] = useState<string>("all");
 
   if (authLoading) return null;
   if (!user) return <Navigate to="/auth" replace />;
@@ -109,6 +110,33 @@ export default function RsvpManager() {
   const declined = guests.filter(g => g.status === "declined").length;
   const pending = guests.filter(g => g.status === "pending").length;
   const totalCompanions = guests.filter(g => g.status === "confirmed").reduce((sum, g) => sum + (g.companions?.length || 0), 0);
+
+  const filteredGuests = groupFilter === "all" ? guests : guests.filter(g => g.group_name === groupFilter);
+  const activeGroups = [...new Set(guests.map(g => g.group_name))].filter(Boolean);
+
+  const exportCsv = () => {
+    const header = "Prénom,Nom,Email,Groupe,Statut,Accompagnants max,Accompagnants confirmés,Restrictions alimentaires,Message,Date réponse";
+    const rows = guests.map(g => {
+      const companionNames = g.companions?.map((c: any) => c.name).join(" / ") || "";
+      return [
+        g.first_name,
+        g.last_name || "",
+        g.email || "",
+        g.group_name,
+        g.status === "confirmed" ? "Confirmé" : g.status === "declined" ? "Décliné" : "En attente",
+        g.max_companions,
+        companionNames,
+        g.dietary_restrictions || "",
+        g.guest_message || "",
+        g.responded_at ? new Date(g.responded_at).toLocaleDateString("fr-FR") : "",
+      ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
+    });
+    const blob = new Blob([header + "\n" + rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "invites-rsvp.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <Layout>
@@ -210,13 +238,35 @@ export default function RsvpManager() {
           {/* Guest List */}
           {event && (
             <div className="space-y-3">
-              <h2 className="font-serif text-xl text-foreground">Liste des invités ({guests.length})</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h2 className="font-serif text-xl text-foreground">Liste des invités ({guests.length})</h2>
+                <div className="flex gap-2 flex-wrap">
+                  {activeGroups.length > 1 && (
+                    <Select value={groupFilter} onValueChange={setGroupFilter}>
+                      <SelectTrigger className="w-[160px] h-8 text-xs">
+                        <Filter size={12} className="mr-1" /><SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tous les groupes</SelectItem>
+                        {activeGroups.map(g => <SelectItem key={g} value={g!}>{g}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {guests.length > 0 && (
+                    <Button variant="outline" size="sm" className="h-8 text-xs gap-1" onClick={exportCsv}>
+                      <Download size={12} />Export CSV
+                    </Button>
+                  )}
+                </div>
+              </div>
               {guestsLoading ? (
                 <p className="text-muted-foreground font-body text-center py-8">…</p>
-              ) : guests.length === 0 ? (
-                <p className="text-muted-foreground font-body text-center py-8">Aucun invité pour le moment</p>
+              ) : filteredGuests.length === 0 ? (
+                <p className="text-muted-foreground font-body text-center py-8">
+                  {guests.length === 0 ? "Aucun invité pour le moment" : "Aucun invité dans ce groupe"}
+                </p>
               ) : (
-                guests.map(guest => (
+                filteredGuests.map(guest => (
                   <div key={guest.id} className="card-glass p-4 flex flex-col sm:flex-row sm:items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
