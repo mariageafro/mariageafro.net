@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Link2, Copy, Users, CheckCircle2, XCircle, Clock, CalendarDays, MapPin, Send, Download, Filter } from "lucide-react";
+import { Plus, Trash2, Link2, Copy, Users, CheckCircle2, XCircle, Clock, CalendarDays, MapPin, Send, Download, Filter, Pencil, Check, X } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 
 const GROUPS = ["Famille", "Amis", "Collègues", "Voisins", "Autre"];
@@ -18,7 +18,7 @@ export default function RsvpManager() {
   const t = useToolTranslations();
   const { user, isLoading: authLoading } = useAuthContext();
   const { event, loading: eventLoading, upsertEvent } = useRsvpEvent();
-  const { guests, loading: guestsLoading, addGuest, deleteGuest, generateLink } = useRsvpGuests(event?.id);
+  const { guests, loading: guestsLoading, addGuest, updateGuest, deleteGuest, generateLink } = useRsvpGuests(event?.id);
   const { toast } = useToast();
 
   // Event form
@@ -39,6 +39,8 @@ export default function RsvpManager() {
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [sendingReminders, setSendingReminders] = useState(false);
   const [groupFilter, setGroupFilter] = useState<string>("all");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<{ first_name: string; last_name: string; email: string; group_name: string; max_companions: string }>({ first_name: "", last_name: "", email: "", group_name: "Autre", max_companions: "0" });
 
   if (authLoading) return null;
   if (!user) return <Navigate to="/auth" replace />;
@@ -110,6 +112,18 @@ export default function RsvpManager() {
   const declined = guests.filter(g => g.status === "declined").length;
   const pending = guests.filter(g => g.status === "pending").length;
   const totalCompanions = guests.filter(g => g.status === "confirmed").reduce((sum, g) => sum + (g.companions?.length || 0), 0);
+
+  const startEdit = (guest: any) => {
+    setEditingId(guest.id);
+    setEditData({ first_name: guest.first_name, last_name: guest.last_name || "", email: guest.email || "", group_name: guest.group_name || "Autre", max_companions: String(guest.max_companions || 0) });
+  };
+
+  const saveEdit = async () => {
+    if (!editingId || !editData.first_name.trim()) return;
+    await updateGuest(editingId, { first_name: editData.first_name, last_name: editData.last_name, email: editData.email, group_name: editData.group_name, max_companions: parseInt(editData.max_companions) || 0 });
+    toast({ title: "Invité modifié !" });
+    setEditingId(null);
+  };
 
   const filteredGuests = groupFilter === "all" ? guests : guests.filter(g => g.group_name === groupFilter);
   const activeGroups = [...new Set(guests.map(g => g.group_name))].filter(Boolean);
@@ -268,37 +282,61 @@ export default function RsvpManager() {
               ) : (
                 filteredGuests.map(guest => (
                   <div key={guest.id} className="card-glass p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-body font-medium text-foreground">
-                          {guest.first_name} {guest.last_name || ""}
-                        </p>
-                        <StatusBadge status={guest.status} />
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0">{guest.group_name}</Badge>
-                      </div>
-                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground font-body">
-                        {guest.email && <span>📧 {guest.email}</span>}
-                        {guest.max_companions > 0 && <span>👥 +{guest.max_companions} max</span>}
-                        {guest.companions && guest.companions.length > 0 && (
-                          <span>✅ {guest.companions.length} accompagnant(s)</span>
-                        )}
-                        {guest.responded_at && <span>📅 Répondu le {new Date(guest.responded_at).toLocaleDateString("fr-FR")}</span>}
-                      </div>
-                      {guest.dietary_restrictions && (
-                        <p className="text-xs text-muted-foreground font-body mt-1">🍽️ {guest.dietary_restrictions}</p>
-                      )}
-                      {guest.guest_message && (
-                        <p className="text-xs text-muted-foreground font-body mt-1 italic">💬 "{guest.guest_message}"</p>
-                      )}
-                    </div>
-                    <div className="flex gap-1 shrink-0">
-                      <Button variant="outline" size="sm" className="h-8 text-xs gap-1" onClick={() => handleGenerateLink(guest.id)}>
-                        <Link2 size={12} />Lien
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteGuest(guest.id)}>
-                        <Trash2 size={14} className="text-destructive" />
-                      </Button>
-                    </div>
+                    {editingId === guest.id ? (
+                      <>
+                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                          <Input placeholder="Prénom *" value={editData.first_name} onChange={e => setEditData(d => ({ ...d, first_name: e.target.value }))} className="h-8 text-xs" />
+                          <Input placeholder="Nom" value={editData.last_name} onChange={e => setEditData(d => ({ ...d, last_name: e.target.value }))} className="h-8 text-xs" />
+                          <Input type="email" placeholder="Email" value={editData.email} onChange={e => setEditData(d => ({ ...d, email: e.target.value }))} className="h-8 text-xs" />
+                          <Select value={editData.group_name} onValueChange={v => setEditData(d => ({ ...d, group_name: v }))}>
+                            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                            <SelectContent>{GROUPS.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent>
+                          </Select>
+                          <Input type="number" min="0" max="10" placeholder="Acc. max" value={editData.max_companions} onChange={e => setEditData(d => ({ ...d, max_companions: e.target.value }))} className="h-8 text-xs" />
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <Button variant="outline" size="icon" className="h-8 w-8" onClick={saveEdit}><Check size={14} className="text-primary" /></Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingId(null)}><X size={14} /></Button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-body font-medium text-foreground">
+                              {guest.first_name} {guest.last_name || ""}
+                            </p>
+                            <StatusBadge status={guest.status} />
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0">{guest.group_name}</Badge>
+                          </div>
+                          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground font-body">
+                            {guest.email && <span>📧 {guest.email}</span>}
+                            {guest.max_companions > 0 && <span>👥 +{guest.max_companions} max</span>}
+                            {guest.companions && guest.companions.length > 0 && (
+                              <span>✅ {guest.companions.length} accompagnant(s)</span>
+                            )}
+                            {guest.responded_at && <span>📅 Répondu le {new Date(guest.responded_at).toLocaleDateString("fr-FR")}</span>}
+                          </div>
+                          {guest.dietary_restrictions && (
+                            <p className="text-xs text-muted-foreground font-body mt-1">🍽️ {guest.dietary_restrictions}</p>
+                          )}
+                          {guest.guest_message && (
+                            <p className="text-xs text-muted-foreground font-body mt-1 italic">💬 "{guest.guest_message}"</p>
+                          )}
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <Button variant="outline" size="sm" className="h-8 text-xs gap-1" onClick={() => startEdit(guest)}>
+                            <Pencil size={12} />Éditer
+                          </Button>
+                          <Button variant="outline" size="sm" className="h-8 text-xs gap-1" onClick={() => handleGenerateLink(guest.id)}>
+                            <Link2 size={12} />Lien
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteGuest(guest.id)}>
+                            <Trash2 size={14} className="text-destructive" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))
               )}
