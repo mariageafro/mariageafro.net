@@ -9,13 +9,14 @@ type Prestataire = Tables<'prestataires'> & {
   review_count: number;
 };
 
+type Contacts = Tables<'prestataire_contacts'>;
 type Review = Tables<'avis'>;
-
 type Media = Tables<'medias'>;
 
 export function usePrestaireDetail() {
   const { id } = useParams<{ id: string }>();
   const [prestataire, setPrestataire] = useState<Prestataire | null>(null);
+  const [contacts, setContacts] = useState<Contacts | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [medias, setMedias] = useState<Media[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,6 +49,13 @@ export function usePrestaireDetail() {
           return;
         }
 
+        // Fetch contacts from separate table
+        const { data: contactsData } = await supabase
+          .from('prestataire_contacts')
+          .select('*')
+          .eq('prestataire_id', prestData.id)
+          .maybeSingle();
+
         // Fetch ratings
         const { data: avisData, error: avisError } = await supabase
           .from('avis')
@@ -62,7 +70,7 @@ export function usePrestaireDetail() {
           avgRating = avisData.reduce((sum, a) => sum + a.note, 0) / avisData.length;
         }
 
-        // Fetch approved reviews with client info
+        // Fetch approved reviews
         const { data: reviewsData, error: reviewsError } = await supabase
           .from('avis')
           .select('*')
@@ -86,6 +94,7 @@ export function usePrestaireDetail() {
           avg_rating: avgRating,
           review_count: avisData?.length ?? 0,
         });
+        setContacts(contactsData);
         setReviews(reviewsData ?? []);
         setMedias(mediasData ?? []);
       } catch (err) {
@@ -101,6 +110,7 @@ export function usePrestaireDetail() {
 
   return {
     prestataire,
+    contacts,
     reviews,
     medias,
     isLoading,

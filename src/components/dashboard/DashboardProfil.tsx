@@ -42,10 +42,10 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
     ville: prestataire?.ville ?? '',
     pays: prestataire?.pays ?? 'France',
     country_id: prestataire?.country_id ?? '',
-    telephone: prestataire?.telephone ?? '',
-    whatsapp: prestataire?.whatsapp ?? '',
-    site_web: prestataire?.site_web ?? '',
-    instagram: prestataire?.instagram ?? '',
+    telephone: '',
+    whatsapp: '',
+    site_web: '',
+    instagram: '',
     origine_culturelle: prestataire?.origine_culturelle ?? '',
     categorie_id: prestataire?.categorie_id ?? '',
     sous_categorie: prestataire?.sous_categorie ?? '',
@@ -55,14 +55,34 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
   });
 
   useEffect(() => {
-    Promise.all([
-      supabase.from('categories').select('*'),
-      supabase.from('countries').select('id, name, flag_emoji').order('priority', { ascending: true }),
-    ]).then(([catRes, countryRes]) => {
+    const fetchData = async () => {
+      const [catRes, countryRes] = await Promise.all([
+        supabase.from('categories').select('*'),
+        supabase.from('countries').select('id, name, flag_emoji').order('priority', { ascending: true }),
+      ]);
       if (catRes.data) setCategories(catRes.data);
       if (countryRes.data) setCountries(countryRes.data);
-    });
-  }, []);
+
+      // Fetch contacts from separate table
+      if (prestataire) {
+        const { data: contactsData } = await supabase
+          .from('prestataire_contacts')
+          .select('*')
+          .eq('prestataire_id', prestataire.id)
+          .maybeSingle();
+        if (contactsData) {
+          setForm(f => ({
+            ...f,
+            telephone: contactsData.telephone ?? '',
+            whatsapp: contactsData.whatsapp ?? '',
+            site_web: contactsData.site_web ?? '',
+            instagram: contactsData.instagram ?? '',
+          }));
+        }
+      }
+    };
+    fetchData();
+  }, [prestataire]);
 
   const handleGeocode = async () => {
     if (!form.ville) { toast.error("Entrez une ville d'abord"); return; }
@@ -82,7 +102,6 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
   };
 
   const handleSave = async () => {
-    // Validate inputs
     const validation = prestataireSchema.safeParse({
       nom_entreprise: form.nom_entreprise,
       description: form.description,
@@ -103,16 +122,14 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
     setSaving(true);
     const slug = form.nom_entreprise.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const langues = form.langues.split(',').map(l => l.trim()).filter(Boolean);
-    const payload = {
+    
+    // Prestataire payload (no contact fields)
+    const prestatairePayload = {
       nom_entreprise: form.nom_entreprise,
       description: form.description || null,
       ville: form.ville || null,
       pays: form.pays || null,
       country_id: form.country_id || null,
-      telephone: form.telephone || null,
-      whatsapp: form.whatsapp || null,
-      site_web: form.site_web || null,
-      instagram: form.instagram || null,
       origine_culturelle: form.origine_culturelle || null,
       categorie_id: form.categorie_id || null,
       sous_categorie: form.sous_categorie || null,
@@ -122,12 +139,37 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
       lng: form.lng ? parseFloat(form.lng) : null,
     };
 
+    // Contacts payload
+    const contactsPayload = {
+      telephone: form.telephone || null,
+      whatsapp: form.whatsapp || null,
+      site_web: form.site_web || null,
+      instagram: form.instagram || null,
+    };
+
     if (prestataire) {
-      const { data, error } = await supabase.from('prestataires').update(payload).eq('id', prestataire.id).select().single();
-      if (error) { toast.error(error.message); } else { toast.success('Profil mis à jour'); onUpdate(data); }
+      const { data, error } = await supabase.from('prestataires').update(prestatairePayload).eq('id', prestataire.id).select().single();
+      if (error) { toast.error(error.message); setSaving(false); return; }
+      
+      // Upsert contacts
+      const { error: contactError } = await supabase
+        .from('prestataire_contacts')
+        .upsert({ prestataire_id: prestataire.id, ...contactsPayload }, { onConflict: 'prestataire_id' });
+      if (contactError) { toast.error(contactError.message); setSaving(false); return; }
+      
+      toast.success('Profil mis à jour');
+      onUpdate(data);
     } else {
-      const { data, error } = await supabase.from('prestataires').insert({ ...payload, user_id: userId }).select().single();
-      if (error) { toast.error(error.message); } else { toast.success('Profil créé'); onUpdate(data); }
+      const { data, error } = await supabase.from('prestataires').insert({ ...prestatairePayload, user_id: userId }).select().single();
+      if (error) { toast.error(error.message); setSaving(false); return; }
+      
+      // Insert contacts
+      await supabase
+        .from('prestataire_contacts')
+        .upsert({ prestataire_id: data.id, ...contactsPayload }, { onConflict: 'prestataire_id' });
+      
+      toast.success('Profil créé');
+      onUpdate(data);
     }
     setSaving(false);
   };

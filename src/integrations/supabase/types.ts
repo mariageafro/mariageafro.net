@@ -266,6 +266,50 @@ export type Database = {
         }
         Relationships: []
       }
+      prestataire_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          instagram: string | null
+          prestataire_id: string
+          site_web: string | null
+          telephone: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          instagram?: string | null
+          prestataire_id: string
+          site_web?: string | null
+          telephone?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          instagram?: string | null
+          prestataire_id?: string
+          site_web?: string | null
+          telephone?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestataire_contacts_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: true
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prestataires: {
         Row: {
           badge_type: string | null
@@ -277,11 +321,9 @@ export type Database = {
           description: string | null
           description_en: string | null
           description_fr: string | null
-          email: string | null
           free_until: string | null
           id: string
           import_batch: string | null
-          instagram: string | null
           is_featured: boolean | null
           is_lifetime_featured: boolean | null
           langues: string[] | null
@@ -293,16 +335,13 @@ export type Database = {
           photo_url: string | null
           priority_score: number | null
           score_ranking: number | null
-          site_web: string | null
           slug: string
           sous_categorie: string | null
           statut: Database["public"]["Enums"]["prestataire_statut"]
-          telephone: string | null
           updated_at: string
           user_id: string
           verified: boolean
           ville: string | null
-          whatsapp: string | null
         }
         Insert: {
           badge_type?: string | null
@@ -314,11 +353,9 @@ export type Database = {
           description?: string | null
           description_en?: string | null
           description_fr?: string | null
-          email?: string | null
           free_until?: string | null
           id?: string
           import_batch?: string | null
-          instagram?: string | null
           is_featured?: boolean | null
           is_lifetime_featured?: boolean | null
           langues?: string[] | null
@@ -330,16 +367,13 @@ export type Database = {
           photo_url?: string | null
           priority_score?: number | null
           score_ranking?: number | null
-          site_web?: string | null
           slug: string
           sous_categorie?: string | null
           statut?: Database["public"]["Enums"]["prestataire_statut"]
-          telephone?: string | null
           updated_at?: string
           user_id: string
           verified?: boolean
           ville?: string | null
-          whatsapp?: string | null
         }
         Update: {
           badge_type?: string | null
@@ -351,11 +385,9 @@ export type Database = {
           description?: string | null
           description_en?: string | null
           description_fr?: string | null
-          email?: string | null
           free_until?: string | null
           id?: string
           import_batch?: string | null
-          instagram?: string | null
           is_featured?: boolean | null
           is_lifetime_featured?: boolean | null
           langues?: string[] | null
@@ -367,16 +399,13 @@ export type Database = {
           photo_url?: string | null
           priority_score?: number | null
           score_ranking?: number | null
-          site_web?: string | null
           slug?: string
           sous_categorie?: string | null
           statut?: Database["public"]["Enums"]["prestataire_statut"]
-          telephone?: string | null
           updated_at?: string
           user_id?: string
           verified?: boolean
           ville?: string | null
-          whatsapp?: string | null
         }
         Relationships: [
           {
@@ -559,44 +588,31 @@ export type Database = {
         Args: { _approved: boolean; _review_id: string }
         Returns: undefined
       }
-      admin_import_prestataire:
-        | {
-            Args: {
-              _categorie_id?: string
-              _description?: string
-              _nom_entreprise: string
-              _pays?: string
-              _statut?: Database["public"]["Enums"]["prestataire_statut"]
-              _telephone?: string
-              _ville?: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              _badge_type?: string
-              _categorie_id?: string
-              _description?: string
-              _description_en?: string
-              _description_fr?: string
-              _email?: string
-              _free_until?: string
-              _import_batch?: string
-              _instagram?: string
-              _is_featured?: boolean
-              _is_lifetime_featured?: boolean
-              _nom_entreprise: string
-              _pays?: string
-              _photo_url?: string
-              _priority_score?: number
-              _site_web?: string
-              _statut?: Database["public"]["Enums"]["prestataire_statut"]
-              _telephone?: string
-              _ville?: string
-              _whatsapp?: string
-            }
-            Returns: string
-          }
+      admin_import_prestataire: {
+        Args: {
+          _badge_type?: string
+          _categorie_id?: string
+          _description?: string
+          _description_en?: string
+          _description_fr?: string
+          _email?: string
+          _free_until?: string
+          _import_batch?: string
+          _instagram?: string
+          _is_featured?: boolean
+          _is_lifetime_featured?: boolean
+          _nom_entreprise: string
+          _pays?: string
+          _photo_url?: string
+          _priority_score?: number
+          _site_web?: string
+          _statut?: Database["public"]["Enums"]["prestataire_statut"]
+          _telephone?: string
+          _ville?: string
+          _whatsapp?: string
+        }
+        Returns: string
+      }
       admin_update_prestataire: {
         Args: { _prestataire_id: string; _updates: Json }
         Returns: undefined
