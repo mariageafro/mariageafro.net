@@ -83,7 +83,9 @@ export function usePrestataires() {
       let query = supabase
         .from('prestataires')
         .select(`*, categories(name, slug)`)
-        .eq('statut', 'actif');
+        .eq('statut', 'actif')
+        .not('photo_url', 'is', null)
+        .neq('photo_url', '');
 
       if (filters.ville) query = query.eq('ville', filters.ville);
       if (filters.categorie) query = query.eq('categorie_id', filters.categorie);
@@ -91,7 +93,14 @@ export function usePrestataires() {
       if (filters.langue) query = query.contains('langues', [filters.langue]);
       if (filters.country) query = query.eq('country_id', filters.country);
       if (filters.search) query = query.or(`nom_entreprise.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
-      if (filters.sort === 'pertinence') query = query.order('score_ranking', { ascending: false, nullsFirst: false });
+      
+      // Ranking: lifetime featured first, then score_ranking
+      if (filters.sort === 'pertinence') {
+        query = query
+          .order('is_lifetime_featured', { ascending: false, nullsFirst: false })
+          .order('score_ranking', { ascending: false, nullsFirst: false })
+          .order('created_at', { ascending: false });
+      }
 
       const { data, error } = await query;
       if (error) { console.error('Error fetching prestataires:', error); setIsLoading(false); return; }

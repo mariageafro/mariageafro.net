@@ -227,49 +227,71 @@ export type Database = {
       pages: {
         Row: {
           content: string | null
+          content_en: string | null
+          content_fr: string | null
           created_at: string
           hero_image_url: string | null
           id: string
           slug: string
           title: string
+          title_en: string | null
+          title_fr: string | null
           updated_at: string
         }
         Insert: {
           content?: string | null
+          content_en?: string | null
+          content_fr?: string | null
           created_at?: string
           hero_image_url?: string | null
           id?: string
           slug: string
           title: string
+          title_en?: string | null
+          title_fr?: string | null
           updated_at?: string
         }
         Update: {
           content?: string | null
+          content_en?: string | null
+          content_fr?: string | null
           created_at?: string
           hero_image_url?: string | null
           id?: string
           slug?: string
           title?: string
+          title_en?: string | null
+          title_fr?: string | null
           updated_at?: string
         }
         Relationships: []
       }
       prestataires: {
         Row: {
+          badge_type: string | null
           caribbean_origins: string[] | null
           caribbean_styles: string[] | null
           categorie_id: string | null
           country_id: string | null
           created_at: string
           description: string | null
+          description_en: string | null
+          description_fr: string | null
+          email: string | null
+          free_until: string | null
           id: string
+          import_batch: string | null
           instagram: string | null
+          is_featured: boolean | null
+          is_lifetime_featured: boolean | null
           langues: string[] | null
           lat: number | null
           lng: number | null
           nom_entreprise: string
           origine_culturelle: string | null
           pays: string | null
+          photo_url: string | null
+          priority_score: number | null
           score_ranking: number | null
           site_web: string | null
           slug: string
@@ -283,20 +305,30 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          badge_type?: string | null
           caribbean_origins?: string[] | null
           caribbean_styles?: string[] | null
           categorie_id?: string | null
           country_id?: string | null
           created_at?: string
           description?: string | null
+          description_en?: string | null
+          description_fr?: string | null
+          email?: string | null
+          free_until?: string | null
           id?: string
+          import_batch?: string | null
           instagram?: string | null
+          is_featured?: boolean | null
+          is_lifetime_featured?: boolean | null
           langues?: string[] | null
           lat?: number | null
           lng?: number | null
           nom_entreprise: string
           origine_culturelle?: string | null
           pays?: string | null
+          photo_url?: string | null
+          priority_score?: number | null
           score_ranking?: number | null
           site_web?: string | null
           slug: string
@@ -310,20 +342,30 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+          badge_type?: string | null
           caribbean_origins?: string[] | null
           caribbean_styles?: string[] | null
           categorie_id?: string | null
           country_id?: string | null
           created_at?: string
           description?: string | null
+          description_en?: string | null
+          description_fr?: string | null
+          email?: string | null
+          free_until?: string | null
           id?: string
+          import_batch?: string | null
           instagram?: string | null
+          is_featured?: boolean | null
+          is_lifetime_featured?: boolean | null
           langues?: string[] | null
           lat?: number | null
           lng?: number | null
           nom_entreprise?: string
           origine_culturelle?: string | null
           pays?: string | null
+          photo_url?: string | null
+          priority_score?: number | null
           score_ranking?: number | null
           site_web?: string | null
           slug?: string
@@ -457,18 +499,44 @@ export type Database = {
         Args: { _approved: boolean; _review_id: string }
         Returns: undefined
       }
-      admin_import_prestataire: {
-        Args: {
-          _categorie_id?: string
-          _description?: string
-          _nom_entreprise: string
-          _pays?: string
-          _statut?: Database["public"]["Enums"]["prestataire_statut"]
-          _telephone?: string
-          _ville?: string
-        }
-        Returns: string
-      }
+      admin_import_prestataire:
+        | {
+            Args: {
+              _categorie_id?: string
+              _description?: string
+              _nom_entreprise: string
+              _pays?: string
+              _statut?: Database["public"]["Enums"]["prestataire_statut"]
+              _telephone?: string
+              _ville?: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              _badge_type?: string
+              _categorie_id?: string
+              _description?: string
+              _description_en?: string
+              _description_fr?: string
+              _email?: string
+              _free_until?: string
+              _import_batch?: string
+              _instagram?: string
+              _is_featured?: boolean
+              _is_lifetime_featured?: boolean
+              _nom_entreprise: string
+              _pays?: string
+              _photo_url?: string
+              _priority_score?: number
+              _site_web?: string
+              _statut?: Database["public"]["Enums"]["prestataire_statut"]
+              _telephone?: string
+              _ville?: string
+              _whatsapp?: string
+            }
+            Returns: string
+          }
       admin_update_prestataire: {
         Args: { _prestataire_id: string; _updates: Json }
         Returns: undefined
@@ -484,6 +552,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      downgrade_expired_ambassadors: { Args: never; Returns: undefined }
       get_prestataire_id_for_user: {
         Args: { _user_id: string }
         Returns: string
@@ -507,7 +576,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "client" | "prestataire"
       media_type: "photo" | "video"
-      prestataire_statut: "actif" | "suspendu" | "en_attente"
+      prestataire_statut: "actif" | "suspendu" | "en_attente" | "draft"
       subscription_type: "gratuit" | "pro" | "premium" | "elite"
     }
     CompositeTypes: {
@@ -638,7 +707,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "client", "prestataire"],
       media_type: ["photo", "video"],
-      prestataire_statut: ["actif", "suspendu", "en_attente"],
+      prestataire_statut: ["actif", "suspendu", "en_attente", "draft"],
       subscription_type: ["gratuit", "pro", "premium", "elite"],
     },
   },

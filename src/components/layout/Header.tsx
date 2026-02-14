@@ -1,20 +1,21 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useUserRole } from "@/hooks/use-user-role";
+import { useLanguage, translateUI } from "@/contexts/language-context";
 import logo from "@/assets/logo-mariageafro.png";
 
 const navLinks = [
-  { name: "Accueil", href: "/" },
-  { name: "Prestataires", href: "/prestataires" },
-  { name: "Par Pays", href: "/trouver-par-pays" },
-  { name: "Premium", href: "/prestataires-premium" },
-  { name: "Blog", href: "/blog" },
-  { name: "💍 Outils Mariés", href: "/outils-maries" },
-  { name: "Devenir Prestataire", href: "/devenir-prestataire" },
+  { key: "Accueil", href: "/" },
+  { key: "Prestataires", href: "/prestataires" },
+  { key: "Par Pays", href: "/trouver-par-pays" },
+  { key: "Premium", href: "/prestataires-premium" },
+  { key: "Blog", href: "/blog" },
+  { key: "💍 Outils Mariés", href: "/outils-maries" },
+  { key: "Devenir Prestataire", href: "/devenir-prestataire" },
 ];
 
 const featuredCategories = [
@@ -32,6 +33,7 @@ export function Header() {
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useAuthContext();
   const { role } = useUserRole(user?.id);
+  const { lang, setLang } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -70,7 +72,7 @@ export function Header() {
           <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
-                key={link.name}
+                key={link.key}
                 to={link.href}
                 className={`font-body text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
                   showSolid ? "text-chocolate" : "text-ivory"
@@ -78,12 +80,12 @@ export function Header() {
                   location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
                 }`}
               >
-                {link.name}
+                {translateUI(link.key, lang)}
               </Link>
             ))}
           </nav>
 
-           {/* Featured categories quick links + Right side: Auth + Mobile toggle */}
+           {/* Featured categories quick links + Right side */}
            <div className="hidden xl:flex items-center gap-2 mx-6 border-l border-champagne/20 pl-6">
              {featuredCategories.slice(0, 3).map((cat) => (
                <Link
@@ -98,8 +100,32 @@ export function Header() {
              ))}
            </div>
 
-           {/* Right side: Auth + Mobile toggle */}
+           {/* Right side: Lang + Auth + Mobile toggle */}
            <div className="flex items-center gap-3">
+             {/* Language Switcher */}
+             <div className="flex items-center gap-0.5 rounded-full bg-secondary/50 p-0.5">
+               <button
+                 onClick={() => setLang("fr")}
+                 className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
+                   lang === "fr"
+                     ? "bg-champagne text-primary-foreground shadow-sm"
+                     : showSolid ? "text-chocolate hover:text-champagne" : "text-ivory hover:text-champagne"
+                 }`}
+               >
+                 FR
+               </button>
+               <button
+                 onClick={() => setLang("en")}
+                 className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
+                   lang === "en"
+                     ? "bg-champagne text-primary-foreground shadow-sm"
+                     : showSolid ? "text-chocolate hover:text-champagne" : "text-ivory hover:text-champagne"
+                 }`}
+               >
+                 EN
+               </button>
+             </div>
+
              {isAuthenticated ? (
                <div className="flex items-center gap-2">
                  {role === 'admin' && (
@@ -144,7 +170,7 @@ export function Header() {
                  className={`transition-all duration-500 ${isScrolled ? "text-xs px-3 h-8" : ""}`}
                  asChild
                >
-                 <Link to="/auth">Connexion</Link>
+                 <Link to="/auth">{translateUI("Connexion", lang)}</Link>
                </Button>
              )}
 
@@ -171,16 +197,24 @@ export function Header() {
             <nav className="container-editorial py-6 flex flex-col gap-4">
               {navLinks.map((link) => (
                  <Link
-                   key={link.name}
+                   key={link.key}
                    to={link.href}
                    onClick={() => setIsMobileMenuOpen(false)}
                    className={`font-body text-base py-2 text-chocolate hover:text-champagne transition-colors ${
                      location.pathname === link.href ? "text-champagne font-medium" : ""
                    }`}
                  >
-                   {link.name}
+                   {translateUI(link.key, lang)}
                  </Link>
                ))}
+
+               {/* Mobile language switcher */}
+               <div className="flex items-center gap-2 py-2 border-t border-border mt-2 pt-4">
+                 <Globe className="w-4 h-4 text-muted-foreground" />
+                 <button onClick={() => { setLang("fr"); }} className={`px-3 py-1 rounded text-sm ${lang === "fr" ? "bg-champagne text-primary-foreground" : "text-muted-foreground"}`}>Français</button>
+                 <button onClick={() => { setLang("en"); }} className={`px-3 py-1 rounded text-sm ${lang === "en" ? "bg-champagne text-primary-foreground" : "text-muted-foreground"}`}>English</button>
+               </div>
+
                {isAuthenticated ? (
                  <div className="flex flex-col gap-3 mt-4 border-t border-border pt-4">
                    {role === 'admin' && (
@@ -197,18 +231,15 @@ export function Header() {
                    <Button
                      variant="outline"
                      className="w-full justify-start"
-                     onClick={() => {
-                       signOut();
-                       setIsMobileMenuOpen(false);
-                     }}
+                     onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
                    >
                      <LogOut className="w-4 h-4 mr-2" />
-                     Déconnexion
+                     {translateUI("Déconnexion", lang)}
                    </Button>
                  </div>
                ) : (
                  <Button variant="gold" className="mt-4 w-full" asChild>
-                   <Link to="/auth">Connexion</Link>
+                   <Link to="/auth">{translateUI("Connexion", lang)}</Link>
                  </Button>
                )}
              </nav>
