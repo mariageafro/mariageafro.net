@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.cultural-recommendations]
 verify_jwt = false
+
+[functions.wedding-reminders]
+verify_jwt = false
