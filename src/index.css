@@ -264,6 +264,51 @@
     border: 1px solid hsla(var(--champagne) / 0.3);
   }
 
+  /* Glassmorphism Card */
+  .card-glass {
+    @apply rounded-2xl overflow-hidden transition-all duration-500;
+    background: hsla(var(--card) / 0.6);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid hsla(var(--champagne) / 0.15);
+    box-shadow: 
+      0 4px 24px -4px hsla(25, 35%, 15%, 0.06),
+      inset 0 1px 0 0 hsla(var(--champagne) / 0.1);
+  }
+
+  .card-glass:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 8px 32px -6px hsla(38, 45%, 50%, 0.18),
+      inset 0 1px 0 0 hsla(var(--champagne) / 0.15);
+    border-color: hsla(var(--champagne) / 0.3);
+  }
+
+  /* Progress Ring */
+  .progress-ring-track {
+    fill: none;
+    stroke: hsl(var(--muted));
+    stroke-width: 4;
+  }
+  .progress-ring-fill {
+    fill: none;
+    stroke: url(#gold-gradient);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+
+  /* KPI Card */
+  .kpi-card {
+    @apply rounded-xl p-4 flex flex-col items-center justify-center text-center;
+    background: hsla(var(--card) / 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsla(var(--champagne) / 0.12);
+  }
+
   /* Animation Classes */
   .animate-fade-up {
     animation: fadeUp 0.8s ease-out forwards;

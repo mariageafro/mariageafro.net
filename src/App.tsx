@@ -24,6 +24,7 @@ import ChecklistPage from "./pages/tools/ChecklistPage";
 import BudgetPage from "./pages/tools/BudgetPage";
 import WishlistPage from "./pages/tools/WishlistPage";
 import RemindersPage from "./pages/tools/RemindersPage";
+import DashboardHub from "./pages/tools/DashboardHub";
 import CategoryPage from "./pages/CategoryPage";
 import CityPage from "./pages/CityPage";
 import DevenirPrestataire from "./pages/DevenirPrestataire";
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/trouver-par-pays" element={<TrouverParPays />} />
             <Route path="/prestataires-premium" element={<PreatairesPremium />} />
             <Route path="/outils-maries" element={<OutilsMaries />} />
+            <Route path="/outils-maries/dashboard" element={<DashboardHub />} />
             <Route path="/outils-maries/planning" element={<PlanningPage />} />
             <Route path="/outils-maries/checklist" element={<ChecklistPage />} />
             <Route path="/outils-maries/budget" element={<BudgetPage />} />
