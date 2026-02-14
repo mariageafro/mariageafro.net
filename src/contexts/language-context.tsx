@@ -24,6 +24,7 @@ const UI_TRANSLATIONS: Record<string, Record<Lang, string>> = {
   "Premium": { fr: "Premium", en: "Premium" },
   "Blog": { fr: "Blog", en: "Blog" },
   "💍 Outils Mariés": { fr: "💍 Outils Mariés", en: "💍 Wedding Tools" },
+  "💒 Mon Mariage": { fr: "💒 Mon Mariage", en: "💒 My Wedding" },
   "Devenir Prestataire": { fr: "Devenir Prestataire", en: "Become a Vendor" },
   "Connexion": { fr: "Connexion", en: "Sign In" },
   "Déconnexion": { fr: "Déconnexion", en: "Sign Out" },
