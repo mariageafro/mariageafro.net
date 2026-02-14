@@ -29,15 +29,10 @@ type Vendor = {
   ville: string | null;
   pays: string | null;
   statut: string;
-  telephone: string | null;
   description: string | null;
   description_fr: string | null;
   description_en: string | null;
   photo_url: string | null;
-  email: string | null;
-  instagram: string | null;
-  whatsapp: string | null;
-  site_web: string | null;
   categorie_id: string | null;
   badge_type: string | null;
   free_until: string | null;
@@ -47,6 +42,12 @@ type Vendor = {
   import_batch: string | null;
   created_at: string;
   category_name?: string;
+  // Contact fields from prestataire_contacts
+  telephone: string | null;
+  email: string | null;
+  instagram: string | null;
+  whatsapp: string | null;
+  site_web: string | null;
 };
 
 type Category = { id: string; name: string };
@@ -74,13 +75,26 @@ export default function AdminVendors() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [vRes, cRes] = await Promise.all([
-      (supabase as any).from("prestataires").select("id, nom_entreprise, ville, pays, statut, telephone, description, description_fr, description_en, photo_url, email, instagram, whatsapp, site_web, categorie_id, badge_type, free_until, is_featured, is_lifetime_featured, priority_score, import_batch, created_at").order("created_at", { ascending: false }),
+    const [vRes, cRes, contactsRes] = await Promise.all([
+      supabase.from("prestataires").select("id, nom_entreprise, ville, pays, statut, description, description_fr, description_en, photo_url, categorie_id, badge_type, free_until, is_featured, is_lifetime_featured, priority_score, import_batch, created_at").order("created_at", { ascending: false }),
       supabase.from("categories").select("id, name").order("name"),
+      supabase.from("prestataire_contacts").select("prestataire_id, telephone, email, instagram, whatsapp, site_web"),
     ]);
     const catMap: Record<string, string> = {};
     (cRes.data ?? []).forEach((c) => { catMap[c.id] = c.name; });
-    setVendors((vRes.data ?? []).map((v: any) => ({ ...v, category_name: v.categorie_id ? catMap[v.categorie_id] : undefined })));
+    
+    const contactsMap: Record<string, any> = {};
+    (contactsRes.data ?? []).forEach((c) => { contactsMap[c.prestataire_id] = c; });
+    
+    setVendors((vRes.data ?? []).map((v: any) => ({
+      ...v,
+      category_name: v.categorie_id ? catMap[v.categorie_id] : undefined,
+      telephone: contactsMap[v.id]?.telephone ?? null,
+      email: contactsMap[v.id]?.email ?? null,
+      instagram: contactsMap[v.id]?.instagram ?? null,
+      whatsapp: contactsMap[v.id]?.whatsapp ?? null,
+      site_web: contactsMap[v.id]?.site_web ?? null,
+    })));
     setCategories(cRes.data ?? []);
     setLoading(false);
   };
@@ -126,7 +140,7 @@ export default function AdminVendors() {
 
   const addVendor = async () => {
     if (!addForm.nom_entreprise.trim()) return;
-    const { error } = await (supabase as any).rpc("admin_import_prestataire", {
+    const { error } = await supabase.rpc("admin_import_prestataire", {
       _nom_entreprise: addForm.nom_entreprise,
       _ville: addForm.ville || null, _pays: addForm.pays || "France",
       _description_fr: addForm.description_fr || null, _description_en: addForm.description_en || null,
@@ -138,7 +152,7 @@ export default function AdminVendors() {
       _is_featured: addForm.is_featured, _is_lifetime_featured: addForm.is_lifetime_featured,
       _priority_score: parseInt(addForm.priority_score) || 0,
       _statut: addForm.photo_url ? "actif" : "draft",
-    });
+    } as any);
     if (error) toast({ title: "Erreur", description: error.message, variant: "destructive" });
     else {
       await logAdminAction("add_vendor", "prestataires");

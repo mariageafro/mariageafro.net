@@ -1,6 +1,6 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { MapPin, Star, Heart, Share2 } from "lucide-react";
+import { MapPin, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePrestaireDetail } from "@/hooks/use-prestataire-detail";
 import { PrestaireGallery } from "@/components/prestataire/PrestaireGallery";
@@ -9,7 +9,7 @@ import { PrestaireContactCard } from "@/components/prestataire/PrestaireContactC
 import categoryDj from "@/assets/category-dj.jpg";
 
 export default function ProfilPrestataire() {
-  const { prestataire, reviews, medias, isLoading, error } = usePrestaireDetail();
+  const { prestataire, contacts, reviews, medias, isLoading, error } = usePrestaireDetail();
 
   if (error) {
     return (
@@ -53,7 +53,7 @@ export default function ProfilPrestataire() {
         <div className="container-editorial">
           <PrestaireGallery
             medias={medias}
-            coverUrl={categoryDj} // Utilise une image par défaut pour le placeholder
+            coverUrl={categoryDj}
             businessName={prestataire.nom_entreprise}
           />
         </div>
@@ -160,7 +160,7 @@ export default function ProfilPrestataire() {
             </div>
 
             {/* Sidebar */}
-            {prestataire && <PrestaireContactCard prestataire={prestataire} />}
+            {prestataire && <PrestaireContactCard prestataire={prestataire} contacts={contacts} />}
           </div>
         </div>
       </section>

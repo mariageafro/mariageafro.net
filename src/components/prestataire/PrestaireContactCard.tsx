@@ -8,22 +8,23 @@ import type { Tables } from '@/integrations/supabase/types';
 
 interface PrestaireContactCardProps {
   prestataire: Tables<'prestataires'>;
+  contacts: Tables<'prestataire_contacts'> | null;
 }
 
-export function PrestaireContactCard({ prestataire }: PrestaireContactCardProps) {
+export function PrestaireContactCard({ prestataire, contacts }: PrestaireContactCardProps) {
   const { isAuthenticated } = useAuthContext();
   const { lang } = useLanguage();
 
   const handleWhatsApp = () => {
-    if (prestataire.whatsapp) {
+    if (contacts?.whatsapp) {
       const message = encodeURIComponent(lang === 'en' ? 'Hello, I am interested in your services for my wedding.' : 'Bonjour, je suis intéressé(e) par vos services pour mon mariage.');
-      window.open(`https://wa.me/${prestataire.whatsapp.replace(/\D/g, '')}?text=${message}`, '_blank');
+      window.open(`https://wa.me/${contacts.whatsapp.replace(/\D/g, '')}?text=${message}`, '_blank');
     }
   };
 
   const handleCall = () => {
-    if (prestataire.telephone) {
-      window.location.href = `tel:${prestataire.telephone}`;
+    if (contacts?.telephone) {
+      window.location.href = `tel:${contacts.telephone}`;
     }
   };
 
@@ -42,22 +43,22 @@ export function PrestaireContactCard({ prestataire }: PrestaireContactCardProps)
         {isAuthenticated ? (
           <>
             <div className="space-y-4 mb-6">
-              {prestataire.telephone && (
+              {contacts?.telephone && (
                 <div className="flex items-center gap-3">
                   <Phone size={18} className="text-gold" />
-                  <span className="font-body text-sm">{prestataire.telephone}</span>
+                  <span className="font-body text-sm">{contacts.telephone}</span>
                 </div>
               )}
-              {prestataire.whatsapp && (
+              {contacts?.whatsapp && (
                 <div className="flex items-center gap-3">
                   <MessageCircle size={18} className="text-gold" />
-                  <span className="font-body text-sm">{prestataire.whatsapp}</span>
+                  <span className="font-body text-sm">{contacts.whatsapp}</span>
                 </div>
               )}
-              {(prestataire as any).email && (
+              {contacts?.email && (
                 <div className="flex items-center gap-3">
                   <Globe size={18} className="text-gold" />
-                  <span className="font-body text-sm">{(prestataire as any).email}</span>
+                  <span className="font-body text-sm">{contacts.email}</span>
                 </div>
               )}
               {prestataire.langues && prestataire.langues.length > 0 && (
@@ -69,12 +70,12 @@ export function PrestaireContactCard({ prestataire }: PrestaireContactCardProps)
             </div>
 
             <div className="space-y-3">
-              {prestataire.whatsapp && (
+              {contacts?.whatsapp && (
                 <Button variant="gold" className="w-full" size="lg" onClick={handleWhatsApp}>
                   <MessageCircle size={18} /> WhatsApp
                 </Button>
               )}
-              {prestataire.telephone && (
+              {contacts?.telephone && (
                 <Button variant="outline" className="w-full" size="lg" onClick={handleCall}>
                   <Phone size={18} /> {translateUI("Appeler", lang)}
                 </Button>
@@ -94,24 +95,26 @@ export function PrestaireContactCard({ prestataire }: PrestaireContactCardProps)
         )}
       </div>
 
-      {/* Social Links - always visible */}
-      <div className="p-6 rounded-2xl bg-secondary space-y-4">
-        <h4 className="font-body text-sm text-muted-foreground font-medium">{translateUI("Suivez-nous", lang)}</h4>
-        <div className="space-y-3">
-          {prestataire.site_web && (
-            <a href={prestataire.site_web} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg hover:bg-background transition-colors">
-              <WebIcon size={18} className="text-chocolate" />
-              <span className="font-body text-sm text-chocolate hover:underline">{translateUI("Site web", lang)}</span>
-            </a>
-          )}
-          {prestataire.instagram && (
-            <a href={`https://instagram.com/${prestataire.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg hover:bg-background transition-colors">
-              <Instagram size={18} className="text-chocolate" />
-              <span className="font-body text-sm text-chocolate hover:underline">@{prestataire.instagram}</span>
-            </a>
-          )}
+      {/* Social Links - always visible for authenticated users */}
+      {isAuthenticated && (contacts?.site_web || contacts?.instagram) && (
+        <div className="p-6 rounded-2xl bg-secondary space-y-4">
+          <h4 className="font-body text-sm text-muted-foreground font-medium">{translateUI("Suivez-nous", lang)}</h4>
+          <div className="space-y-3">
+            {contacts?.site_web && (
+              <a href={contacts.site_web} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg hover:bg-background transition-colors">
+                <WebIcon size={18} className="text-chocolate" />
+                <span className="font-body text-sm text-chocolate hover:underline">{translateUI("Site web", lang)}</span>
+              </a>
+            )}
+            {contacts?.instagram && (
+              <a href={`https://instagram.com/${contacts.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg hover:bg-background transition-colors">
+                <Instagram size={18} className="text-chocolate" />
+                <span className="font-body text-sm text-chocolate hover:underline">@{contacts.instagram}</span>
+              </a>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Info Card */}
       <div className="p-6 rounded-2xl bg-secondary">
