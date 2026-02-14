@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuthContext } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -20,18 +21,66 @@ interface CulturalRecommendationsProps {
   showVendorLinks?: boolean;
 }
 
+function buildCacheKey(props: Omit<CulturalRecommendationsProps, 'autoLoad' | 'showVendorLinks'>) {
+  return `${props.originOne}|${props.originTwo}|${props.weddingType || 'mixte'}|${props.country || 'France'}|${props.budget || 15000}|${props.guestCount || 100}|${props.weddingStyle || 'moderne'}`;
+}
+
 export function CulturalRecommendations({
   originOne, originTwo, weddingType, country, budget, guestCount, weddingStyle,
   autoLoad = false, showVendorLinks = true,
 }: CulturalRecommendationsProps) {
+  const { user } = useAuthContext();
   const [reco, setReco] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [fromCache, setFromCache] = useState(false);
+
+  const cacheKey = buildCacheKey({ originOne, originTwo, weddingType, country, budget, guestCount, weddingStyle });
+
+  // Try loading from cache first
+  useEffect(() => {
+    if (!user || !autoLoad) return;
+    const loadCached = async () => {
+      const { data } = await supabase
+        .from("cultural_recommendations_cache")
+        .select("recommendations, expires_at")
+        .eq("user_id", user.id)
+        .eq("cache_key", cacheKey)
+        .maybeSingle();
+      if (data && new Date(data.expires_at) > new Date()) {
+        setReco(data.recommendations);
+        setFromCache(true);
+      } else if (autoLoad && originOne && originTwo) {
+        loadRecommendations();
+      }
+    };
+    loadCached();
+  }, [user, autoLoad, cacheKey]);
+
+  // Auto-load for non-authenticated users (demo)
+  useEffect(() => {
+    if (!user && autoLoad && originOne && originTwo && !reco && !loading) {
+      loadRecommendations();
+    }
+  }, [autoLoad, originOne, originTwo]);
+
+  const saveToCache = async (data: any) => {
+    if (!user) return;
+    await supabase
+      .from("cultural_recommendations_cache")
+      .upsert({
+        user_id: user.id,
+        cache_key: cacheKey,
+        recommendations: data,
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      }, { onConflict: "user_id,cache_key" });
+  };
 
   const loadRecommendations = async () => {
     setLoading(true);
     setError(null);
+    setFromCache(false);
     try {
       const { data, error: fnError } = await supabase.functions.invoke("cultural-recommendations", {
         body: {
@@ -47,17 +96,13 @@ export function CulturalRecommendations({
       if (fnError) throw fnError;
       if (data?.error) throw new Error(data.error);
       setReco(data);
+      await saveToCache(data);
     } catch (e: any) {
       setError(e.message || "Erreur lors du chargement");
     } finally {
       setLoading(false);
     }
   };
-
-  // Auto-load on mount if requested
-  useState(() => {
-    if (autoLoad && originOne && originTwo) loadRecommendations();
-  });
 
   if (!reco && !loading) {
     return (
@@ -249,10 +294,13 @@ export function CulturalRecommendations({
       </div>
 
       {/* Regenerate */}
-      <div className="text-center">
+      <div className="text-center flex items-center justify-center gap-3">
         <Button variant="outline" size="sm" onClick={loadRecommendations} className="font-body text-xs gap-1.5">
           <Wand2 size={12} /> Régénérer
         </Button>
+        {fromCache && (
+          <span className="font-body text-[10px] text-muted-foreground">✓ Chargé instantanément</span>
+        )}
       </div>
     </div>
   );
