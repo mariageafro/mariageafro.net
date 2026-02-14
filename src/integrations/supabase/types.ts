@@ -186,6 +186,92 @@ export type Database = {
         }
         Relationships: []
       }
+      day_of_timeline: {
+        Row: {
+          created_at: string
+          event_date: string | null
+          id: string
+          is_public: boolean | null
+          share_code: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_date?: string | null
+          id?: string
+          is_public?: boolean | null
+          share_code?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string | null
+          id?: string
+          is_public?: boolean | null
+          share_code?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      day_of_timeline_items: {
+        Row: {
+          address: string | null
+          created_at: string
+          end_time: string | null
+          google_maps_link: string | null
+          id: string
+          notes: string | null
+          responsible_person: string | null
+          sort_order: number | null
+          start_time: string
+          timeline_id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          end_time?: string | null
+          google_maps_link?: string | null
+          id?: string
+          notes?: string | null
+          responsible_person?: string | null
+          sort_order?: number | null
+          start_time: string
+          timeline_id: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          end_time?: string | null
+          google_maps_link?: string | null
+          id?: string
+          notes?: string | null
+          responsible_person?: string | null
+          sort_order?: number | null
+          start_time?: string
+          timeline_id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "day_of_timeline_items_timeline_id_fkey"
+            columns: ["timeline_id"]
+            isOneToOne: false
+            referencedRelation: "day_of_timeline"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medias: {
         Row: {
           created_at: string
@@ -263,6 +349,54 @@ export type Database = {
           title_en?: string | null
           title_fr?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      planning_tasks: {
+        Row: {
+          auto_generated: boolean | null
+          category: string | null
+          created_at: string
+          description: string | null
+          done: boolean | null
+          due_date: string | null
+          id: string
+          linked_vendor_id: string | null
+          priority: string | null
+          sort_order: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_generated?: boolean | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          done?: boolean | null
+          due_date?: string | null
+          id?: string
+          linked_vendor_id?: string | null
+          priority?: string | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_generated?: boolean | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          done?: boolean | null
+          due_date?: string | null
+          id?: string
+          linked_vendor_id?: string | null
+          priority?: string | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -579,6 +713,78 @@ export type Database = {
         }
         Relationships: []
       }
+      user_wedding_profile: {
+        Row: {
+          city: string | null
+          country: string | null
+          couple_display_name: string | null
+          couple_quote: string | null
+          created_at: string
+          estimated_budget: number | null
+          guest_count: number | null
+          id: string
+          is_afro_wedding: boolean | null
+          onboarding_completed: boolean | null
+          origin_partner_one: string | null
+          origin_partner_two: string | null
+          partner_one_first_name: string
+          partner_one_last_name: string | null
+          partner_two_first_name: string
+          partner_two_last_name: string | null
+          updated_at: string
+          user_id: string
+          wedding_date: string | null
+          wedding_style: string | null
+          wedding_type: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          couple_display_name?: string | null
+          couple_quote?: string | null
+          created_at?: string
+          estimated_budget?: number | null
+          guest_count?: number | null
+          id?: string
+          is_afro_wedding?: boolean | null
+          onboarding_completed?: boolean | null
+          origin_partner_one?: string | null
+          origin_partner_two?: string | null
+          partner_one_first_name: string
+          partner_one_last_name?: string | null
+          partner_two_first_name: string
+          partner_two_last_name?: string | null
+          updated_at?: string
+          user_id: string
+          wedding_date?: string | null
+          wedding_style?: string | null
+          wedding_type?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          couple_display_name?: string | null
+          couple_quote?: string | null
+          created_at?: string
+          estimated_budget?: number | null
+          guest_count?: number | null
+          id?: string
+          is_afro_wedding?: boolean | null
+          onboarding_completed?: boolean | null
+          origin_partner_one?: string | null
+          origin_partner_two?: string | null
+          partner_one_first_name?: string
+          partner_one_last_name?: string | null
+          partner_two_first_name?: string
+          partner_two_last_name?: string | null
+          updated_at?: string
+          user_id?: string
+          wedding_date?: string | null
+          wedding_style?: string | null
+          wedding_type?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -629,6 +835,10 @@ export type Database = {
         Returns: boolean
       }
       downgrade_expired_ambassadors: { Args: never; Returns: undefined }
+      generate_planning_tasks: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
       get_prestataire_id_for_user: {
         Args: { _user_id: string }
         Returns: string

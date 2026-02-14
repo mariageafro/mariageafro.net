@@ -27,6 +27,10 @@ import RemindersPage from "./pages/tools/RemindersPage";
 import CategoryPage from "./pages/CategoryPage";
 import CityPage from "./pages/CityPage";
 import DevenirPrestataire from "./pages/DevenirPrestataire";
+import WeddingOnboarding from "./pages/wedding/WeddingOnboarding";
+import WeddingDashboard from "./pages/wedding/WeddingDashboard";
+import WeddingPlanning from "./pages/wedding/WeddingPlanning";
+import DayOfTimeline from "./pages/wedding/DayOfTimeline";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import AdminOverview from "./pages/admin/AdminOverview";
@@ -68,6 +72,10 @@ const App = () => (
             <Route path="/outils-maries/budget" element={<BudgetPage />} />
             <Route path="/outils-maries/liste-de-souhaits" element={<WishlistPage />} />
             <Route path="/outils-maries/rappels" element={<RemindersPage />} />
+            <Route path="/mon-mariage" element={<WeddingDashboard />} />
+            <Route path="/mon-mariage/onboarding" element={<WeddingOnboarding />} />
+            <Route path="/mon-mariage/planning" element={<WeddingPlanning />} />
+            <Route path="/mon-mariage/jour-j" element={<DayOfTimeline />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/inspiration" element={<Inspiration />} />
             <Route path="/a-propos" element={<APropos />} />
