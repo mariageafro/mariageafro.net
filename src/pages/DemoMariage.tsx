@@ -4,11 +4,14 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import {
   Heart, CalendarDays, MapPin, Sparkles, Users, Calculator,
   ListChecks, Clock, ChevronRight, CheckCircle2, AlertTriangle,
   Gift, FileText, Crown, Star, Shield, TrendingUp, Printer,
-  Hotel, Bus, UtensilsCrossed, ChevronDown, ChevronUp
+  Hotel, Bus, UtensilsCrossed, ChevronDown, ChevronUp, Wand2,
+  Flame, Zap, Globe, Lightbulb, BarChart3, Palette
 } from "lucide-react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import {
@@ -68,6 +71,7 @@ function GlassCard({ children, className = "", onClick }: { children: React.Reac
 
 // ───────── MAIN PAGE ─────────
 export default function DemoMariage() {
+  const { toast } = useToast();
   const healthScore = getDemoHealthScore();
   const taskStats = getDemoTaskStats();
   const budgetChartData = getDemoBudgetChartData();
@@ -75,6 +79,38 @@ export default function DemoMariage() {
   const rsvpStats = getDemoRsvpStats();
   const [expandedVendors, setExpandedVendors] = useState(false);
   const [expandedGuests, setExpandedGuests] = useState(false);
+
+  // AI Cultural Recommendations
+  const [aiReco, setAiReco] = useState<any>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const loadRecommendations = async () => {
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("cultural-recommendations", {
+        body: {
+          origin_one: demoCouple.origin_partner_one,
+          origin_two: demoCouple.origin_partner_two,
+          wedding_type: "mixte (civil + religieux + traditionnel)",
+          country: demoCouple.country,
+          budget: demoCouple.estimated_budget,
+          guest_count: demoCouple.guest_count,
+          wedding_style: demoCouple.wedding_style,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setAiReco(data);
+    } catch (e: any) {
+      console.error("AI reco error:", e);
+      setAiError(e.message || "Erreur lors du chargement");
+      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const healthItems = [
     { label: "Budget", ok: demoBudgetOverrun <= 0, text: demoBudgetOverrun > 0 ? `Dépassé +${demoBudgetOverrun.toLocaleString("fr-FR")}€` : "Maîtrisé" },
@@ -316,6 +352,316 @@ export default function DemoMariage() {
                 {expandedVendors ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 {expandedVendors ? "Réduire" : `Voir les ${demoVendors.length - 12} autres prestataires`}
               </Button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ═══════ AI CULTURAL RECOMMENDATIONS ═══════ */}
+      <section className="section-padding bg-gradient-warm !py-10">
+        <div className="container-editorial max-w-5xl">
+          <RevealSection>
+            <div className="text-center mb-8">
+              <span className="badge-premium mb-3 inline-flex text-xs"><Wand2 size={12} className="mr-1.5" /> Configuration intelligente</span>
+              <h2 className="font-serif text-3xl text-chocolate mb-2">
+                <Sparkles className="inline mr-2 text-primary" size={28} />
+                Recommandé pour votre culture
+              </h2>
+              <p className="font-body text-muted-foreground max-w-lg mx-auto">
+                Suggestions personnalisées pour un mariage {demoCouple.origin_partner_one} × {demoCouple.origin_partner_two}
+              </p>
+            </div>
+          </RevealSection>
+
+          {!aiReco && !aiLoading && (
+            <RevealSection>
+              <GlassCard className="text-center !p-10">
+                <Globe className="text-primary mx-auto mb-4" size={48} />
+                <h3 className="font-serif text-xl text-chocolate mb-2">Découvrez vos recommandations culturelles</h3>
+                <p className="font-body text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+                  Notre moteur analyse les origines du couple, le style de mariage et le budget pour générer des suggestions ultra-personnalisées.
+                </p>
+                <Button onClick={loadRecommendations} className="font-body gap-2 px-8 py-3">
+                  <Wand2 size={16} /> Générer mes recommandations
+                </Button>
+                {aiError && <p className="font-body text-xs text-destructive mt-3">{aiError}</p>}
+              </GlassCard>
+            </RevealSection>
+          )}
+
+          {aiLoading && (
+            <RevealSection>
+              <GlassCard className="text-center !p-10">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="inline-block mb-4"
+                >
+                  <Sparkles className="text-primary" size={40} />
+                </motion.div>
+                <p className="font-serif text-lg text-chocolate mb-1">Analyse culturelle en cours…</p>
+                <p className="font-body text-sm text-muted-foreground">Traditions, budget et prestataires adaptés à votre profil</p>
+              </GlassCard>
+            </RevealSection>
+          )}
+
+          {aiReco && !aiLoading && (
+            <div className="space-y-8">
+              {/* Complexity Score */}
+              {aiReco.cultural_profile && (
+                <RevealSection>
+                  <GlassCard className="text-center">
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-1">Indice de complexité</p>
+                        <div className="relative w-28 h-28 mx-auto">
+                          <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(35, 20%, 90%)" strokeWidth="8" />
+                            <motion.circle
+                              cx="50" cy="50" r="40" fill="none"
+                              stroke={aiReco.cultural_profile.complexity_score > 70 ? "hsl(15, 70%, 50%)" : aiReco.cultural_profile.complexity_score > 40 ? "hsl(38, 70%, 50%)" : "hsl(140, 50%, 40%)"}
+                              strokeWidth="8" strokeLinecap="round"
+                              strokeDasharray={`${2 * Math.PI * 40}`}
+                              initial={{ strokeDashoffset: 2 * Math.PI * 40 }}
+                              animate={{ strokeDashoffset: 2 * Math.PI * 40 * (1 - aiReco.cultural_profile.complexity_score / 100) }}
+                              transition={{ duration: 1.5, ease: "easeOut" }}
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="font-serif text-2xl text-chocolate">{aiReco.cultural_profile.complexity_score}</span>
+                          </div>
+                        </div>
+                        <p className="font-body text-sm font-semibold mt-2">
+                          {aiReco.cultural_profile.complexity_score > 70 ? "🔴" : aiReco.cultural_profile.complexity_score > 40 ? "🟡" : "🟢"}{" "}
+                          {aiReco.cultural_profile.complexity_label}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 text-left">
+                        <div className="bg-muted/20 rounded-xl p-3">
+                          <p className="font-body text-[10px] text-muted-foreground">Durée estimée</p>
+                          <p className="font-serif text-lg text-chocolate">{aiReco.cultural_profile.estimated_duration_hours}h</p>
+                        </div>
+                        <div className="bg-muted/20 rounded-xl p-3">
+                          <p className="font-body text-[10px] text-muted-foreground">Traditions</p>
+                          <p className="font-serif text-lg text-chocolate">{aiReco.cultural_profile.traditions_count}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </RevealSection>
+              )}
+
+              {/* Budget Assessment */}
+              {aiReco.recommended_budget && (
+                <RevealSection>
+                  <GlassCard>
+                    <h3 className="font-serif text-xl text-chocolate mb-4 text-center flex items-center justify-center gap-2">
+                      <BarChart3 size={20} className="text-primary" /> Budget optimisé selon votre profil
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="bg-primary/5 rounded-xl p-4 text-center">
+                        <p className="font-body text-[10px] text-muted-foreground">Budget conseillé</p>
+                        <p className="font-serif text-2xl text-primary">{aiReco.recommended_budget.ideal_total?.toLocaleString("fr-FR")} €</p>
+                      </div>
+                      <div className="bg-muted/20 rounded-xl p-4 text-center">
+                        <p className="font-body text-[10px] text-muted-foreground">Votre budget</p>
+                        <p className="font-serif text-2xl text-chocolate">{demoCouple.estimated_budget.toLocaleString("fr-FR")} €</p>
+                      </div>
+                    </div>
+                    <p className="font-body text-sm text-center text-muted-foreground mb-4">
+                      {aiReco.recommended_budget.budget_assessment}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {aiReco.recommended_budget.breakdown?.slice(0, 10).map((item: any, i: number) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.05 }}
+                          className="flex items-center gap-3 py-2 px-3 bg-muted/10 rounded-lg"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="font-body text-xs font-medium truncate">{item.category}</p>
+                            <p className="font-body text-[10px] text-muted-foreground truncate">{item.reason}</p>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <p className="font-body text-xs font-semibold text-primary">{item.amount?.toLocaleString("fr-FR")} €</p>
+                            <p className="font-body text-[10px] text-muted-foreground">{item.percent}%</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </GlassCard>
+                </RevealSection>
+              )}
+
+              {/* Traditions */}
+              {aiReco.traditions?.length > 0 && (
+                <RevealSection>
+                  <GlassCard>
+                    <h3 className="font-serif text-xl text-chocolate mb-4 text-center">🌍 Traditions à intégrer</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {aiReco.traditions.map((t: any, i: number) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.08 }}
+                          className="flex items-start gap-3 p-3 bg-muted/10 rounded-xl hover:bg-muted/20 transition-colors"
+                        >
+                          <span className="text-xl flex-shrink-0">{t.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <p className="font-body text-sm font-semibold">{t.name}</p>
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-body ${
+                                t.importance === "essentiel" ? "bg-primary/15 text-primary" :
+                                t.importance === "recommandé" ? "bg-accent/20 text-accent-foreground" :
+                                "bg-muted text-muted-foreground"
+                              }`}>{t.importance}</span>
+                            </div>
+                            <p className="font-body text-xs text-muted-foreground">{t.description}</p>
+                            <p className="font-body text-[10px] text-primary mt-1">⏰ {t.timing}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </GlassCard>
+                </RevealSection>
+              )}
+
+              {/* Vendor Recommendations */}
+              {aiReco.vendor_recommendations?.length > 0 && (
+                <RevealSection>
+                  <GlassCard>
+                    <h3 className="font-serif text-xl text-chocolate mb-4 text-center flex items-center justify-center gap-2">
+                      <Star size={18} className="text-primary" /> Prestataires adaptés à votre tradition
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {aiReco.vendor_recommendations.map((v: any, i: number) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.06 }}
+                          className="p-4 bg-muted/10 rounded-xl hover:bg-muted/20 hover:-translate-y-0.5 transition-all duration-300 group"
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xl group-hover:scale-125 transition-transform">{v.icon}</span>
+                            <div>
+                              <p className="font-body text-sm font-semibold">{v.role}</p>
+                              <span className="text-[9px] font-body bg-primary/10 text-primary rounded-full px-2 py-0.5">{v.badge}</span>
+                            </div>
+                          </div>
+                          <p className="font-body text-xs text-muted-foreground mb-2">{v.why}</p>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                              <motion.div
+                                className="h-full rounded-full bg-gradient-to-r from-primary/60 to-primary"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${v.cultural_score}%` }}
+                                transition={{ duration: 1, delay: 0.3 + i * 0.05 }}
+                              />
+                            </div>
+                            <span className="font-body text-[10px] font-semibold text-primary">{v.cultural_score}%</span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </GlassCard>
+                </RevealSection>
+              )}
+
+              {/* Tips + Style */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {aiReco.personalized_tips?.length > 0 && (
+                  <RevealSection>
+                    <GlassCard>
+                      <h3 className="font-serif text-lg text-chocolate mb-4 flex items-center gap-2">
+                        <Lightbulb size={18} className="text-primary" /> Conseils personnalisés
+                      </h3>
+                      <div className="space-y-2.5">
+                        {aiReco.personalized_tips.map((tip: any, i: number) => (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.08 }}
+                            className="flex items-start gap-2.5 py-2 border-b border-border/20 last:border-0"
+                          >
+                            <span className="text-sm flex-shrink-0">{tip.icon}</span>
+                            <div>
+                              <p className="font-body text-sm">{tip.tip}</p>
+                              <span className="font-body text-[10px] text-muted-foreground">{tip.category}</span>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </GlassCard>
+                  </RevealSection>
+                )}
+
+                {aiReco.style_suggestions && (
+                  <RevealSection delay={0.1}>
+                    <GlassCard>
+                      <h3 className="font-serif text-lg text-chocolate mb-4 flex items-center gap-2">
+                        <Palette size={18} className="text-primary" /> Style suggéré
+                      </h3>
+                      <div className="space-y-3">
+                        {[
+                          { label: "Intensité visuelle", value: aiReco.style_suggestions.visual_intensity },
+                          { label: "Niveau animation", value: aiReco.style_suggestions.animation_level },
+                          { label: "Accent couleur", value: aiReco.style_suggestions.color_accent },
+                          { label: "Ambiance", value: aiReco.style_suggestions.ambiance },
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-center justify-between py-2 border-b border-border/20 last:border-0">
+                            <span className="font-body text-xs text-muted-foreground">{item.label}</span>
+                            <span className="font-body text-sm font-medium text-chocolate">{item.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </GlassCard>
+                  </RevealSection>
+                )}
+              </div>
+
+              {/* Timeline additions */}
+              {aiReco.timeline_additions?.length > 0 && (
+                <RevealSection>
+                  <GlassCard>
+                    <h3 className="font-serif text-xl text-chocolate mb-4 text-center flex items-center justify-center gap-2">
+                      <Clock size={18} className="text-primary" /> Moments culturels à ajouter
+                    </h3>
+                    <div className="space-y-3">
+                      {aiReco.timeline_additions.map((t: any, i: number) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.08 }}
+                          className="flex items-start gap-3 p-3 bg-muted/10 rounded-xl"
+                        >
+                          <span className="text-xl flex-shrink-0">{t.icon}</span>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <p className="font-body text-sm font-semibold">{t.title}</p>
+                              <span className="font-body text-[10px] text-primary bg-primary/10 rounded-full px-2 py-0.5">
+                                {t.suggested_time} · {t.duration_min} min
+                              </span>
+                            </div>
+                            <p className="font-body text-xs text-muted-foreground">{t.description}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </GlassCard>
+                </RevealSection>
+              )}
+
+              <div className="text-center">
+                <Button variant="outline" onClick={loadRecommendations} className="font-body text-sm gap-2">
+                  <Wand2 size={14} /> Régénérer les recommandations
+                </Button>
+              </div>
             </div>
           )}
         </div>
