@@ -23,43 +23,72 @@ function supaAdmin() {
 function buildDemoHtml(): string {
   const coupleName = "Nadia & Junior";
   const weddingDate = "mercredi 12 août 2026";
-  const quote = "Un amour qui unit deux cultures, deux familles, un seul destin.";
+  const quote = "Notre amour est une alliance de cultures et d'élégance.";
   const city = "Paris";
   const country = "France";
   const guestCount = 250;
   const estimatedBudget = 35000;
   const style = "Afro-Luxe";
-  const origin1 = "Congo";
-  const origin2 = "Cameroun";
-  const totalBudget = 39000;
-  const paidBudget = 36500;
-  const depositBudget = 2500;
+  const origin1 = "Congo 🇨🇩";
+  const origin2 = "Cameroun 🇨🇲";
+  const totalBudget = 38200;
+  const paidBudget = 37200;
+  const depositBudget = 1000;
   const budgetDiff = totalBudget - estimatedBudget;
 
   const demoBudgetItems = [
-    { title: "Salle de réception", category: "Lieu", amount: 8000, status: "paid" },
-    { title: "Traiteur", category: "Traiteur", amount: 7500, status: "paid" },
-    { title: "Photographe", category: "Photo", amount: 3500, status: "paid" },
-    { title: "DJ", category: "Musique", amount: 2000, status: "paid" },
-    { title: "Robe de mariée", category: "Tenues", amount: 3000, status: "paid" },
-    { title: "Décoration florale", category: "Décoration", amount: 2500, status: "deposit" },
-    { title: "Vidéaste", category: "Vidéo", amount: 2800, status: "paid" },
-    { title: "Costume marié", category: "Tenues", amount: 1500, status: "paid" },
-    { title: "Wedding Planner", category: "Organisation", amount: 4000, status: "paid" },
-    { title: "Transport invités", category: "Transport", amount: 1800, status: "paid" },
-    { title: "Gâteau", category: "Traiteur", amount: 800, status: "paid" },
-    { title: "Faire-part", category: "Papeterie", amount: 600, status: "paid" },
+    { title: "Salle & Domaine", category: "Lieu", amount: 8000, status: "paid" },
+    { title: "Traiteur congolais", category: "Traiteur", amount: 9500, status: "deposit" },
+    { title: "Wedding Planner", category: "Organisation", amount: 3000, status: "paid" },
+    { title: "Photographe", category: "Photo", amount: 2500, status: "paid" },
+    { title: "Vidéaste", category: "Vidéo", amount: 3000, status: "paid" },
+    { title: "DJ + MC Atalaku", category: "Musique", amount: 2000, status: "paid" },
+    { title: "Groupe live rumba", category: "Musique", amount: 1200, status: "paid" },
+    { title: "Chorale gospel", category: "Musique", amount: 800, status: "paid" },
+    { title: "Son & Lumière", category: "Technique", amount: 1800, status: "paid" },
+    { title: "Décoration florale", category: "Décoration", amount: 2200, status: "paid" },
+    { title: "Location trône royal", category: "Décoration", amount: 600, status: "paid" },
+    { title: "Robe mariée sur mesure", category: "Tenues", amount: 2000, status: "paid" },
+    { title: "Costume sur mesure", category: "Tenues", amount: 900, status: "paid" },
+    { title: "Location tenues traditionnelles", category: "Tenues", amount: 1200, status: "paid" },
+    { title: "Maquilleuse", category: "Beauté", amount: 450, status: "paid" },
+    { title: "Coiffeuse", category: "Beauté", amount: 350, status: "paid" },
+    { title: "Wedding Cake 5 étages", category: "Traiteur", amount: 850, status: "paid" },
+    { title: "Location voiture Bentley", category: "Transport", amount: 800, status: "paid" },
+    { title: "Voiturier", category: "Logistique", amount: 700, status: "paid" },
+    { title: "Sécurité", category: "Logistique", amount: 600, status: "paid" },
+    { title: "Transport invités", category: "Transport", amount: 1100, status: "paid" },
+    { title: "Hôtel mariés", category: "Hébergement", amount: 600, status: "paid" },
+    { title: "Hôtel invités VIP", category: "Hébergement", amount: 1000, status: "paid" },
+    { title: "Photobooth 360", category: "Animation", amount: 750, status: "paid" },
+    { title: "Drone", category: "Photo", amount: 600, status: "paid" },
+    { title: "Impression faire-part", category: "Papeterie", amount: 500, status: "paid" },
+    { title: "Bar à cocktails", category: "Traiteur", amount: 800, status: "paid" },
+    { title: "Serveurs extra", category: "Logistique", amount: 600, status: "paid" },
+    { title: "Hôtesses accueil", category: "Logistique", amount: 400, status: "paid" },
+    { title: "Coordonnateur logistique", category: "Logistique", amount: 500, status: "paid" },
+    { title: "Animation enfants", category: "Animation", amount: 400, status: "paid" },
+    { title: "Éclairage architectural", category: "Technique", amount: 450, status: "paid" },
+    { title: "Création site mariage", category: "Digital", amount: 300, status: "paid" },
   ];
 
   const demoTimeline = [
-    { start: "06:00", end: "07:30", title: "Préparatifs mariée", address: "Hôtel Le Meurice" },
-    { start: "08:00", end: "09:00", title: "Préparatifs marié", address: "Résidence" },
-    { start: "10:00", end: "11:00", title: "Mairie", address: "Mairie du 8e arrondissement" },
-    { start: "12:00", end: "13:30", title: "Cérémonie religieuse", address: "Cathédrale" },
-    { start: "14:00", end: "15:30", title: "Cocktail", address: "Domaine des Lys" },
-    { start: "16:00", end: "17:00", title: "Séance photo couple", address: "Jardins" },
-    { start: "18:00", end: "23:00", title: "Réception & Dîner", address: "Domaine des Lys" },
-    { start: "23:00", end: "04:00", title: "Soirée dansante", address: "Domaine des Lys" },
+    { start: "06:00", end: "08:00", title: "Préparatifs mariée", address: "Suite Présidentielle, Hôtel Renaissance" },
+    { start: "07:00", end: "08:30", title: "Préparatifs marié", address: "Suite VIP, Hôtel Renaissance" },
+    { start: "08:30", end: "10:30", title: "Cérémonie de la Dot", address: "Résidence familiale, Montreuil" },
+    { start: "10:00", end: "11:00", title: "Mairie du 8ème", address: "3 Rue de Lisbonne, Paris" },
+    { start: "11:30", end: "12:30", title: "Cérémonie religieuse", address: "Église Saint-Sulpice, Paris" },
+    { start: "13:00", end: "14:30", title: "Photos couple", address: "Pont Alexandre III" },
+    { start: "15:00", end: "16:30", title: "Vin d'honneur", address: "Jardins Salle Renaissance" },
+    { start: "17:00", end: "17:30", title: "Entrée des mariés", address: "Grande Salle Renaissance" },
+    { start: "18:00", end: "18:30", title: "Danse traditionnelle", address: "Grande Salle Renaissance" },
+    { start: "19:00", end: "20:30", title: "Dîner gastronomique afro", address: "Grande Salle Renaissance" },
+    { start: "19:30", end: "20:00", title: "Show Atalaku", address: "Grande Salle Renaissance" },
+    { start: "21:00", end: "21:30", title: "Coupure du gâteau", address: "Grande Salle Renaissance" },
+    { start: "22:00", end: "23:00", title: "Ouverture de bal", address: "Grande Salle Renaissance" },
+    { start: "23:00", end: "01:00", title: "After Party", address: "Grande Salle Renaissance" },
+    { start: "01:00", end: "03:00", title: "Seben live", address: "Grande Salle Renaissance" },
+    { start: "04:00", end: "04:30", title: "Clôture & départ", address: "Grande Salle Renaissance" },
   ];
 
   return buildBookHtml({
@@ -67,28 +96,37 @@ function buildDemoHtml(): string {
     style, origin1, origin2, totalBudget, paidBudget, depositBudget, budgetDiff,
     budgetItems: demoBudgetItems,
     checklist: [
-      { title: "Réserver la salle", done: true, category: "Lieu", priority: "high" },
-      { title: "Choisir le traiteur", done: true, category: "Traiteur", priority: "high" },
-      { title: "Réserver photographe", done: true, category: "Photo", priority: "high" },
+      { title: "Réserver la salle de réception", done: true, category: "Lieu", priority: "urgent" },
+      { title: "Choisir le traiteur congolais", done: true, category: "Traiteur", priority: "high" },
+      { title: "Réserver photographe & vidéaste", done: true, category: "Photo", priority: "high" },
+      { title: "Organiser la cérémonie de la Dot", done: true, category: "Tradition", priority: "high" },
       { title: "Commander les faire-part", done: true, category: "Papeterie", priority: "medium" },
+      { title: "Choisir la robe & costume", done: true, category: "Tenues", priority: "high" },
+      { title: "Réserver le DJ & groupe live", done: true, category: "Musique", priority: "medium" },
       { title: "Envoyer les invitations", done: true, category: "Invitations", priority: "high" },
       { title: "Finaliser le plan de table", done: true, category: "Organisation", priority: "high" },
+      { title: "Préparer le planning Jour J", done: true, category: "Organisation", priority: "high" },
+      { title: "Confirmer tous les prestataires", done: true, category: "Général", priority: "urgent" },
+      { title: "Relancer les RSVP manquants", done: true, category: "Invités", priority: "high" },
     ],
     planning: [],
     timeline: demoTimeline,
     allGuests: [
-      { first_name: "Amara", last_name: "Diop", group: "Famille marié", status: "confirmed", companions: [], dietary: "" },
-      { first_name: "Fatou", last_name: "N'Guessan", group: "Famille mariée", status: "confirmed", companions: [{ name: "Youssef" }], dietary: "Halal" },
-      { first_name: "Kwame", last_name: "Asante", group: "Amis", status: "confirmed", companions: [], dietary: "" },
-      { first_name: "Aïssatou", last_name: "Ba", group: "Amis", status: "pending", companions: [], dietary: "Végétarien" },
-      { first_name: "Moussa", last_name: "Traoré", group: "Collègues", status: "declined", companions: [], dietary: "" },
+      { first_name: "Amina", last_name: "Diallo", group: "Famille Nadia", status: "confirmed", companions: [{ name: "Ibrahim" }], dietary: "Halal" },
+      { first_name: "Patrick", last_name: "Mbeki", group: "Famille Junior", status: "confirmed", companions: [{ name: "Marie" }, { name: "Léo" }], dietary: "" },
+      { first_name: "Fatou", last_name: "Sow", group: "Amis Paris", status: "confirmed", companions: [], dietary: "" },
+      { first_name: "Christian", last_name: "Nkosi", group: "Famille Junior", status: "confirmed", companions: [{ name: "Sandra" }], dietary: "" },
+      { first_name: "Aïssatou", last_name: "Bah", group: "Famille Nadia", status: "pending", companions: [], dietary: "Végétarien" },
+      { first_name: "Moussa", last_name: "Sylla", group: "Collègues", status: "declined", companions: [], dietary: "" },
     ],
     wishlistItems: [
-      { title: "Voyage de noces Zanzibar", amount: 5000, done: true },
-      { title: "Robot pâtissier", amount: 800, done: true },
-      { title: "Service de table", amount: 400, done: false },
+      { title: "Voyage Zanzibar", amount: 3000, done: true },
+      { title: "TV Samsung 65\"", amount: 1200, done: true },
+      { title: "Service de table Villeroy", amount: 800, done: true },
+      { title: "Salon design", amount: 2400, done: false },
+      { title: "Machine à café Nespresso", amount: 450, done: true },
     ],
-    rsvpConfirmed: 210, rsvpPending: 25, rsvpDeclined: 15,
+    rsvpConfirmed: 212, rsvpPending: 28, rsvpDeclined: 10,
     profileData: { partner_one_first_name: "Nadia", partner_one_last_name: "Mbeki", partner_two_first_name: "Junior", partner_two_last_name: "Kamga" },
     isDemo: true,
   });

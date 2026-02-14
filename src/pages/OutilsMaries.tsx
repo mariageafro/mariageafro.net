@@ -217,11 +217,19 @@ export default function OutilsMaries() {
                     : "Vous visualisez des données de démonstration. Connectez-vous pour créer votre espace."}
                 </p>
               </div>
-              {!user && (
-                <Button variant="gold" size="sm" asChild className="font-body text-xs">
-                  <Link to="/auth">{isEn ? "Sign in" : "Se connecter"}</Link>
+              <div className="flex items-center gap-2">
+                {!user && (
+                  <Button variant="gold" size="sm" asChild className="font-body text-xs">
+                    <Link to="/auth">{isEn ? "Sign in" : "Se connecter"}</Link>
+                  </Button>
+                )}
+                <Button variant="outline" size="sm" asChild className="font-body text-xs gap-1.5">
+                  <Link to="/demo-mariage">
+                    <Eye size={12} />
+                    {isEn ? "Full demo" : "Démo complète"}
+                  </Link>
                 </Button>
-              )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -426,7 +434,7 @@ export default function OutilsMaries() {
                       <div className="flex-1 min-w-0">
                         <p className="font-body text-xs text-foreground truncate">{p.vendor}</p>
                         <p className="font-body text-[10px] text-muted-foreground">
-                          {p.status === "confirmed" ? "✓ Confirmé" : "⏳ En attente"} · ↓ {p.deposit.toLocaleString()} €
+                          {p.status === "confirmed" ? "✓ Confirmé" : p.status === "partial" ? "⏳ Partiel" : "⏳ En attente"} · ↓ {p.deposit.toLocaleString()} €
                         </p>
                       </div>
                       <div className="text-right flex-shrink-0">
