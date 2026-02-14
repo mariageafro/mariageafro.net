@@ -11,6 +11,7 @@ import {
   Heart, CalendarDays, ListChecks, Calculator, Users, Clock,
   MapPin, Sparkles, ChevronRight, CheckCircle2
 } from "lucide-react";
+import { RsvpLiveCounters } from "@/components/wedding/RsvpLiveCounters";
 import { differenceInDays, format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -141,6 +142,9 @@ export default function WeddingDashboard() {
               ))}
             </div>
           </motion.div>
+
+          {/* RSVP Live Counters */}
+          <RsvpLiveCounters />
 
           {/* Upcoming Tasks */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
