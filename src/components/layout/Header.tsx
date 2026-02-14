@@ -16,6 +16,7 @@ const navLinks = [
   { key: "Blog", href: "/blog" },
   { key: "💍 Outils Mariés", href: "/outils-maries" },
   { key: "💒 Mon Mariage", href: "/mon-mariage" },
+  { key: "✨ Voir la démo", href: "/demo-mariage" },
   { key: "Devenir Prestataire", href: "/devenir-prestataire" },
 ];
 
