@@ -20,7 +20,7 @@ const tools = [
   { icon: Heart, slug: "liste-de-souhaits", nameKey: "Liste de souhaits", description_fr: "Créez votre liste de cadeaux en ligne.", description_en: "Create your gift list online." },
   { icon: Bell, slug: "rappels", nameKey: "Rappels", description_fr: "Recevez des notifications pour vos rendez-vous importants.", description_en: "Get notifications for your important appointments." },
   { icon: Clock, slug: "timeline", nameKey: "Timeline Jour J", description_fr: "Planifiez votre journée minute par minute.", description_en: "Plan your wedding day minute by minute." },
-  { icon: Users, slug: "rsvp", nameKey: "RSVP Invités", description_fr: "Gérez les confirmations et les accompagnants.", description_en: "Manage confirmations and companions.", coming: true },
+  { icon: Users, slug: "rsvp", nameKey: "RSVP Invités", description_fr: "Gérez les confirmations et les accompagnants.", description_en: "Manage confirmations and companions." },
 ];
 
 export default function OutilsMaries() {
@@ -114,7 +114,7 @@ export default function OutilsMaries() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.06 }}
               >
-                {tool.coming ? (
+                {('coming' in tool && tool.coming) ? (
                   <div className="card-glass p-6 text-center h-full opacity-60 cursor-default relative">
                     <span className="absolute top-3 right-3 text-[10px] font-body font-medium uppercase tracking-wider text-champagne bg-champagne/10 px-2 py-0.5 rounded-full">
                       {isEn ? "Soon" : "Bientôt"}
@@ -129,7 +129,7 @@ export default function OutilsMaries() {
                   </div>
                 ) : (
                   <Link
-                    to={tool.slug === "timeline" ? "/mon-mariage/jour-j" : `/outils-maries/${tool.slug}`}
+                    to={tool.slug === "timeline" ? "/mon-mariage/jour-j" : tool.slug === "rsvp" ? "/mon-mariage/rsvp" : `/outils-maries/${tool.slug}`}
                     className={`block card-glass p-6 text-center h-full group relative ${
                       tool.accent ? "ring-1 ring-champagne/30" : ""
                     }`}

@@ -20,7 +20,7 @@ const quickLinks = [
   { icon: Calculator, label: "Budget", href: "/outils-maries/budget" },
   { icon: ListChecks, label: "Checklist", href: "/outils-maries/checklist" },
   { icon: Heart, label: "Souhaits", href: "/outils-maries/liste-de-souhaits" },
-  { icon: Users, label: "Invités", href: "/mon-mariage/planning" },
+  { icon: Users, label: "RSVP", href: "/mon-mariage/rsvp" },
 ];
 
 export default function WeddingDashboard() {

@@ -323,7 +323,7 @@ export default function DashboardHub() {
                     { icon: Calculator, label: "Budget", href: "/outils-maries/budget" },
                     { icon: ListChecks, label: "Checklist", href: "/outils-maries/checklist" },
                     { icon: Heart, label: "Souhaits", href: "/outils-maries/liste-de-souhaits" },
-                    { icon: Users, label: "RSVP", href: "/outils-maries" },
+                    { icon: Users, label: "RSVP", href: "/mon-mariage/rsvp" },
                   ].map(link => (
                     <Link key={link.label} to={link.href}
                       className="kpi-card p-3 hover:border-champagne/30 transition-all group">
