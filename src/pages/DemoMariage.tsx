@@ -564,6 +564,12 @@ export default function DemoMariage() {
                             </div>
                             <span className="font-body text-[10px] font-semibold text-primary">{v.cultural_score}%</span>
                           </div>
+                          <Link
+                            to={`/prestataires?search=${encodeURIComponent(v.role)}`}
+                            className="font-body text-[10px] text-primary hover:underline flex items-center gap-1 mt-1.5"
+                          >
+                            <ChevronRight size={9} /> Voir les prestataires
+                          </Link>
                         </motion.div>
                       ))}
                     </div>

@@ -186,6 +186,33 @@ export type Database = {
         }
         Relationships: []
       }
+      cultural_recommendations_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          expires_at: string
+          id: string
+          recommendations: Json
+          user_id: string
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          recommendations: Json
+          user_id: string
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          recommendations?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       day_of_timeline: {
         Row: {
           created_at: string
