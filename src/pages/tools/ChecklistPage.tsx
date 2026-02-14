@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ToolPageWrapper } from "@/components/tools/ToolPageWrapper";
 import { useToolItems } from "@/hooks/use-tool-items";
 import { useToolTranslations } from "@/hooks/use-tool-translations";
@@ -131,9 +132,17 @@ export default function ChecklistPage() {
                   <h3 className="font-serif text-sm text-foreground">{col.label}</h3>
                   <Badge variant="secondary" className="text-[10px]">{colItems.length}</Badge>
                 </div>
-                <div className="space-y-2">
+                <AnimatePresence mode="popLayout">
                   {colItems.map(item => (
-                    <div key={item.id} className="bg-background/60 rounded-lg p-3 border border-border/40 hover:border-primary/30 transition-colors">
+                    <motion.div
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: 20, scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      className="bg-background/60 rounded-lg p-3 border border-border/40 hover:border-primary/30 transition-colors"
+                    >
                       <div className="flex items-start justify-between gap-2 mb-1">
                         <p className={`font-body text-sm font-medium ${item.done ? "line-through text-muted-foreground" : "text-foreground"}`}>{item.title}</p>
                         <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => deleteItem(item.id)}><Trash2 size={12} className="text-destructive" /></Button>
@@ -154,9 +163,9 @@ export default function ChecklistPage() {
                           <Button variant="outline" size="sm" className="h-6 text-[10px] px-2" onClick={() => moveToColumn(item.id, "done")}>{t("Terminé")}</Button>
                         )}
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </AnimatePresence>
               </div>
             );
           })}
