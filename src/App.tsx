@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth-context";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Prestataires from "./pages/Prestataires";
@@ -17,11 +18,18 @@ import DashboardPrestataire from "./pages/DashboardPrestataire";
 import TrouverParPays from "./pages/TrouverParPays";
 import PreatairesPremium from "./pages/PreatairesPremium";
 import OutilsMaries from "./pages/OutilsMaries";
-import AdminDashboard from "./pages/AdminDashboard";
 import CategoryPage from "./pages/CategoryPage";
 import CityPage from "./pages/CityPage";
 import DevenirPrestataire from "./pages/DevenirPrestataire";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AdminLayout } from "./components/admin/AdminLayout";
+import AdminOverview from "./pages/admin/AdminOverview";
+import AdminVendors from "./pages/admin/AdminVendors";
+import AdminMediaPage from "./pages/admin/AdminMediaPage";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminCountries from "./pages/admin/AdminCountries";
+import AdminImport from "./pages/admin/AdminImport";
+import AdminPages from "./pages/admin/AdminPages";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +38,7 @@ const App = () => (
     <AuthProvider>
       <TooltipProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Toaster />
           <Sonner />
           <Routes>
@@ -54,9 +63,17 @@ const App = () => (
             <Route path="/devenir-prestataire" element={<DevenirPrestataire />} />
             <Route path="/admin" element={
               <ProtectedRoute requiredRole="admin">
-                <AdminDashboard />
+                <AdminLayout />
               </ProtectedRoute>
-            } />
+            }>
+              <Route index element={<AdminOverview />} />
+              <Route path="vendors" element={<AdminVendors />} />
+              <Route path="media" element={<AdminMediaPage />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="countries" element={<AdminCountries />} />
+              <Route path="import" element={<AdminImport />} />
+              <Route path="pages" element={<AdminPages />} />
+            </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

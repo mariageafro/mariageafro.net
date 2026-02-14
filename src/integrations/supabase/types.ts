@@ -64,6 +64,36 @@ export type Database = {
           },
         ]
       }
+      admin_logs: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: []
+      }
       avis: {
         Row: {
           approved: boolean
@@ -193,6 +223,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pages: {
+        Row: {
+          content: string | null
+          created_at: string
+          hero_image_url: string | null
+          id: string
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          hero_image_url?: string | null
+          id?: string
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          hero_image_url?: string | null
+          id?: string
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       prestataires: {
         Row: {
@@ -396,6 +456,18 @@ export type Database = {
       admin_approve_review: {
         Args: { _approved: boolean; _review_id: string }
         Returns: undefined
+      }
+      admin_import_prestataire: {
+        Args: {
+          _categorie_id?: string
+          _description?: string
+          _nom_entreprise: string
+          _pays?: string
+          _statut?: Database["public"]["Enums"]["prestataire_statut"]
+          _telephone?: string
+          _ville?: string
+        }
+        Returns: string
       }
       admin_update_prestataire: {
         Args: { _prestataire_id: string; _updates: Json }
