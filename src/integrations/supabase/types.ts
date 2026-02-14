@@ -490,6 +490,66 @@ export type Database = {
         }
         Relationships: []
       }
+      user_tool_items: {
+        Row: {
+          amount: number | null
+          created_at: string
+          date: string | null
+          done: boolean
+          id: string
+          meta: Json | null
+          title: string
+          tool_slug: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          date?: string | null
+          done?: boolean
+          id?: string
+          meta?: Json | null
+          title: string
+          tool_slug: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          date?: string | null
+          done?: boolean
+          id?: string
+          meta?: Json | null
+          title?: string
+          tool_slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_tools: {
+        Row: {
+          data: Json | null
+          id: string
+          tool_slug: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          data?: Json | null
+          id?: string
+          tool_slug: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          data?: Json | null
+          id?: string
+          tool_slug?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
