@@ -33,7 +33,7 @@ const categories = [
 
 export function CategoriesSection() {
   return (
-    <section className="pt-16 md:pt-24 pb-16 md:pb-24 lg:pb-32 bg-gradient-warm relative z-[1] texture-grain my-[194px]">
+    <section className="pt-16 md:pt-24 pb-16 md:pb-24 lg:pb-32 bg-gradient-warm relative z-[1] texture-grain mt-32 md:mt-40">
       <div className="container-editorial">
         {/* Header */}
         <motion.div
