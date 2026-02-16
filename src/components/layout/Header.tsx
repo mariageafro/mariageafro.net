@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin, Shirt } from "lucide-react";
 import { mainCategories, otherCategories } from "@/components/layout/MegaMenuData";
 import { plannerItems } from "@/components/layout/MegaMenuPlannerData";
+import { marieeItems } from "@/components/layout/MegaMenuMarieeData";
+import { marieItems } from "@/components/layout/MegaMenuMarieData";
+import { robesCategories } from "@/components/layout/MegaMenuRobesData";
+import { ideesItems } from "@/components/layout/MegaMenuIdeesData";
+import { communauteThemes, communauteNewItems } from "@/components/layout/MegaMenuCommunauteData";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,17 +16,27 @@ import { useUserRole } from "@/hooks/use-user-role";
 import { useLanguage, translateUI } from "@/contexts/language-context";
 import { MegaMenu } from "@/components/layout/MegaMenu";
 import { MegaMenuPlanner } from "@/components/layout/MegaMenuPlanner";
+import { MegaMenuMariee } from "@/components/layout/MegaMenuMariee";
+import { MegaMenuMarie } from "@/components/layout/MegaMenuMarie";
+import { MegaMenuRobes } from "@/components/layout/MegaMenuRobes";
+import { MegaMenuIdees } from "@/components/layout/MegaMenuIdees";
+import { MegaMenuCommunaute } from "@/components/layout/MegaMenuCommunaute";
 import logo from "@/assets/logo-mariageafro.png";
+
+type MegaMenuKey = "prestataires" | "planner" | "mariee" | "marie" | "robes" | "idees" | "communaute" | null;
 
 const navLinks = [
   { key: "Accueil", href: "/" },
-  { key: "Prestataires", href: "/prestataires" },
+  { key: "Prestataires", href: "/prestataires", megaMenu: "prestataires" as const },
+  { key: "Mariée", href: "/categories/tenues-couture", megaMenu: "mariee" as const },
+  { key: "Marié", href: "/categories/tenues-couture", megaMenu: "marie" as const },
+  { key: "Robes", href: "/categories/tenues-couture", megaMenu: "robes" as const },
+  { key: "Mon Mariage", href: "/mon-mariage", megaMenu: "planner" as const },
+  { key: "Idées", href: "/blog", megaMenu: "idees" as const },
+  { key: "Communauté", href: "/blog", megaMenu: "communaute" as const },
   { key: "Par Pays", href: "/trouver-par-pays" },
   { key: "Premium", href: "/prestataires-premium" },
-  { key: "Blog", href: "/blog" },
-  { key: "Mon Mariage", href: "/mon-mariage", megaMenu: "planner" },
-  { key: "✨ Voir la démo", href: "/demo-mariage" },
-  { key: "Devenir Prestataire", href: "/devenir-prestataire" },
+  { key: "✨ Démo", href: "/demo-mariage" },
 ];
 
 const featuredCategories = [
@@ -33,13 +48,21 @@ const featuredCategories = [
   { name: "Beauté", slug: "coiffure-beaute" },
 ];
 
+const megaMenuComponents: Record<Exclude<MegaMenuKey, null>, React.FC> = {
+  prestataires: MegaMenu,
+  planner: MegaMenuPlanner,
+  mariee: MegaMenuMariee,
+  marie: MegaMenuMarie,
+  robes: MegaMenuRobes,
+  idees: MegaMenuIdees,
+  communaute: MegaMenuCommunaute,
+};
+
 export function Header() {
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
-  const [isPlannerMenuOpen, setIsPlannerMenuOpen] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<MegaMenuKey>(null);
   const megaMenuTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const plannerMenuTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useAuthContext();
   const { role } = useUserRole(user?.id);
@@ -54,6 +77,15 @@ export function Header() {
   const isScrolled = scrollY > 100;
   const isHomePage = location.pathname === "/";
   const showSolid = isScrolled || !isHomePage;
+
+  const openMegaMenu = (key: MegaMenuKey) => {
+    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
+    setActiveMegaMenu(key);
+  };
+
+  const closeMegaMenuDelayed = () => {
+    megaMenuTimeout.current = setTimeout(() => setActiveMegaMenu(null), 200);
+  };
 
   return (
     <header
@@ -79,33 +111,24 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-5">
             {navLinks.map((link) => {
-              const hasMegaMenu = link.href === "/prestataires" || (link as any).megaMenu === "planner";
+              const hasMegaMenu = !!(link as any).megaMenu;
               if (hasMegaMenu) {
-                const isPrestataires = link.href === "/prestataires";
-                const isOpen = isPrestataires ? isMegaMenuOpen : isPlannerMenuOpen;
-                const setOpen = isPrestataires ? setIsMegaMenuOpen : setIsPlannerMenuOpen;
-                const timeoutRef = isPrestataires ? megaMenuTimeout : plannerMenuTimeout;
+                const menuKey = (link as any).megaMenu as Exclude<MegaMenuKey, null>;
                 return (
                   <div
                     key={link.key}
                     className="flex items-center"
-                    onMouseEnter={() => {
-                      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-                      setOpen(true);
-                      // Close other mega menu
-                      if (isPrestataires) setIsPlannerMenuOpen(false);
-                      else setIsMegaMenuOpen(false);
-                    }}
-                    onMouseLeave={() => {
-                      timeoutRef.current = setTimeout(() => setOpen(false), 200);
-                    }}
+                    onMouseEnter={() => openMegaMenu(menuKey)}
+                    onMouseLeave={closeMegaMenuDelayed}
                   >
                     <Link
                       to={link.href}
-                      className={`font-body text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne flex items-center gap-1 ${
+                      className={`font-body text-[11px] xl:text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne flex items-center gap-1 ${
                         showSolid ? "text-chocolate" : "text-ivory"
+                      } ${
+                        activeMegaMenu === menuKey ? "text-champagne" : ""
                       } ${
                         location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
                       }`}
@@ -120,7 +143,7 @@ export function Header() {
                 <Link
                   key={link.key}
                   to={link.href}
-                  className={`font-body text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
+                  className={`font-body text-[11px] xl:text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
                     showSolid ? "text-chocolate" : "text-ivory"
                   } ${
                     location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
@@ -132,25 +155,10 @@ export function Header() {
             })}
           </nav>
 
-           {/* Featured categories quick links + Right side */}
-           <div className="hidden xl:flex items-center gap-2 mx-6 border-l border-champagne/20 pl-6">
-             {featuredCategories.slice(0, 3).map((cat) => (
-               <Link
-                 key={cat.slug}
-                 to={`/categories/${cat.slug}`}
-                 className={`text-xs font-medium px-2 py-1 rounded transition-colors ${
-                   showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
-                 }`}
-               >
-                 {cat.name}
-               </Link>
-             ))}
-           </div>
-
            {/* Right side: Lang + Auth + Mobile toggle */}
            <div className="flex items-center gap-3">
              {/* Language Switcher */}
-             <div className="flex items-center gap-0.5 rounded-full bg-secondary/50 p-0.5">
+             <div className="hidden sm:flex items-center gap-0.5 rounded-full bg-secondary/50 p-0.5">
                <button
                  onClick={() => setLang("fr")}
                  className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
@@ -233,46 +241,23 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mega Menu Panel - full width */}
+      {/* Mega Menu Panels */}
       <AnimatePresence>
-        {isMegaMenuOpen && (
+        {activeMegaMenu && (
           <motion.div
+            key={activeMegaMenu}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.2 }}
             className="hidden lg:block"
-            onMouseEnter={() => {
-              if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
-              setIsMegaMenuOpen(true);
-            }}
-            onMouseLeave={() => {
-              megaMenuTimeout.current = setTimeout(() => setIsMegaMenuOpen(false), 200);
-            }}
+            onMouseEnter={() => openMegaMenu(activeMegaMenu)}
+            onMouseLeave={closeMegaMenuDelayed}
           >
-            <MegaMenu />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Planner Mega Menu Panel - full width */}
-      <AnimatePresence>
-        {isPlannerMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.2 }}
-            className="hidden lg:block"
-            onMouseEnter={() => {
-              if (plannerMenuTimeout.current) clearTimeout(plannerMenuTimeout.current);
-              setIsPlannerMenuOpen(true);
-            }}
-            onMouseLeave={() => {
-              plannerMenuTimeout.current = setTimeout(() => setIsPlannerMenuOpen(false), 200);
-            }}
-          >
-            <MegaMenuPlanner />
+            {(() => {
+              const Component = megaMenuComponents[activeMegaMenu];
+              return <Component />;
+            })()}
           </motion.div>
         )}
       </AnimatePresence>
@@ -326,6 +311,11 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
   const mobileNavItems = [
     { key: "Mon Mariage", href: "/mon-mariage", hasChildren: true },
     { key: "Prestataires", href: "/prestataires", hasChildren: true },
+    { key: "Mariée", href: "/categories/tenues-couture", hasChildren: true },
+    { key: "Marié", href: "/categories/tenues-couture", hasChildren: true },
+    { key: "Robes", href: "/categories/tenues-couture", hasChildren: true },
+    { key: "Idées", href: "/blog", hasChildren: true },
+    { key: "Communauté", href: "/blog", hasChildren: true },
     { key: "Par Pays", href: "/trouver-par-pays", hasChildren: true },
     { key: "Premium", href: "/prestataires-premium" },
     { key: "Blog", href: "/blog" },
@@ -376,11 +366,7 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                             {cat.label}
                           </Link>
                         ))}
-                        <Link
-                          to="/prestataires"
-                          onClick={close}
-                          className="block text-center text-xs text-champagne font-medium py-2 mt-1"
-                        >
+                        <Link to="/prestataires" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1">
                           Voir toutes les catégories →
                         </Link>
                       </div>
@@ -400,6 +386,66 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                               <span className="block">{pi.label}</span>
                               <span className="block text-[11px] text-muted-foreground">{pi.description}</span>
                             </div>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    {item.key === "Mariée" && (
+                      <div className="px-6 py-3 space-y-1">
+                        {marieeItems.map(mi => (
+                          <Link key={mi.label} to={mi.href} onClick={close} className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
+                            <Shirt size={14} className="text-champagne shrink-0" />
+                            {mi.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    {item.key === "Marié" && (
+                      <div className="px-6 py-3 space-y-1">
+                        {marieItems.map(mi => (
+                          <Link key={mi.label} to={mi.href} onClick={close} className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
+                            <Shirt size={14} className="text-champagne shrink-0" />
+                            {mi.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    {item.key === "Robes" && (
+                      <div className="px-6 py-3 space-y-1">
+                        {robesCategories.map(r => (
+                          <Link key={r.label} to={r.href} onClick={close} className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
+                            <Shirt size={14} className="text-champagne shrink-0" />
+                            {r.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    {item.key === "Idées" && (
+                      <div className="px-6 py-3 space-y-1">
+                        {ideesItems.map(i => (
+                          <Link key={i.label} to={i.href} onClick={close} className="block py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
+                            {i.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    {item.key === "Communauté" && (
+                      <div className="px-6 py-3 space-y-1">
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground px-3 py-1">Groupes par thème</p>
+                        {communauteThemes.slice(0, 8).map(c => (
+                          <Link key={c.label} to={c.href} onClick={close} className="block py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
+                            {c.label}
+                          </Link>
+                        ))}
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground px-3 py-1 mt-2">Nouveautés</p>
+                        {communauteNewItems.map(c => (
+                          <Link key={c.label} to={c.href} onClick={close} className="block py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
+                            {c.label}
                           </Link>
                         ))}
                       </div>
@@ -429,11 +475,7 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                             {country.name}
                           </Link>
                         ))}
-                        <Link
-                          to="/trouver-par-pays"
-                          onClick={close}
-                          className="flex items-center gap-2 text-center text-xs text-champagne font-medium py-2 mt-1 justify-center"
-                        >
+                        <Link to="/trouver-par-pays" onClick={close} className="flex items-center gap-2 text-center text-xs text-champagne font-medium py-2 mt-1 justify-center">
                           <MapPin size={12} /> Voir tous les pays →
                         </Link>
                       </div>
