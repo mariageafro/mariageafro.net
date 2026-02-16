@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown } from "lucide-react";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useUserRole } from "@/hooks/use-user-role";
 import { useLanguage, translateUI } from "@/contexts/language-context";
+import { MegaMenu } from "@/components/layout/MegaMenu";
 import logo from "@/assets/logo-mariageafro.png";
 
 const navLinks = [
@@ -33,6 +34,8 @@ const featuredCategories = [
 export function Header() {
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const megaMenuTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useAuthContext();
   const { role } = useUserRole(user?.id);
@@ -73,19 +76,61 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.key}
-                to={link.href}
-                className={`font-body text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
-                  showSolid ? "text-chocolate" : "text-ivory"
-                } ${
-                  location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
-                }`}
-              >
-                {translateUI(link.key, lang)}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isPrestataires = link.href === "/prestataires";
+              if (isPrestataires) {
+                return (
+                  <div
+                    key={link.key}
+                    className="relative h-full flex items-center"
+                    onMouseEnter={() => {
+                      if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
+                      setIsMegaMenuOpen(true);
+                    }}
+                    onMouseLeave={() => {
+                      megaMenuTimeout.current = setTimeout(() => setIsMegaMenuOpen(false), 200);
+                    }}
+                  >
+                    <Link
+                      to={link.href}
+                      className={`font-body text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne flex items-center gap-1 ${
+                        showSolid ? "text-chocolate" : "text-ivory"
+                      } ${
+                        location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
+                      }`}
+                    >
+                      {translateUI(link.key, lang)}
+                      <ChevronDown className="w-3 h-3" />
+                    </Link>
+                    <AnimatePresence>
+                      {isMegaMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <MegaMenu showSolid={showSolid} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+              return (
+                <Link
+                  key={link.key}
+                  to={link.href}
+                  className={`font-body text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
+                    showSolid ? "text-chocolate" : "text-ivory"
+                  } ${
+                    location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
+                  }`}
+                >
+                  {translateUI(link.key, lang)}
+                </Link>
+              );
+            })}
           </nav>
 
            {/* Featured categories quick links + Right side */}
