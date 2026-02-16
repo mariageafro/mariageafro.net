@@ -135,7 +135,7 @@ Deno.serve(async (req) => {
 
     // ── RESPOND (public) ──
     if (path === "respond" && req.method === "POST") {
-      const { token, status, companions, dietary_restrictions, guest_message, email, phone } = await req.json();
+      const { token, status, companions, dietary_restrictions, guest_message, email, phone, menu_choice } = await req.json();
       if (!token || !status) return json({ error: "token and status required" }, 400);
       if (!["confirmed", "declined"].includes(status)) return json({ error: "Invalid status" }, 400);
 
@@ -183,6 +183,7 @@ Deno.serve(async (req) => {
           guest_message: guest_message || null,
           email: email || null,
           phone: phone || null,
+          menu_choice: menu_choice || null,
           responded_at: new Date().toISOString(),
         })
         .eq("token", payload.guest_token);

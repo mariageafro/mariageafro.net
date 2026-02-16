@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Plus, Trash2, Heart, CalendarDays, MapPin, Users } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CheckCircle2, XCircle, Plus, Trash2, Heart, CalendarDays, MapPin, Users, UtensilsCrossed } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Step = "welcome" | "attendance" | "companions" | "details" | "confirmation";
@@ -27,6 +28,7 @@ export default function RsvpPublic() {
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [menuChoice, setMenuChoice] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -76,6 +78,7 @@ export default function RsvpPublic() {
       guest_message: message || undefined,
       email: email || undefined,
       phone: phone || undefined,
+      menu_choice: menuChoice || undefined,
     });
     setSubmitting(false);
     if (result.error) {
@@ -224,10 +227,25 @@ export default function RsvpPublic() {
                   <Input type="tel" placeholder="+33 6 ..." value={phone} onChange={e => setPhone(e.target.value)} />
                 </div>
                 {status === "confirmed" && (
-                  <div>
-                    <label className="font-body text-sm text-muted-foreground mb-1 block">Restrictions alimentaires</label>
-                    <Input placeholder="Végétarien, sans gluten, halal..." value={dietary} onChange={e => setDietary(e.target.value)} />
-                  </div>
+                  <>
+                    <div>
+                      <label className="font-body text-sm text-muted-foreground mb-1 block">
+                        <UtensilsCrossed size={14} className="inline mr-1" />Choix du menu
+                      </label>
+                      <Select value={menuChoice} onValueChange={setMenuChoice}>
+                        <SelectTrigger><SelectValue placeholder="Sélectionnez votre menu" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="afro-fusion">Afro-fusion</SelectItem>
+                          <SelectItem value="traditionnel">Traditionnel</SelectItem>
+                          <SelectItem value="enfant">Menu Enfant</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="font-body text-sm text-muted-foreground mb-1 block">Restrictions alimentaires</label>
+                      <Input placeholder="Végétarien, sans gluten, halal..." value={dietary} onChange={e => setDietary(e.target.value)} />
+                    </div>
+                  </>
                 )}
                 <div>
                   <label className="font-body text-sm text-muted-foreground mb-1 block">Un petit mot pour les mariés 💛</label>

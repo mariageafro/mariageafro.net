@@ -35,6 +35,8 @@ import DayOfTimeline from "./pages/wedding/DayOfTimeline";
 import RsvpManager from "./pages/wedding/RsvpManager";
 import SeatingChart from "./pages/wedding/SeatingChart";
 import RsvpPublic from "./pages/RsvpPublic";
+import WeddingSite from "./pages/wedding/WeddingSite";
+import WeddingSiteEditor from "./pages/wedding/WeddingSiteEditor";
 import DemoMariage from "./pages/DemoMariage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AdminLayout } from "./components/admin/AdminLayout";
@@ -84,7 +86,9 @@ const App = () => (
             <Route path="/mon-mariage/jour-j" element={<DayOfTimeline />} />
             <Route path="/mon-mariage/rsvp" element={<RsvpManager />} />
             <Route path="/mon-mariage/plan-de-table" element={<SeatingChart />} />
+            <Route path="/mon-mariage/site" element={<WeddingSiteEditor />} />
             <Route path="/rsvp/:token" element={<RsvpPublic />} />
+            <Route path="/site/:code" element={<WeddingSite />} />
             <Route path="/demo-mariage" element={<DemoMariage />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/inspiration" element={<Inspiration />} />
