@@ -14,8 +14,9 @@ export function MegaMenuMariee() {
               <Link
                 key={item.label}
                 to={item.href}
-                className="text-sm font-body text-chocolate hover:text-champagne transition-colors py-1.5"
+                className="flex items-center gap-2.5 text-sm font-body text-chocolate hover:text-champagne transition-colors py-1.5 group"
               >
+                {item.icon && <item.icon className="w-4 h-4 text-muted-foreground group-hover:text-champagne transition-colors flex-shrink-0" />}
                 {item.label}
               </Link>
             ))}

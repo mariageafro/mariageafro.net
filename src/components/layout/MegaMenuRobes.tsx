@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Shirt } from "lucide-react";
 import { robesCategories } from "./MegaMenuRobesData";
 
 export function MegaMenuRobes() {
@@ -13,9 +12,9 @@ export function MegaMenuRobes() {
               <Link
                 key={item.label}
                 to={item.href}
-                className="flex items-center gap-3 text-sm font-body text-chocolate hover:text-champagne transition-colors py-2"
+                className="flex items-center gap-3 text-sm font-body text-chocolate hover:text-champagne transition-colors py-2 group"
               >
-                <Shirt className="w-5 h-5 text-muted-foreground" />
+                {item.icon && <item.icon className="w-5 h-5 text-muted-foreground group-hover:text-champagne transition-colors" />}
                 {item.label}
               </Link>
             ))}
