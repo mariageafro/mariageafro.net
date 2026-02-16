@@ -147,12 +147,12 @@ export function TemplateCard({ theme }: TemplateCardProps) {
           >
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
             <div className="relative z-10 flex flex-col items-center gap-3">
-              <Link to="/mon-mariage/onboarding">
+              <Link to={`/templates-mariage/${theme.key}`}>
                 <Button className="btn-gold shadow-lg text-sm px-6">
                   Choisir ce thème
                 </Button>
               </Link>
-              <Link to={`/demo-mariage?theme=${theme.key}`}>
+              <Link to={`/templates-mariage/${theme.key}`}>
                 <Button variant="outline" size="sm" className="bg-white/90 hover:bg-white text-xs gap-1.5">
                   <Eye size={14} /> Aperçu complet
                 </Button>
