@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight } from "lucide-react";
+import { mainCategories, otherCategories } from "@/components/layout/MegaMenuData";
+import { plannerItems } from "@/components/layout/MegaMenuPlannerData";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -278,63 +280,185 @@ export function Header() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-ivory border-t border-border"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.25 }}
+            className="lg:hidden fixed inset-0 top-[56px] z-50 bg-ivory overflow-y-auto"
           >
-            <nav className="container-editorial py-6 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                 <Link
-                   key={link.key}
-                   to={link.href}
-                   onClick={() => setIsMobileMenuOpen(false)}
-                   className={`font-body text-base py-2 text-chocolate hover:text-champagne transition-colors ${
-                     location.pathname === link.href ? "text-champagne font-medium" : ""
-                   }`}
-                 >
-                   {translateUI(link.key, lang)}
-                 </Link>
-               ))}
-
-               {/* Mobile language switcher */}
-               <div className="flex items-center gap-2 py-2 border-t border-border mt-2 pt-4">
-                 <Globe className="w-4 h-4 text-muted-foreground" />
-                 <button onClick={() => { setLang("fr"); }} className={`px-3 py-1 rounded text-sm ${lang === "fr" ? "bg-champagne text-primary-foreground" : "text-muted-foreground"}`}>Français</button>
-                 <button onClick={() => { setLang("en"); }} className={`px-3 py-1 rounded text-sm ${lang === "en" ? "bg-champagne text-primary-foreground" : "text-muted-foreground"}`}>English</button>
-               </div>
-
-               {isAuthenticated ? (
-                 <div className="flex flex-col gap-3 mt-4 border-t border-border pt-4">
-                   {role === 'admin' && (
-                     <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-base py-2 text-chocolate hover:text-champagne flex items-center gap-2">
-                       <Shield className="w-4 h-4" /> Admin
-                     </Link>
-                   )}
-                   {role === 'prestataire' && (
-                     <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-base py-2 text-chocolate hover:text-champagne flex items-center gap-2">
-                       <LayoutDashboard className="w-4 h-4" /> Espace Pro
-                     </Link>
-                   )}
-                   <div className="text-sm text-muted-foreground">{user?.email}</div>
-                   <Button
-                     variant="outline"
-                     className="w-full justify-start"
-                     onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-                   >
-                     <LogOut className="w-4 h-4 mr-2" />
-                     {translateUI("Déconnexion", lang)}
-                   </Button>
-                 </div>
-               ) : (
-                 <Button variant="gold" className="mt-4 w-full" asChild>
-                   <Link to="/auth">{translateUI("Connexion", lang)}</Link>
-                 </Button>
-               )}
-             </nav>
+            <MobileMenuContent
+              lang={lang}
+              setLang={setLang}
+              location={location}
+              isAuthenticated={isAuthenticated}
+              user={user}
+              role={role}
+              signOut={signOut}
+              close={() => setIsMobileMenuOpen(false)}
+            />
           </motion.div>
         )}
       </AnimatePresence>
     </header>
+  );
+}
+
+/* ───────── Mobile Menu with Expandable Sub-menus ───────── */
+
+interface MobileMenuContentProps {
+  lang: "fr" | "en";
+  setLang: (l: "fr" | "en") => void;
+  location: ReturnType<typeof useLocation>;
+  isAuthenticated: boolean;
+  user: any;
+  role: string | null;
+  signOut: () => void;
+  close: () => void;
+}
+
+function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, role, signOut, close }: MobileMenuContentProps) {
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const toggle = (key: string) => {
+    setExpandedSection(prev => prev === key ? null : key);
+  };
+
+  const mobileNavItems = [
+    { key: "Mon Mariage", href: "/mon-mariage", hasChildren: true },
+    { key: "Prestataires", href: "/prestataires", hasChildren: true },
+    { key: "Par Pays", href: "/trouver-par-pays" },
+    { key: "Premium", href: "/prestataires-premium" },
+    { key: "Blog", href: "/blog" },
+    { key: "✨ Voir la démo", href: "/demo-mariage" },
+    { key: "Devenir Prestataire", href: "/devenir-prestataire" },
+  ];
+
+  return (
+    <nav className="flex flex-col">
+      {/* Close button */}
+      <div className="flex justify-end px-5 pt-4">
+        <button onClick={close} className="text-chocolate p-1">
+          <X size={24} />
+        </button>
+      </div>
+
+      {/* Nav items */}
+      <div className="flex flex-col">
+        {mobileNavItems.map((item) => (
+          <div key={item.key} className="border-b border-border/50">
+            {item.hasChildren ? (
+              <>
+                <button
+                  onClick={() => toggle(item.key)}
+                  className="w-full flex items-center justify-between px-6 py-4 font-body text-base text-chocolate hover:text-champagne transition-colors"
+                >
+                  <span>{translateUI(item.key, lang)}</span>
+                  <ChevronRight
+                    size={18}
+                    className={`text-muted-foreground transition-transform duration-200 ${
+                      expandedSection === item.key ? "rotate-90" : ""
+                    }`}
+                  />
+                </button>
+
+                {expandedSection === item.key && (
+                  <div className="bg-muted/30">
+                    {item.key === "Prestataires" && (
+                      <div className="px-6 py-3 space-y-1">
+                        {mainCategories.slice(0, 8).map(cat => (
+                          <Link
+                            key={cat.href + cat.label}
+                            to={cat.href}
+                            onClick={close}
+                            className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
+                          >
+                            <cat.icon size={16} className="text-champagne shrink-0" />
+                            {cat.label}
+                          </Link>
+                        ))}
+                        <Link
+                          to="/prestataires"
+                          onClick={close}
+                          className="block text-center text-xs text-champagne font-medium py-2 mt-1"
+                        >
+                          Voir toutes les catégories →
+                        </Link>
+                      </div>
+                    )}
+
+                    {item.key === "Mon Mariage" && (
+                      <div className="px-6 py-3 space-y-1">
+                        {plannerItems.map(pi => (
+                          <Link
+                            key={pi.href + pi.label}
+                            to={pi.href}
+                            onClick={close}
+                            className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
+                          >
+                            <pi.icon size={16} className="text-champagne shrink-0" />
+                            <div>
+                              <span className="block">{pi.label}</span>
+                              <span className="block text-[11px] text-muted-foreground">{pi.description}</span>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            ) : (
+              <Link
+                to={item.href}
+                onClick={close}
+                className={`block px-6 py-4 font-body text-base text-chocolate hover:text-champagne transition-colors ${
+                  location.pathname === item.href ? "text-champagne font-medium" : ""
+                }`}
+              >
+                {translateUI(item.key, lang)}
+              </Link>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Separator + extras */}
+      <div className="px-6 py-4 border-t border-border mt-2">
+        {/* Language */}
+        <div className="flex items-center gap-2 mb-4">
+          <Globe className="w-4 h-4 text-muted-foreground" />
+          <button onClick={() => setLang("fr")} className={`px-3 py-1 rounded text-sm ${lang === "fr" ? "bg-champagne text-primary-foreground" : "text-muted-foreground"}`}>Français</button>
+          <button onClick={() => setLang("en")} className={`px-3 py-1 rounded text-sm ${lang === "en" ? "bg-champagne text-primary-foreground" : "text-muted-foreground"}`}>English</button>
+        </div>
+
+        {isAuthenticated ? (
+          <div className="flex flex-col gap-3">
+            {role === 'admin' && (
+              <Link to="/admin" onClick={close} className="font-body text-base py-2 text-chocolate hover:text-champagne flex items-center gap-2">
+                <Shield className="w-4 h-4" /> Admin
+              </Link>
+            )}
+            {role === 'prestataire' && (
+              <Link to="/dashboard" onClick={close} className="font-body text-base py-2 text-chocolate hover:text-champagne flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4" /> Espace Pro
+              </Link>
+            )}
+            <div className="text-sm text-muted-foreground">{user?.email}</div>
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => { signOut(); close(); }}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              {translateUI("Déconnexion", lang)}
+            </Button>
+          </div>
+        ) : (
+          <Button variant="gold" className="w-full" asChild>
+            <Link to="/auth" onClick={close}>{translateUI("Connexion", lang)}</Link>
+          </Button>
+        )}
+      </div>
+    </nav>
   );
 }
