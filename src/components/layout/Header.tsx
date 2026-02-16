@@ -21,9 +21,10 @@ import { MegaMenuMarie } from "@/components/layout/MegaMenuMarie";
 import { MegaMenuRobes } from "@/components/layout/MegaMenuRobes";
 import { MegaMenuIdees } from "@/components/layout/MegaMenuIdees";
 import { MegaMenuCommunaute } from "@/components/layout/MegaMenuCommunaute";
+import { MegaMenuPays } from "@/components/layout/MegaMenuPays";
 import logo from "@/assets/logo-mariageafro.png";
 
-type MegaMenuKey = "prestataires" | "planner" | "mariee" | "marie" | "robes" | "idees" | "communaute" | null;
+type MegaMenuKey = "prestataires" | "planner" | "mariee" | "marie" | "robes" | "idees" | "communaute" | "pays" | null;
 
 const navLinks = [
   { key: "Accueil", href: "/" },
@@ -34,7 +35,7 @@ const navLinks = [
   { key: "Mon Mariage", href: "/mon-mariage", megaMenu: "planner" as const },
   { key: "Idées", href: "/blog", megaMenu: "idees" as const },
   { key: "Communauté", href: "/blog", megaMenu: "communaute" as const },
-  { key: "Par Pays", href: "/trouver-par-pays" },
+  { key: "Par Pays", href: "/trouver-par-pays", megaMenu: "pays" as const },
   { key: "Premium", href: "/prestataires-premium" },
   { key: "✨ Démo", href: "/demo-mariage" },
 ];
@@ -56,6 +57,7 @@ const megaMenuComponents: Record<Exclude<MegaMenuKey, null>, React.FC> = {
   robes: MegaMenuRobes,
   idees: MegaMenuIdees,
   communaute: MegaMenuCommunaute,
+  pays: MegaMenuPays,
 };
 
 export function Header() {
