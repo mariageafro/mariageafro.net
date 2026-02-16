@@ -196,7 +196,7 @@ export default function WeddingTemplates() {
 
             {/* ── RSVP Form Preview (like mariages.net) ── */}
             <div className="relative py-20 px-4">
-              <img src={rsvpImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
               <div className="absolute inset-0 bg-black/30" />
               <div className="relative z-10 max-w-md mx-auto">
                 <div className="bg-white rounded-2xl p-8 space-y-5 shadow-xl">
