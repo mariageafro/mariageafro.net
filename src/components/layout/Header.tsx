@@ -82,7 +82,7 @@ export function Header() {
                 return (
                   <div
                     key={link.key}
-                    className="relative h-full flex items-center"
+                    className="flex items-center"
                     onMouseEnter={() => {
                       if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
                       setIsMegaMenuOpen(true);
@@ -102,18 +102,6 @@ export function Header() {
                       {translateUI(link.key, lang)}
                       <ChevronDown className="w-3 h-3" />
                     </Link>
-                    <AnimatePresence>
-                      {isMegaMenuOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -4 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <MegaMenu />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </div>
                 );
               }
@@ -234,7 +222,28 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mega Menu Panel - full width */}
+      <AnimatePresence>
+        {isMegaMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2 }}
+            className="hidden lg:block"
+            onMouseEnter={() => {
+              if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
+              setIsMegaMenuOpen(true);
+            }}
+            onMouseLeave={() => {
+              megaMenuTimeout.current = setTimeout(() => setIsMegaMenuOpen(false), 200);
+            }}
+          >
+            <MegaMenu />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div

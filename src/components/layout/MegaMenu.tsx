@@ -4,7 +4,7 @@ import { mainCategories, otherCategories } from "./MegaMenuData";
 
 export function MegaMenu() {
   return (
-    <div className="absolute top-full left-0 w-full bg-popover shadow-xl border-b border-border z-50">
+    <div className="w-full bg-popover shadow-xl border-b border-border z-50">
       <div className="max-w-6xl mx-auto px-6 pt-8 pb-6">
         {/* Title */}
         <h3 className="font-serif text-lg text-chocolate mb-6">
