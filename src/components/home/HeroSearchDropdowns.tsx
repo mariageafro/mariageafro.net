@@ -88,14 +88,24 @@ export function HeroSearchDropdowns() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close dropdowns on scroll
+  // Close dropdowns on significant scroll
   useEffect(() => {
+    let scrollStart: number | null = null;
     const onScroll = () => {
-      setShowCatDropdown(false);
-      setShowLocDropdown(false);
+      if (scrollStart === null) scrollStart = window.scrollY;
+      if (Math.abs(window.scrollY - scrollStart) > 80) {
+        setShowCatDropdown(false);
+        setShowLocDropdown(false);
+        scrollStart = null;
+      }
     };
+    const onReset = () => { scrollStart = null; };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("scrollend", onReset, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scrollend", onReset);
+    };
   }, []);
 
   const handleSearch = () => {
