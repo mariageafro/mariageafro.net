@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Link, Navigate } from "react-router-dom";
-import { Globe, Copy, ExternalLink, Image, Type } from "lucide-react";
+import { Globe, Copy, ExternalLink, Image, Type, Palette, Check } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { weddingThemes, getWeddingTheme } from "@/lib/wedding-themes";
 
 export default function WeddingSiteEditor() {
   const { user, isLoading: authLoading } = useAuthContext();
@@ -17,12 +18,14 @@ export default function WeddingSiteEditor() {
 
   const [heroUrl, setHeroUrl] = useState("");
   const [welcomeText, setWelcomeText] = useState("");
+  const [selectedTheme, setSelectedTheme] = useState("classic");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (profile) {
       setHeroUrl((profile as any).site_hero_image_url || "");
       setWelcomeText((profile as any).site_welcome_text || "");
+      setSelectedTheme((profile as any).site_theme || "classic");
     }
   }, [profile]);
 
@@ -38,6 +41,7 @@ export default function WeddingSiteEditor() {
     await saveProfile({
       site_hero_image_url: heroUrl || null,
       site_welcome_text: welcomeText || null,
+      site_theme: selectedTheme,
     } as any);
     toast({ title: "Site mis à jour !" });
     setSaving(false);
@@ -46,6 +50,13 @@ export default function WeddingSiteEditor() {
   const copyUrl = () => {
     navigator.clipboard.writeText(siteUrl);
     toast({ title: "Lien copié !" });
+  };
+
+  const themePreviewColors: Record<string, { bg: string; accent: string; text: string }> = {
+    classic: { bg: "bg-[hsl(0,0%,10%)]", accent: "bg-white", text: "text-white" },
+    romantique: { bg: "bg-[hsl(340,25%,35%)]", accent: "bg-[hsl(340,40%,80%)]", text: "text-[hsl(340,30%,95%)]" },
+    moderne: { bg: "bg-[hsl(0,0%,8%)]", accent: "bg-[hsl(45,80%,60%)]", text: "text-white" },
+    tropical: { bg: "bg-[hsl(160,35%,25%)]", accent: "bg-[hsl(45,70%,65%)]", text: "text-[hsl(45,60%,95%)]" },
   };
 
   return (
@@ -83,6 +94,47 @@ export default function WeddingSiteEditor() {
             <p className="text-xs text-center text-muted-foreground font-body">
               Partagez ce QR code sur vos faire-part ou invitations
             </p>
+          </div>
+
+          {/* Theme Selector */}
+          <div className="card-premium p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <Palette size={18} className="text-primary" />
+              <h2 className="font-serif text-xl text-chocolate">Thème de couleurs</h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {Object.values(weddingThemes).map((t) => {
+                const preview = themePreviewColors[t.key];
+                const isSelected = selectedTheme === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setSelectedTheme(t.key)}
+                    className={`relative rounded-xl overflow-hidden border-2 transition-all ${
+                      isSelected ? "border-primary ring-2 ring-primary/30" : "border-transparent hover:border-muted-foreground/30"
+                    }`}
+                  >
+                    {/* Color preview strip */}
+                    <div className={`h-16 ${preview.bg} flex items-center justify-center gap-1`}>
+                      <div className={`w-3 h-3 rounded-full ${preview.accent}`} />
+                      <div className={`w-6 h-px ${preview.accent}`} />
+                      <div className={`w-3 h-3 rounded-full ${preview.accent}`} />
+                    </div>
+                    <div className="p-3 bg-card text-center">
+                      <p className="text-sm font-medium text-foreground">
+                        {t.emoji} {t.label}
+                      </p>
+                      <p className="text-xs text-muted-foreground font-body mt-0.5">{t.description}</p>
+                    </div>
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                        <Check size={12} className="text-primary-foreground" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Customization */}

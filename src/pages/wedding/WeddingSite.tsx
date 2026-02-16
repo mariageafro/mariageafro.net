@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, Link as RouterLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, CalendarDays, MapPin, Clock, Sparkles, Camera, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Heart, MapPin, ChevronDown, Camera } from "lucide-react";
+import { motion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { getWeddingTheme } from "@/lib/wedding-themes";
 
 type Section = "bienvenue" | "rsvp" | "adresses";
 
@@ -53,7 +54,6 @@ export default function WeddingSite() {
       if (!wp) { setError(true); setLoading(false); return; }
       setProfile(wp as any);
 
-      // Fetch day-of timeline if available
       const { data: tl } = await supabase
         .from("day_of_timeline")
         .select("id")
@@ -77,6 +77,8 @@ export default function WeddingSite() {
     setActiveSection(section);
     sectionsRef.current[section]?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const theme = getWeddingTheme(profile?.site_theme);
 
   const coupleName = profile?.couple_display_name ||
     (profile ? `${profile.partner_one_first_name} & ${profile.partner_two_first_name}` : "");
@@ -113,9 +115,9 @@ export default function WeddingSite() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* Fixed Navigation Bar */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-[hsl(0,0%,10%)] text-white">
+      <nav className={`fixed top-0 inset-x-0 z-50 ${theme.nav.bg} ${theme.nav.text}`}>
         <div className="text-center py-3">
           <p className="font-serif text-lg tracking-[0.3em]">{initials}</p>
         </div>
@@ -128,8 +130,10 @@ export default function WeddingSite() {
             <button
               key={item.key}
               onClick={() => scrollTo(item.key)}
-              className={`pb-1 transition-all hover:text-white/80 ${
-                activeSection === item.key ? "border-b border-white text-white" : "text-white/60"
+              className={`pb-1 transition-all hover:opacity-80 ${
+                activeSection === item.key
+                  ? `border-b ${theme.nav.activeBar} ${theme.nav.text}`
+                  : theme.nav.textMuted
               }`}
             >
               {item.label}
@@ -147,9 +151,9 @@ export default function WeddingSite() {
             className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(25,20%,25%)] to-[hsl(25,15%,15%)]" />
+          <div className={`absolute inset-0 bg-gradient-to-b ${theme.hero.fallbackGradient}`} />
         )}
-        <div className="absolute inset-0 bg-black/30" />
+        <div className={`absolute inset-0 ${theme.hero.overlay}`} />
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -169,30 +173,29 @@ export default function WeddingSite() {
       </section>
 
       {/* BIENVENUE Section */}
-      <section ref={el => { sectionsRef.current.bienvenue = el; }} className="py-20 px-4">
+      <section ref={el => { sectionsRef.current.bienvenue = el; }} className={`py-20 px-4 ${theme.welcome.bg}`}>
         <div className="max-w-2xl mx-auto text-center space-y-8">
-          {/* Decorative script */}
-          <p className="font-serif italic text-[hsl(var(--muted-foreground))] text-3xl md:text-4xl">
+          <p className={`font-serif ${theme.welcome.scriptFont} ${theme.welcome.accent} text-3xl md:text-4xl`}>
             our wedding
           </p>
 
-          <p className="font-serif text-lg text-[hsl(var(--foreground))]">Nous nous marions !</p>
+          <p className={`font-serif text-lg ${theme.welcome.heading}`}>Nous nous marions !</p>
 
           {weddingDateFormatted && (
-            <h2 className="font-serif text-4xl md:text-5xl text-[hsl(var(--foreground))] tracking-wider">
+            <h2 className={`font-serif text-4xl md:text-5xl ${theme.welcome.heading} tracking-wider`}>
               {weddingDateFormatted}
             </h2>
           )}
 
           {profile.city && (
-            <p className="font-mono text-sm tracking-wider text-[hsl(var(--muted-foreground))]">
+            <p className={`font-mono text-sm tracking-wider ${theme.welcome.body}`}>
               {profile.city}, {profile.country}
             </p>
           )}
 
-          <div className="w-16 h-px bg-[hsl(var(--border))] mx-auto" />
+          <div className={`w-16 h-px ${theme.welcome.divider} mx-auto`} />
 
-          <h3 className="font-serif text-2xl text-[hsl(var(--foreground))]">Bienvenue à notre mariage !</h3>
+          <h3 className={`font-serif text-2xl ${theme.welcome.heading}`}>Bienvenue à notre mariage !</h3>
 
           {/* Moments / Timeline */}
           {timeline.length > 0 && (
@@ -200,37 +203,37 @@ export default function WeddingSite() {
               {profile.site_hero_image_url ? (
                 <img src={profile.site_hero_image_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-b from-[hsl(25,20%,20%)] to-[hsl(25,15%,12%)]" />
+                <div className={`absolute inset-0 bg-gradient-to-b ${theme.hero.fallbackGradient}`} />
               )}
-              <div className="absolute inset-0 bg-black/60" />
-              <div className="relative z-10 py-10 px-6 text-white text-center space-y-6">
+              <div className={`absolute inset-0 ${theme.moments.overlay}`} />
+              <div className={`relative z-10 py-10 px-6 ${theme.moments.text} text-center space-y-6`}>
                 <h4 className="font-serif italic text-3xl">Moments</h4>
-                <div className="w-12 h-px bg-white/40 mx-auto" />
+                <div className={`w-12 h-px ${theme.moments.divider} mx-auto`} />
                 {timeline.map(item => (
                   <div key={item.id} className="space-y-1">
                     <p className="font-serif font-semibold text-lg">{item.title}</p>
-                    <p className="font-serif italic text-white/80">
+                    <p className={`font-serif italic ${theme.moments.textMuted}`}>
                       {item.start_time?.slice(0, 5).replace(":", "h")}
                       {item.end_time ? ` à ${item.end_time.slice(0, 5).replace(":", "h")}` : ""}
                     </p>
                   </div>
                 ))}
-                <div className="pt-4 border-t border-white/20">
+                <div className={`pt-4 border-t ${theme.moments.divider.replace("bg-", "border-")}`}>
                   <p className="text-xs tracking-widest uppercase">Thème</p>
-                  <p className="font-serif italic text-white/70">Chic & élégant</p>
+                  <p className={`font-serif italic ${theme.moments.textMuted}`}>Chic & élégant</p>
                 </div>
               </div>
             </div>
           )}
 
           {profile.site_welcome_text && (
-            <p className="font-body text-[hsl(var(--muted-foreground))] leading-relaxed max-w-lg mx-auto">
+            <p className={`font-body ${theme.welcome.body} leading-relaxed max-w-lg mx-auto`}>
               {profile.site_welcome_text}
             </p>
           )}
 
           {!profile.site_welcome_text && (
-            <p className="font-body text-[hsl(var(--muted-foreground))] leading-relaxed max-w-lg mx-auto">
+            <p className={`font-body ${theme.welcome.body} leading-relaxed max-w-lg mx-auto`}>
               Votre présence sur ce site est la preuve de votre considération envers notre union.
               Nous avons imaginé cette journée comme un temps de joie, de partage et d'émotion,
               entouré des personnes qui comptent pour nous.
@@ -244,27 +247,25 @@ export default function WeddingSite() {
         {profile.site_hero_image_url ? (
           <img src={profile.site_hero_image_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(25,15%,18%)] to-[hsl(25,10%,12%)]" />
+          <div className={`absolute inset-0 bg-gradient-to-b ${theme.rsvp.fallbackGradient}`} />
         )}
-        <div className="absolute inset-0 bg-black/60" />
+        <div className={`absolute inset-0 ${theme.rsvp.overlay}`} />
 
-        <div className="relative z-10 max-w-md mx-auto text-center text-white space-y-8">
-          {/* Monogram */}
+        <div className={`relative z-10 max-w-md mx-auto text-center ${theme.rsvp.text} space-y-8`}>
           <p className="font-serif text-4xl tracking-wider">{initials.replace(" + ", "")}</p>
 
           <h2 className="font-serif text-3xl md:text-4xl font-bold">
             Confirmation de présence
           </h2>
 
-          <div className="w-16 h-px bg-white/40 mx-auto" />
+          <div className={`w-16 h-px ${theme.rsvp.divider} mx-auto`} />
 
           {profile.wedding_date && (
-            <p className="font-serif text-xl text-white/80">
+            <p className={`font-serif text-xl ${theme.rsvp.textMuted}`}>
               Avant le {format(new Date(new Date(profile.wedding_date).getTime() - 60 * 24 * 60 * 60 * 1000), "dd.MM.yyyy")}
             </p>
           )}
 
-          {/* QR Code */}
           <div className="bg-white rounded-xl p-4 inline-block mx-auto">
             <QRCodeSVG
               value={rsvpUrl || `${window.location.origin}/site/${code}`}
@@ -274,23 +275,23 @@ export default function WeddingSite() {
             />
           </div>
 
-          <p className="text-white/60 text-sm font-body">
+          <p className={`${theme.rsvp.textMuted} text-sm font-body`}>
             Scannez le QR code ou utilisez le lien envoyé par les mariés
           </p>
         </div>
       </section>
 
       {/* ADRESSES Section */}
-      <section ref={el => { sectionsRef.current.adresses = el; }} className="py-20 px-4 bg-white">
+      <section ref={el => { sectionsRef.current.adresses = el; }} className={`py-20 px-4 ${theme.addresses.bg}`}>
         <div className="max-w-2xl mx-auto text-center space-y-8">
-          <h2 className="font-serif text-3xl text-[hsl(var(--foreground))]">Adresses</h2>
+          <h2 className={`font-serif text-3xl ${theme.addresses.heading}`}>Adresses</h2>
 
           {timeline.filter(t => t.address).length > 0 ? (
             <div className="space-y-6">
               {timeline.filter(t => t.address).map(item => (
-                <div key={item.id} className="p-6 rounded-xl border border-[hsl(var(--border))] text-left">
-                  <h3 className="font-serif text-xl text-[hsl(var(--foreground))] mb-2">{item.title}</h3>
-                  <div className="flex items-start gap-2 text-[hsl(var(--muted-foreground))] font-body text-sm">
+                <div key={item.id} className={`p-6 rounded-xl border ${theme.addresses.border} text-left`}>
+                  <h3 className={`font-serif text-xl ${theme.addresses.heading} mb-2`}>{item.title}</h3>
+                  <div className={`flex items-start gap-2 ${theme.addresses.body} font-body text-sm`}>
                     <MapPin size={16} className="shrink-0 mt-0.5" />
                     <p>{item.address}</p>
                   </div>
@@ -299,7 +300,7 @@ export default function WeddingSite() {
                       href={item.google_maps_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 mt-3 text-sm font-body text-[hsl(var(--primary))] hover:underline"
+                      className={`inline-flex items-center gap-1 mt-3 text-sm font-body ${theme.addresses.link} hover:underline`}
                     >
                       <MapPin size={14} /> Voir sur Google Maps
                     </a>
@@ -308,9 +309,9 @@ export default function WeddingSite() {
               ))}
             </div>
           ) : (
-            <div className="p-8 rounded-xl border border-[hsl(var(--border))]">
-              <MapPin size={32} className="mx-auto mb-4 text-[hsl(var(--muted-foreground))]" />
-              <p className="font-body text-[hsl(var(--muted-foreground))]">
+            <div className={`p-8 rounded-xl border ${theme.addresses.border}`}>
+              <MapPin size={32} className={`mx-auto mb-4 ${theme.addresses.body}`} />
+              <p className={`font-body ${theme.addresses.body}`}>
                 {profile.city
                   ? `Le mariage se déroulera à ${profile.city}, ${profile.country}. Les adresses exactes seront communiquées prochainement.`
                   : "Les adresses seront communiquées prochainement."}
@@ -321,13 +322,13 @@ export default function WeddingSite() {
       </section>
 
       {/* Wedshoots Promo Section */}
-      <section className="py-16 px-4 bg-[hsl(var(--secondary))]">
+      <section className={`py-16 px-4 ${theme.welcome.bg}`}>
         <div className="max-w-md mx-auto text-center space-y-6">
-          <Camera size={40} className="mx-auto text-[hsl(var(--primary))]" />
-          <h3 className="font-serif text-2xl text-[hsl(var(--foreground))]">
+          <Camera size={40} className={`mx-auto ${theme.welcome.accent}`} />
+          <h3 className={`font-serif text-2xl ${theme.welcome.heading}`}>
             Album photo partagé
           </h3>
-          <p className="font-body text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">
+          <p className={`font-body text-sm ${theme.welcome.body} leading-relaxed`}>
             Retrouvez toutes les photos prises par les invités le jour J !
             Téléchargez l'application Wedshoots et partagez vos plus beaux clichés dans l'album commun du mariage.
           </p>
@@ -335,7 +336,15 @@ export default function WeddingSite() {
             href="https://www.wedshoots.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-body text-sm hover:opacity-90 transition-opacity"
+            className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-body text-sm transition-opacity hover:opacity-90 ${
+              theme.key === "romantique"
+                ? "bg-[hsl(340,35%,55%)] text-white"
+                : theme.key === "tropical"
+                  ? "bg-[hsl(160,40%,35%)] text-white"
+                  : theme.key === "moderne"
+                    ? "bg-[hsl(45,80%,50%)] text-[hsl(0,0%,10%)]"
+                    : "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
+            }`}
           >
             <Camera size={16} />
             Toutes les photos prises par vos invités
@@ -344,9 +353,9 @@ export default function WeddingSite() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 text-center bg-[hsl(0,0%,10%)] text-white/40">
+      <footer className={`py-8 text-center ${theme.footer.bg} ${theme.footer.text}`}>
         <p className="font-body text-xs">
-          Fait avec amour sur <span className="text-white/60">MariageAfro</span> ✨
+          Fait avec amour sur <span className={theme.footer.highlight}>MariageAfro</span> ✨
         </p>
       </footer>
     </div>
