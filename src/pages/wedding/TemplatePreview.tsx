@@ -242,6 +242,15 @@ export default function TemplatePreview() {
           </div>
         </div>
       </section>
+
+      {/* Floating mobile CTA */}
+      <div className="fixed bottom-0 inset-x-0 z-50 lg:hidden bg-card/95 backdrop-blur-md border-t border-border px-4 py-3 safe-bottom">
+        <Link to="/mon-mariage/onboarding" className="block">
+          <Button className="w-full btn-gold text-sm py-5 shadow-lg gap-2">
+            <Heart size={16} className="fill-current" /> Créer mon site de mariage
+          </Button>
+        </Link>
+      </div>
     </Layout>
   );
 }
