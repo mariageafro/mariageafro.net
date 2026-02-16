@@ -10,7 +10,7 @@ const stats = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center z-20">
+    <section className="relative min-h-screen flex items-center justify-center z-0">
       {/* Background Image */}
       <div className="absolute inset-0 overflow-hidden">
         <img
