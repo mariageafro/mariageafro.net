@@ -110,7 +110,7 @@ export function Header() {
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <MegaMenu showSolid={showSolid} />
+                          <MegaMenu />
                         </motion.div>
                       )}
                     </AnimatePresence>
