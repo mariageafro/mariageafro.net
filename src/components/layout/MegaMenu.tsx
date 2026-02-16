@@ -1,57 +1,75 @@
 import { Link } from "react-router-dom";
-import { megaMenuCategories } from "./MegaMenuData";
+import { Plane, Sparkles } from "lucide-react";
+import { mainCategories, otherCategories } from "./MegaMenuData";
 
-interface MegaMenuProps {
-  showSolid: boolean;
-}
-
-export function MegaMenu({ showSolid }: MegaMenuProps) {
+export function MegaMenu() {
   return (
-    <div className="absolute top-full left-0 w-full bg-popover shadow-xl border-b border-border z-50 animate-fade-in">
-      <div className="max-w-7xl mx-auto p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-        {megaMenuCategories.map((cat, idx) => {
-          const Icon = cat.icon;
-          return (
-            <div key={idx} className="flex flex-col gap-3">
-              <div className="flex items-center gap-2 text-champagne border-b border-border pb-2 mb-1">
-                <Icon className="w-4 h-4" />
-                <h3 className="font-serif text-xs uppercase tracking-widest font-semibold">
-                  {cat.title}
-                </h3>
-              </div>
-              <ul className="space-y-1.5">
-                {cat.items.map((item, i) => (
-                  <li key={i}>
-                    <Link
-                      to={item.href}
-                      className={`text-sm font-body block transition-colors ${
-                        item.highlight
-                          ? "text-destructive font-semibold"
-                          : "text-muted-foreground hover:text-champagne"
-                      }`}
-                    >
-                      {item.label}
-                      {item.info && (
-                        <span className="block text-[10px] text-muted-foreground/60 font-normal">
-                          {item.info}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
+    <div className="absolute top-full left-0 w-full bg-popover shadow-xl border-b border-border z-50">
+      <div className="max-w-6xl mx-auto px-6 pt-8 pb-6">
+        {/* Title */}
+        <h3 className="font-serif text-lg text-chocolate mb-6">
+          Commencez à rechercher vos prestataires
+        </h3>
+
+        {/* Main categories grid */}
+        <div className="grid grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-4 mb-8">
+          {mainCategories.map((cat) => {
+            const Icon = cat.icon;
+            return (
+              <Link
+                key={cat.label}
+                to={cat.href}
+                className="flex items-center gap-3 group py-1.5 transition-colors"
+              >
+                <Icon className="w-5 h-5 text-muted-foreground group-hover:text-champagne transition-colors flex-shrink-0" />
+                <span className="text-sm font-body text-chocolate group-hover:text-champagne transition-colors">
+                  {cat.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-border pt-5">
+          <p className="text-xs font-body uppercase tracking-widest text-muted-foreground mb-3">
+            Autres catégories
+          </p>
+          <div className="flex flex-wrap gap-x-5 gap-y-2">
+            {otherCategories.map((cat) => (
+              <Link
+                key={cat.label}
+                to={cat.href}
+                className={`text-sm font-body transition-colors ${
+                  cat.highlight
+                    ? "text-destructive font-semibold hover:text-destructive/80"
+                    : "text-muted-foreground hover:text-champagne"
+                }`}
+              >
+                {cat.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="bg-secondary/50 p-4 text-center border-t border-border">
-        <p className="text-sm text-muted-foreground font-body">
-          Besoin d'aide ? Découvrez nos{" "}
-          <Link to="/blog" className="text-champagne underline">
-            guides d'organisation par culture
+
+      {/* Promo strip */}
+      <div className="border-t border-border bg-secondary/40">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Plane className="w-5 h-5 text-champagne" />
+            <div>
+              <p className="text-sm font-body font-semibold text-chocolate">Destination Weddings</p>
+              <p className="text-xs text-muted-foreground">Mariez-vous dans le pays de vos rêves.</p>
+            </div>
+          </div>
+          <Link
+            to="/blog"
+            className="text-xs font-body text-champagne underline hover:text-champagne-dark transition-colors"
+          >
+            Guides par culture →
           </Link>
-          .
-        </p>
+        </div>
       </div>
     </div>
   );
