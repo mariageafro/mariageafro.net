@@ -8,6 +8,7 @@ import { useAuthContext } from "@/contexts/auth-context";
 import { useUserRole } from "@/hooks/use-user-role";
 import { useLanguage, translateUI } from "@/contexts/language-context";
 import { MegaMenu } from "@/components/layout/MegaMenu";
+import { MegaMenuPlanner } from "@/components/layout/MegaMenuPlanner";
 import logo from "@/assets/logo-mariageafro.png";
 
 const navLinks = [
@@ -16,8 +17,7 @@ const navLinks = [
   { key: "Par Pays", href: "/trouver-par-pays" },
   { key: "Premium", href: "/prestataires-premium" },
   { key: "Blog", href: "/blog" },
-  { key: "💍 Outils Mariés", href: "/outils-maries" },
-  { key: "💒 Mon Mariage", href: "/mon-mariage" },
+  { key: "Mon Mariage", href: "/mon-mariage", megaMenu: "planner" },
   { key: "✨ Voir la démo", href: "/demo-mariage" },
   { key: "Devenir Prestataire", href: "/devenir-prestataire" },
 ];
@@ -35,7 +35,9 @@ export function Header() {
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [isPlannerMenuOpen, setIsPlannerMenuOpen] = useState(false);
   const megaMenuTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const plannerMenuTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useAuthContext();
   const { role } = useUserRole(user?.id);
@@ -77,18 +79,25 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => {
-              const isPrestataires = link.href === "/prestataires";
-              if (isPrestataires) {
+              const hasMegaMenu = link.href === "/prestataires" || (link as any).megaMenu === "planner";
+              if (hasMegaMenu) {
+                const isPrestataires = link.href === "/prestataires";
+                const isOpen = isPrestataires ? isMegaMenuOpen : isPlannerMenuOpen;
+                const setOpen = isPrestataires ? setIsMegaMenuOpen : setIsPlannerMenuOpen;
+                const timeoutRef = isPrestataires ? megaMenuTimeout : plannerMenuTimeout;
                 return (
                   <div
                     key={link.key}
                     className="flex items-center"
                     onMouseEnter={() => {
-                      if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
-                      setIsMegaMenuOpen(true);
+                      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                      setOpen(true);
+                      // Close other mega menu
+                      if (isPrestataires) setIsPlannerMenuOpen(false);
+                      else setIsMegaMenuOpen(false);
                     }}
                     onMouseLeave={() => {
-                      megaMenuTimeout.current = setTimeout(() => setIsMegaMenuOpen(false), 200);
+                      timeoutRef.current = setTimeout(() => setOpen(false), 200);
                     }}
                   >
                     <Link
@@ -240,6 +249,28 @@ export function Header() {
             }}
           >
             <MegaMenu />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Planner Mega Menu Panel - full width */}
+      <AnimatePresence>
+        {isPlannerMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2 }}
+            className="hidden lg:block"
+            onMouseEnter={() => {
+              if (plannerMenuTimeout.current) clearTimeout(plannerMenuTimeout.current);
+              setIsPlannerMenuOpen(true);
+            }}
+            onMouseLeave={() => {
+              plannerMenuTimeout.current = setTimeout(() => setIsPlannerMenuOpen(false), 200);
+            }}
+          >
+            <MegaMenuPlanner />
           </motion.div>
         )}
       </AnimatePresence>
