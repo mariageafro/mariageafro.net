@@ -1,31 +1,75 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Search, MapPin, Navigation, Loader2, ChevronDown } from "lucide-react";
 import {
-  Camera, Video, Music, Utensils, Car, Bus, Palette,
+  Camera, Video, Music, Utensils, Car, Palette,
   PartyPopper, Layout, Scissors, Crown, FileText, Gift, MapPin as MapPinIcon,
+  Building2, Castle, Hotel, Church, Tent, Ship, UtensilsCrossed,
+  Flower2, ClipboardList, Clapperboard, Moon, Cake, Shirt, Gem, Sparkles,
+  Heart, CheckSquare, Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { RADIUS_OPTIONS } from "@/lib/priority-cities";
 
-/* ── Category Data ── */
-const searchCategories = [
-  { icon: Camera, label: "Photo mariage", slug: "photographe" },
-  { icon: Video, label: "Vidéo mariage", slug: "videaste" },
-  { icon: Music, label: "Musique mariage", slug: "dj-musique" },
+/* ── Category Groups (mariages.net style) ── */
+interface CatItem { icon: typeof Camera; label: string; slug: string; highlight?: boolean }
+
+const col1Items: CatItem[] = [
+  { icon: MapPinIcon, label: "Lieux de mariage", slug: "salle-lieu" },
+  { icon: Building2, label: "Domaine mariage", slug: "salle-lieu" },
+  { icon: Hotel, label: "Auberge mariage", slug: "salle-lieu" },
+  { icon: Hotel, label: "Hôtel mariage", slug: "salle-lieu" },
+  { icon: Utensils, label: "Restaurant mariage", slug: "salle-lieu" },
+  { icon: Building2, label: "Salle mariage", slug: "salle-lieu" },
+  { icon: Castle, label: "Château mariage", slug: "salle-lieu", highlight: true },
+  { icon: Ship, label: "Bateau mariage", slug: "salle-lieu" },
+  { icon: MapPinIcon, label: "Mariages à la plage", slug: "salle-lieu" },
   { icon: Utensils, label: "Traiteur mariage", slug: "traiteur" },
-  { icon: Car, label: "Voiture mariage", slug: "transport" },
-  { icon: Bus, label: "Bus mariage", slug: "transport" },
-  { icon: MapPinIcon, label: "Salle & Lieu", slug: "salle-lieu" },
-  { icon: Palette, label: "Décoration mariage", slug: "decoration" },
-  { icon: PartyPopper, label: "Animation mariage", slug: "animation" },
-  { icon: Layout, label: "Wedding Planner", slug: "wedding-planner" },
-  { icon: Scissors, label: "Tenues & Couture", slug: "tenues-couture" },
-  { icon: Crown, label: "Coiffure & Beauté", slug: "coiffure-beaute" },
-  { icon: FileText, label: "Faire-part mariage", slug: "faire-part" },
-  { icon: Gift, label: "Cadeaux invités", slug: "cadeaux-invites" },
+  { icon: FileText, label: "Faire part mariage", slug: "faire-part" },
+  { icon: Gift, label: "Cadeaux invités mariage", slug: "cadeaux-invites" },
+  { icon: Camera, label: "Photo mariage", slug: "photographe" },
 ];
+
+const col2Items: CatItem[] = [
+  { icon: Music, label: "Musique mariage", slug: "dj-musique" },
+  { icon: Car, label: "Voiture mariage", slug: "transport" },
+  { icon: Car, label: "Bus mariage", slug: "transport" },
+  { icon: Palette, label: "Décoration mariage", slug: "decoration" },
+  { icon: Tent, label: "Chapiteau mariage", slug: "salle-lieu" },
+  { icon: PartyPopper, label: "Animation mariage", slug: "animation" },
+  { icon: Flower2, label: "Fleurs mariage", slug: "decoration" },
+  { icon: ClipboardList, label: "Liste de mariage", slug: "liste" },
+  { icon: Layout, label: "Organisation mariage", slug: "wedding-planner" },
+  { icon: Clapperboard, label: "Vidéo mariage", slug: "videaste" },
+  { icon: Moon, label: "Lune de miel", slug: "lune-de-miel" },
+  { icon: Cake, label: "Wedding cake", slug: "traiteur" },
+];
+
+const col3Items: CatItem[] = [
+  { icon: Church, label: "Officiants", slug: "officiants" },
+  { icon: UtensilsCrossed, label: "Food Truck", slug: "traiteur" },
+  { icon: Crown, label: "Vin et Spiritueux", slug: "traiteur" },
+  { icon: Gem, label: "Bijoux mariage", slug: "tenues-couture" },
+];
+
+const marieeItems: CatItem[] = [
+  { icon: Shirt, label: "Robe de mariée", slug: "tenues-couture" },
+  { icon: Sparkles, label: "Accessoires mariage", slug: "tenues-couture" },
+  { icon: Shirt, label: "Robe de cocktail", slug: "tenues-couture" },
+  { icon: Scissors, label: "Esthétique coiffure mariage", slug: "coiffure-beaute" },
+];
+
+const marieItems: CatItem[] = [
+  { icon: Shirt, label: "Costumes mariage", slug: "tenues-couture" },
+  { icon: Heart, label: "Soins beauté", slug: "coiffure-beaute" },
+  { icon: Sparkles, label: "Accessoires marié", slug: "tenues-couture" },
+];
+
+/* ── Flat list for mobile ── */
+const searchCategories = [
+  ...col1Items, ...col2Items, ...col3Items, ...marieeItems, ...marieItems,
+].filter((item, index, arr) => arr.findIndex(i => i.label === item.label) === index);
 
 /* ── Location Data ── */
 const regions = [
@@ -150,23 +194,123 @@ export function HeroSearchDropdowns() {
 
           {/* Category Dropdown */}
           {showCatDropdown && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-border z-50 max-h-[420px] overflow-y-auto">
-              <div className="grid grid-cols-2 gap-0">
-                {searchCategories.map((cat) => {
-                  const Icon = cat.icon;
-                  return (
-                    <button
-                      key={cat.slug + cat.label}
-                      onClick={() => selectCategory(cat.slug, cat.label)}
-                      className={`flex items-center gap-3 px-5 py-3.5 text-left hover:bg-champagne/5 transition-colors border-b border-border/30 ${
-                        categorie === cat.slug ? "text-champagne bg-champagne/5" : "text-chocolate"
-                      }`}
+            <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border border-border z-50 w-[720px] max-h-[520px] overflow-y-auto">
+              <div className="grid grid-cols-3 gap-0 divide-x divide-border/30 p-2">
+                {/* Column 1 */}
+                <div className="space-y-0.5 pr-2">
+                  {col1Items.map((cat) => {
+                    const Icon = cat.icon;
+                    const isHeader = cat.label === "Lieux de mariage";
+                    return (
+                      <button
+                        key={cat.label}
+                        onClick={() => selectCategory(cat.slug, cat.label)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-lg transition-colors ${
+                          cat.highlight ? "text-champagne font-medium" : ""
+                        } ${isHeader ? "font-semibold text-chocolate" : ""} ${
+                          categorie === cat.slug && categorieLabel === cat.label ? "bg-champagne/10 text-champagne" : "text-chocolate hover:bg-muted/50"
+                        }`}
+                      >
+                        <Icon size={16} className={`shrink-0 ${cat.highlight ? "text-champagne" : "text-muted-foreground"}`} />
+                        <span className="font-body text-sm">{cat.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Column 2 */}
+                <div className="space-y-0.5 px-2">
+                  {col2Items.map((cat) => {
+                    const Icon = cat.icon;
+                    const isHeader = cat.label === "Musique mariage";
+                    return (
+                      <button
+                        key={cat.label}
+                        onClick={() => selectCategory(cat.slug, cat.label)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-lg transition-colors ${
+                          isHeader ? "font-semibold text-chocolate" : ""
+                        } ${categorie === cat.slug && categorieLabel === cat.label ? "bg-champagne/10 text-champagne" : "text-chocolate hover:bg-muted/50"}`}
+                      >
+                        <Icon size={16} className="text-muted-foreground shrink-0" />
+                        <span className="font-body text-sm">{cat.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Column 3 */}
+                <div className="space-y-0.5 pl-2">
+                  {col3Items.map((cat) => {
+                    const Icon = cat.icon;
+                    const isHeader = cat.label === "Officiants";
+                    return (
+                      <button
+                        key={cat.label}
+                        onClick={() => selectCategory(cat.slug, cat.label)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-lg transition-colors ${
+                          isHeader ? "font-semibold text-chocolate" : ""
+                        } ${categorie === cat.slug && categorieLabel === cat.label ? "bg-champagne/10 text-champagne" : "text-chocolate hover:bg-muted/50"}`}
+                      >
+                        <Icon size={16} className="text-muted-foreground shrink-0" />
+                        <span className="font-body text-sm">{cat.label}</span>
+                      </button>
+                    );
+                  })}
+
+                  {/* Mariée section */}
+                  <div className="pt-3 mt-2 border-t border-border/30">
+                    <p className="flex items-center gap-2 px-3 py-2 font-semibold text-chocolate font-body text-sm">
+                      <Shirt size={16} className="text-muted-foreground" /> Mariée
+                    </p>
+                    {marieeItems.map((cat) => {
+                      const Icon = cat.icon;
+                      return (
+                        <button
+                          key={cat.label}
+                          onClick={() => selectCategory(cat.slug, cat.label)}
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-lg transition-colors ${
+                            categorie === cat.slug && categorieLabel === cat.label ? "bg-champagne/10 text-champagne" : "text-chocolate hover:bg-muted/50"
+                          }`}
+                        >
+                          <span className="font-body text-sm ml-6">{cat.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Marié section */}
+                  <div className="pt-3 mt-2 border-t border-border/30">
+                    <p className="flex items-center gap-2 px-3 py-2 font-semibold text-chocolate font-body text-sm">
+                      <Shirt size={16} className="text-muted-foreground" /> Marié
+                    </p>
+                    {marieItems.map((cat) => (
+                      <button
+                        key={cat.label}
+                        onClick={() => selectCategory(cat.slug, cat.label)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-lg transition-colors ${
+                          categorie === cat.slug && categorieLabel === cat.label ? "bg-champagne/10 text-champagne" : "text-chocolate hover:bg-muted/50"
+                        }`}
+                      >
+                        <span className="font-body text-sm ml-6">{cat.label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Outils card */}
+                  <div className="mt-4 p-4 rounded-xl border border-border bg-muted/20">
+                    <p className="font-serif text-sm font-semibold text-chocolate mb-1">Outils d'organisation</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-2">
+                      Liste de tâches, Budget, Plan de table et autres outils pratiques et gratuits !
+                    </p>
+                    <Link
+                      to="/outils-maries"
+                      onClick={() => setShowCatDropdown(false)}
+                      className="text-xs font-semibold text-champagne hover:text-champagne-dark transition-colors"
                     >
-                      <Icon size={18} className="text-muted-foreground shrink-0" />
-                      <span className="font-body text-sm">{cat.label}</span>
-                    </button>
-                  );
-                })}
+                      Découvrez nos outils
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           )}
