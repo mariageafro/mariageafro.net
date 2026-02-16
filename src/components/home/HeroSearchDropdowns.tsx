@@ -108,7 +108,7 @@ export function HeroSearchDropdowns() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto relative z-50">
       {/* ─── Desktop ─── */}
       <div className="hidden sm:flex bg-ivory/95 backdrop-blur-sm rounded-2xl shadow-elegant overflow-visible relative">
         {/* Category input */}
