@@ -199,6 +199,7 @@ export async function submitRsvpResponse(token: string, data: {
   guest_message?: string;
   email?: string;
   phone?: string;
+  menu_choice?: string;
 }) {
   const res = await fetch(
     `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rsvp-public/respond`,

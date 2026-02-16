@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   Heart, CalendarDays, ListChecks, Calculator, Users, Clock,
-  MapPin, Sparkles, ChevronRight, CheckCircle2, FileText
+  MapPin, Sparkles, ChevronRight, CheckCircle2, FileText, Globe
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { RsvpLiveCounters } from "@/components/wedding/RsvpLiveCounters";
@@ -22,8 +22,8 @@ const quickLinks = [
   { icon: Clock, label: "Jour J", href: "/mon-mariage/jour-j" },
   { icon: Calculator, label: "Budget", href: "/outils-maries/budget" },
   { icon: ListChecks, label: "Checklist", href: "/outils-maries/checklist" },
-  { icon: Heart, label: "Souhaits", href: "/outils-maries/liste-de-souhaits" },
   { icon: Users, label: "RSVP", href: "/mon-mariage/rsvp" },
+  { icon: Globe, label: "Mon site", href: "/mon-mariage/site" },
 ];
 
 export default function WeddingDashboard() {

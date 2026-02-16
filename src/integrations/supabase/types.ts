@@ -670,6 +670,7 @@ export type Database = {
           id: string
           last_name: string | null
           max_companions: number
+          menu_choice: string | null
           phone: string | null
           responded_at: string | null
           status: string
@@ -688,6 +689,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           max_companions?: number
+          menu_choice?: string | null
           phone?: string | null
           responded_at?: string | null
           status?: string
@@ -706,6 +708,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           max_companions?: number
+          menu_choice?: string | null
           phone?: string | null
           responded_at?: string | null
           status?: string
@@ -859,6 +862,10 @@ export type Database = {
           partner_one_last_name: string | null
           partner_two_first_name: string
           partner_two_last_name: string | null
+          site_hero_image_url: string | null
+          site_share_code: string | null
+          site_theme: string | null
+          site_welcome_text: string | null
           updated_at: string
           user_id: string
           wedding_date: string | null
@@ -882,6 +889,10 @@ export type Database = {
           partner_one_last_name?: string | null
           partner_two_first_name: string
           partner_two_last_name?: string | null
+          site_hero_image_url?: string | null
+          site_share_code?: string | null
+          site_theme?: string | null
+          site_welcome_text?: string | null
           updated_at?: string
           user_id: string
           wedding_date?: string | null
@@ -905,6 +916,10 @@ export type Database = {
           partner_one_last_name?: string | null
           partner_two_first_name?: string
           partner_two_last_name?: string | null
+          site_hero_image_url?: string | null
+          site_share_code?: string | null
+          site_theme?: string | null
+          site_welcome_text?: string | null
           updated_at?: string
           user_id?: string
           wedding_date?: string | null
