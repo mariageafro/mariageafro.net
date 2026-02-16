@@ -18,7 +18,7 @@ export const mainCategories: MegaMenuItem[] = [
   { label: "Musique mariage", icon: Music, href: "/categories/dj-musique" },
   { label: "Traiteur mariage", icon: Utensils, href: "/categories/traiteur" },
   { label: "Voiture mariage", icon: Car, href: "/categories/transport" },
-  { label: "Bus mariage", icon: Bus, href: "/categories/transport" },
+  { label: "Wedding Planner", icon: Layout, href: "/categories/wedding-planner" },
   { label: "Salle & Lieu", icon: MapPin, href: "/categories/salle-lieu" },
   { label: "Décoration mariage", icon: Palette, href: "/categories/decoration" },
   { label: "Faire-part mariage", icon: FileText, href: "/prestataires" },
