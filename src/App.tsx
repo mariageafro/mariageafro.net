@@ -38,6 +38,7 @@ import RsvpPublic from "./pages/RsvpPublic";
 import WeddingSite from "./pages/wedding/WeddingSite";
 import WeddingSiteEditor from "./pages/wedding/WeddingSiteEditor";
 import WeddingTemplates from "./pages/wedding/WeddingTemplates";
+import TemplatePreview from "./pages/wedding/TemplatePreview";
 import DemoMariage from "./pages/DemoMariage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AdminLayout } from "./components/admin/AdminLayout";
@@ -91,6 +92,7 @@ const App = () => (
             <Route path="/rsvp/:token" element={<RsvpPublic />} />
             <Route path="/site/:code" element={<WeddingSite />} />
             <Route path="/templates-mariage" element={<WeddingTemplates />} />
+            <Route path="/templates-mariage/:themeKey" element={<TemplatePreview />} />
             <Route path="/demo-mariage" element={<DemoMariage />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/inspiration" element={<Inspiration />} />
