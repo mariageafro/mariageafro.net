@@ -14,7 +14,7 @@ export interface PlannerMenuItem {
 export const plannerItems: PlannerMenuItem[] = [
   { label: "Tâches", description: "Checklist de mariage", icon: CheckSquare, href: "/outils-maries" },
   { label: "Budget", description: "Gestionnaire de frais", icon: Wallet, href: "/outils-maries" },
-  { label: "Site de mariage", description: "Templates & édition", icon: Globe, href: "/mon-mariage" },
+  { label: "Site de mariage", description: "Templates & édition", icon: Globe, href: "/templates-mariage" },
   { label: "Invités", description: "RSVP & liste", icon: Users, href: "/mon-mariage/rsvp" },
   { label: "Prestataires", description: "Mes favoris", icon: Heart, href: "/prestataires" },
   { label: "Tirage au sort", description: "Gagnez 4 000 €", icon: Gift, href: "/blog" },
