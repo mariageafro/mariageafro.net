@@ -88,6 +88,16 @@ export function HeroSearchDropdowns() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Close dropdowns on scroll
+  useEffect(() => {
+    const onScroll = () => {
+      setShowCatDropdown(false);
+      setShowLocDropdown(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (ville) params.set("ville", ville);
