@@ -16,19 +16,10 @@ export function MegaMenuPlanner() {
                 <Link
                   key={item.label}
                   to={item.href}
-                  className="flex items-center gap-3 group py-2 px-2 rounded-lg hover:bg-secondary/60 transition-colors"
+                  className="flex items-center gap-2.5 text-sm font-body text-chocolate hover:text-champagne transition-colors py-1.5 group"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-champagne/15 flex items-center justify-center flex-shrink-0 group-hover:bg-champagne/25 transition-colors">
-                    <Icon className="w-4.5 h-4.5 text-champagne" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium font-body text-chocolate group-hover:text-champagne transition-colors block leading-tight">
-                      {item.label}
-                    </span>
-                    <span className="text-xs text-muted-foreground leading-tight">
-                      {item.description}
-                    </span>
-                  </div>
+                  <Icon className="w-4 h-4 text-muted-foreground group-hover:text-champagne transition-colors flex-shrink-0" />
+                  <span>{item.label}</span>
                 </Link>
               );
             })}
