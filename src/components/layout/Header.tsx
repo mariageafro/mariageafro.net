@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin } from "lucide-react";
 import { mainCategories, otherCategories } from "@/components/layout/MegaMenuData";
 import { plannerItems } from "@/components/layout/MegaMenuPlannerData";
 import { NotificationBell } from "@/components/layout/NotificationBell";
@@ -326,7 +326,7 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
   const mobileNavItems = [
     { key: "Mon Mariage", href: "/mon-mariage", hasChildren: true },
     { key: "Prestataires", href: "/prestataires", hasChildren: true },
-    { key: "Par Pays", href: "/trouver-par-pays" },
+    { key: "Par Pays", href: "/trouver-par-pays", hasChildren: true },
     { key: "Premium", href: "/prestataires-premium" },
     { key: "Blog", href: "/blog" },
     { key: "✨ Voir la démo", href: "/demo-mariage" },
@@ -402,6 +402,40 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                             </div>
                           </Link>
                         ))}
+                      </div>
+                    )}
+
+                    {item.key === "Par Pays" && (
+                      <div className="px-6 py-3 space-y-1">
+                        {[
+                          { flag: "🇨🇩", name: "Congo", code: "cd" },
+                          { flag: "🇨🇲", name: "Cameroun", code: "cm" },
+                          { flag: "🇸🇳", name: "Sénégal", code: "sn" },
+                          { flag: "🇨🇮", name: "Côte d'Ivoire", code: "ci" },
+                          { flag: "🇳🇬", name: "Nigeria", code: "ng" },
+                          { flag: "🇬🇭", name: "Ghana", code: "gh" },
+                          { flag: "🇫🇷", name: "France", code: "fr" },
+                          { flag: "🇧🇪", name: "Belgique", code: "be" },
+                          { flag: "🇬🇧", name: "Royaume-Uni", code: "gb" },
+                          { flag: "🇩🇪", name: "Allemagne", code: "de" },
+                        ].map(country => (
+                          <Link
+                            key={country.code}
+                            to={`/trouver-par-pays?pays=${country.code}`}
+                            onClick={close}
+                            className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
+                          >
+                            <span className="text-lg shrink-0">{country.flag}</span>
+                            {country.name}
+                          </Link>
+                        ))}
+                        <Link
+                          to="/trouver-par-pays"
+                          onClick={close}
+                          className="flex items-center gap-2 text-center text-xs text-champagne font-medium py-2 mt-1 justify-center"
+                        >
+                          <MapPin size={12} /> Voir tous les pays →
+                        </Link>
                       </div>
                     )}
                   </div>
