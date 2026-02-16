@@ -139,11 +139,11 @@ export function TemplateCard({ theme }: TemplateCardProps) {
             </div>
           </div>
 
-          {/* Hover overlay with CTA */}
+          {/* Hover overlay with CTA — always visible on mobile, hover on desktop */}
           <div
             className={`absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-300 ${
               hovered ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+            } max-sm:opacity-100 max-sm:pointer-events-auto`}
           >
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
             <div className="relative z-10 flex flex-col items-center gap-3">
