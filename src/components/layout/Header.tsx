@@ -8,6 +8,7 @@ import { marieItems } from "@/components/layout/MegaMenuMarieData";
 import { robesCategories } from "@/components/layout/MegaMenuRobesData";
 import { ideesItems } from "@/components/layout/MegaMenuIdeesData";
 import { communauteThemes, communauteNewItems } from "@/components/layout/MegaMenuCommunauteData";
+import { lieuxItems } from "@/components/layout/MegaMenuLieuxData";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,13 +23,15 @@ import { MegaMenuRobes } from "@/components/layout/MegaMenuRobes";
 import { MegaMenuIdees } from "@/components/layout/MegaMenuIdees";
 import { MegaMenuCommunaute } from "@/components/layout/MegaMenuCommunaute";
 import { MegaMenuPays } from "@/components/layout/MegaMenuPays";
+import { MegaMenuLieux } from "@/components/layout/MegaMenuLieux";
 import logo from "@/assets/logo-mariageafro.png";
 
-type MegaMenuKey = "prestataires" | "planner" | "mariee" | "marie" | "robes" | "idees" | "communaute" | "pays" | null;
+type MegaMenuKey = "prestataires" | "planner" | "mariee" | "marie" | "robes" | "idees" | "communaute" | "pays" | "lieux" | null;
 
 const navLinks = [
   { key: "Accueil", href: "/" },
   { key: "Prestataires", href: "/prestataires", megaMenu: "prestataires" as const },
+  { key: "Lieux", href: "/categories/salle-lieu", megaMenu: "lieux" as const },
   { key: "Mariée", href: "/categories/tenues-couture", megaMenu: "mariee" as const },
   { key: "Marié", href: "/categories/tenues-couture", megaMenu: "marie" as const },
   { key: "Robes", href: "/categories/tenues-couture", megaMenu: "robes" as const },
@@ -58,6 +61,7 @@ const megaMenuComponents: Record<Exclude<MegaMenuKey, null>, React.FC> = {
   idees: MegaMenuIdees,
   communaute: MegaMenuCommunaute,
   pays: MegaMenuPays,
+  lieux: MegaMenuLieux,
 };
 
 export function Header() {
@@ -313,6 +317,7 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
   const mobileNavItems = [
     { key: "Mon Mariage", href: "/mon-mariage", hasChildren: true },
     { key: "Prestataires", href: "/prestataires", hasChildren: true },
+    { key: "Lieux", href: "/categories/salle-lieu", hasChildren: true },
     { key: "Mariée", href: "/categories/tenues-couture", hasChildren: true },
     { key: "Marié", href: "/categories/tenues-couture", hasChildren: true },
     { key: "Robes", href: "/categories/tenues-couture", hasChildren: true },
@@ -371,6 +376,22 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                         <Link to="/prestataires" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1">
                           Voir toutes les catégories →
                         </Link>
+                      </div>
+                    )}
+
+                    {item.key === "Lieux" && (
+                      <div className="px-6 py-3 space-y-1">
+                        {lieuxItems.map(li => (
+                          <Link
+                            key={li.label}
+                            to={li.href}
+                            onClick={close}
+                            className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
+                          >
+                            {li.icon && <li.icon size={14} className="text-champagne shrink-0" />}
+                            {li.label}
+                          </Link>
+                        ))}
                       </div>
                     )}
 
