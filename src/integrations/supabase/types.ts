@@ -862,7 +862,10 @@ export type Database = {
           partner_one_last_name: string | null
           partner_two_first_name: string
           partner_two_last_name: string | null
+          site_accent_color: string | null
+          site_font_style: string | null
           site_hero_image_url: string | null
+          site_sections_config: Json | null
           site_share_code: string | null
           site_theme: string | null
           site_welcome_text: string | null
@@ -889,7 +892,10 @@ export type Database = {
           partner_one_last_name?: string | null
           partner_two_first_name: string
           partner_two_last_name?: string | null
+          site_accent_color?: string | null
+          site_font_style?: string | null
           site_hero_image_url?: string | null
+          site_sections_config?: Json | null
           site_share_code?: string | null
           site_theme?: string | null
           site_welcome_text?: string | null
@@ -916,7 +922,10 @@ export type Database = {
           partner_one_last_name?: string | null
           partner_two_first_name?: string
           partner_two_last_name?: string | null
+          site_accent_color?: string | null
+          site_font_style?: string | null
           site_hero_image_url?: string | null
+          site_sections_config?: Json | null
           site_share_code?: string | null
           site_theme?: string | null
           site_welcome_text?: string | null
