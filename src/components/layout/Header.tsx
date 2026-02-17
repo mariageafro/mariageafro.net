@@ -97,191 +97,194 @@ export function Header() {
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
-        showSolid
-          ? "bg-ivory/80 backdrop-blur-xl shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_16px_-2px_rgba(0,0,0,0.06)] border-b border-border/40"
-          : "bg-transparent border-b border-transparent"
-      }`}
-    >
-      <div className="container-editorial">
-        <div className={`flex items-center justify-between transition-all duration-500 ease-out ${
-          isScrolled ? "h-14" : "h-20"
-        }`}>
-          {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <img
-              src={logo}
-              alt="MariageAfro"
-              className={`w-auto transition-all duration-500 ease-out ${
-                isScrolled ? "h-9" : "h-16"
-              }`}
-            />
-          </Link>
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
+          showSolid
+            ? "bg-ivory/80 backdrop-blur-xl shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_16px_-2px_rgba(0,0,0,0.06)] border-b border-border/40"
+            : "bg-transparent border-b border-transparent"
+        }`}
+      >
+        <div className="container-editorial">
+          <div className={`flex items-center justify-between transition-all duration-500 ease-out ${
+            isScrolled ? "h-14" : "h-20"
+          }`}>
+            {/* Logo */}
+            <Link to="/" className="flex items-center">
+              <img
+                src={logo}
+                alt="MariageAfro"
+                className={`w-auto transition-all duration-500 ease-out ${
+                  isScrolled ? "h-9" : "h-16"
+                }`}
+              />
+            </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-5">
-            {navLinks.map((link) => {
-              const hasMegaMenu = !!(link as any).megaMenu;
-              if (hasMegaMenu) {
-                const menuKey = (link as any).megaMenu as Exclude<MegaMenuKey, null>;
-                return (
-                  <div
-                    key={link.key}
-                    className="flex items-center"
-                    onMouseEnter={() => openMegaMenu(menuKey)}
-                    onMouseLeave={closeMegaMenuDelayed}
-                  >
-                    <Link
-                      to={link.href}
-                      className={`font-body text-[11px] xl:text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne flex items-center gap-1 ${
-                        showSolid ? "text-chocolate" : "text-ivory"
-                      } ${
-                        activeMegaMenu === menuKey ? "text-champagne" : ""
-                      } ${
-                        location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
-                      }`}
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center gap-4 xl:gap-5">
+              {navLinks.map((link) => {
+                const hasMegaMenu = !!(link as any).megaMenu;
+                if (hasMegaMenu) {
+                  const menuKey = (link as any).megaMenu as Exclude<MegaMenuKey, null>;
+                  return (
+                    <div
+                      key={link.key}
+                      className="flex items-center"
+                      onMouseEnter={() => openMegaMenu(menuKey)}
+                      onMouseLeave={closeMegaMenuDelayed}
                     >
-                      {translateUI(link.key, lang)}
-                      <ChevronDown className="w-3 h-3" />
-                    </Link>
-                  </div>
+                      <Link
+                        to={link.href}
+                        className={`font-body text-[11px] xl:text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne flex items-center gap-1 ${
+                          showSolid ? "text-chocolate" : "text-ivory"
+                        } ${
+                          activeMegaMenu === menuKey ? "text-champagne" : ""
+                        } ${
+                          location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
+                        }`}
+                      >
+                        {translateUI(link.key, lang)}
+                        <ChevronDown className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  );
+                }
+                return (
+                  <Link
+                    key={link.key}
+                    to={link.href}
+                    className={`font-body text-[11px] xl:text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
+                      showSolid ? "text-chocolate" : "text-ivory"
+                    } ${
+                      location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
+                    }`}
+                  >
+                    {translateUI(link.key, lang)}
+                  </Link>
                 );
-              }
-              return (
-                <Link
-                  key={link.key}
-                  to={link.href}
-                  className={`font-body text-[11px] xl:text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne ${
-                    showSolid ? "text-chocolate" : "text-ivory"
-                  } ${
-                    location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
+              })}
+            </nav>
+
+             {/* Right side: Lang + Auth + Mobile toggle */}
+             <div className="flex items-center gap-3">
+               {/* Language Switcher */}
+               <div className="hidden sm:flex items-center gap-0.5 rounded-full bg-secondary/50 p-0.5">
+                <button
+                  onClick={() => setLang("fr")}
+                  className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
+                    lang === "fr"
+                      ? "bg-champagne text-primary-foreground shadow-sm"
+                      : showSolid ? "text-chocolate hover:text-champagne" : "text-ivory hover:text-champagne"
                   }`}
                 >
-                  {translateUI(link.key, lang)}
-                </Link>
-              );
-            })}
-          </nav>
+                  FR
+                </button>
+                <button
+                  onClick={() => setLang("en")}
+                  className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
+                    lang === "en"
+                      ? "bg-champagne text-primary-foreground shadow-sm"
+                      : showSolid ? "text-chocolate hover:text-champagne" : "text-ivory hover:text-champagne"
+                  }`}
+                >
+                  EN
+                </button>
+              </div>
 
-           {/* Right side: Lang + Auth + Mobile toggle */}
-           <div className="flex items-center gap-3">
-             {/* Language Switcher */}
-             <div className="hidden sm:flex items-center gap-0.5 rounded-full bg-secondary/50 p-0.5">
+                {isAuthenticated ? (
+                  <div className="flex items-center gap-2">
+                    <NotificationBell showSolid={showSolid} />
+                   {role === 'admin' && (
+                      <Link
+                        to="/admin"
+                        className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
+                          showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                        }`}
+                      >
+                        <Shield className="w-4 h-4" />
+                        <span className="hidden xl:inline">Admin</span>
+                      </Link>
+                    )}
+                    {role === 'prestataire' ? (
+                      <Link
+                        to="/dashboard"
+                        className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
+                          showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                        }`}
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        <span className="hidden xl:inline">Espace Pro</span>
+                      </Link>
+                    ) : role !== 'admin' ? (
+                      <Link
+                        to="/mes-favoris"
+                        className={`relative text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
+                          showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                        }`}
+                      >
+                        <Heart className="w-4 h-4" />
+                        {favCount > 0 && (
+                          <span className="absolute -top-1 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-champagne text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
+                            {favCount > 99 ? '99+' : favCount}
+                          </span>
+                        )}
+                        <span className="hidden xl:inline">Favoris</span>
+                      </Link>
+                    ) : null}
+                   <Button
+                     variant="ghost"
+                     size="sm"
+                     onClick={signOut}
+                     className={`transition-all duration-500 ${isScrolled ? "text-xs" : ""}`}
+                   >
+                     <LogOut className="w-4 h-4" />
+                   </Button>
+                 </div>
+               ) : (
+                 <Button
+                   variant={showSolid ? "gold-outline" : "hero-outline"}
+                   size="sm"
+                   className={`transition-all duration-500 ${isScrolled ? "text-xs px-3 h-8" : ""}`}
+                   asChild
+                 >
+                   <Link to="/auth">{translateUI("Connexion", lang)}</Link>
+                 </Button>
+               )}
+
+               {/* Mobile Menu Toggle */}
                <button
-                 onClick={() => setLang("fr")}
-                 className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
-                   lang === "fr"
-                     ? "bg-champagne text-primary-foreground shadow-sm"
-                     : showSolid ? "text-chocolate hover:text-champagne" : "text-ivory hover:text-champagne"
-                 }`}
+                 className={`lg:hidden p-2 transition-colors duration-300 z-[200] relative ${showSolid ? "text-chocolate" : isMobileMenuOpen ? "text-chocolate" : "text-ivory"}`}
+                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                >
-                 FR
-               </button>
-               <button
-                 onClick={() => setLang("en")}
-                 className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
-                   lang === "en"
-                     ? "bg-champagne text-primary-foreground shadow-sm"
-                     : showSolid ? "text-chocolate hover:text-champagne" : "text-ivory hover:text-champagne"
-                 }`}
-               >
-                 EN
+                 {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
                </button>
              </div>
-
-              {isAuthenticated ? (
-                <div className="flex items-center gap-2">
-                  <NotificationBell showSolid={showSolid} />
-                 {role === 'admin' && (
-                    <Link
-                      to="/admin"
-                      className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
-                        showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
-                      }`}
-                    >
-                      <Shield className="w-4 h-4" />
-                      <span className="hidden xl:inline">Admin</span>
-                    </Link>
-                  )}
-                  {role === 'prestataire' ? (
-                    <Link
-                      to="/dashboard"
-                      className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
-                        showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
-                      }`}
-                    >
-                      <LayoutDashboard className="w-4 h-4" />
-                      <span className="hidden xl:inline">Espace Pro</span>
-                    </Link>
-                  ) : role !== 'admin' ? (
-                    <Link
-                      to="/mes-favoris"
-                      className={`relative text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
-                        showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
-                      }`}
-                    >
-                      <Heart className="w-4 h-4" />
-                      {favCount > 0 && (
-                        <span className="absolute -top-1 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-champagne text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
-                          {favCount > 99 ? '99+' : favCount}
-                        </span>
-                      )}
-                      <span className="hidden xl:inline">Favoris</span>
-                    </Link>
-                  ) : null}
-                 <Button
-                   variant="ghost"
-                   size="sm"
-                   onClick={signOut}
-                   className={`transition-all duration-500 ${isScrolled ? "text-xs" : ""}`}
-                 >
-                   <LogOut className="w-4 h-4" />
-                 </Button>
-               </div>
-             ) : (
-               <Button
-                 variant={showSolid ? "gold-outline" : "hero-outline"}
-                 size="sm"
-                 className={`transition-all duration-500 ${isScrolled ? "text-xs px-3 h-8" : ""}`}
-                 asChild
-               >
-                 <Link to="/auth">{translateUI("Connexion", lang)}</Link>
-               </Button>
-             )}
-
-             {/* Mobile Menu Toggle */}
-             <button
-               className={`lg:hidden p-2 transition-colors duration-300 ${showSolid ? "text-chocolate" : "text-ivory"}`}
-               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-             >
-               {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-             </button>
-           </div>
+          </div>
         </div>
-      </div>
 
-      {/* Mega Menu Panels */}
-      <AnimatePresence>
-        {activeMegaMenu && (
-          <motion.div
-            key={activeMegaMenu}
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.2 }}
-            className="hidden lg:block"
-            onMouseEnter={() => openMegaMenu(activeMegaMenu)}
-            onMouseLeave={closeMegaMenuDelayed}
-          >
-            {(() => {
-              const Component = megaMenuComponents[activeMegaMenu];
-              return <Component />;
-            })()}
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Mega Menu Panels */}
+        <AnimatePresence>
+          {activeMegaMenu && (
+            <motion.div
+              key={activeMegaMenu}
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="hidden lg:block"
+              onMouseEnter={() => openMegaMenu(activeMegaMenu)}
+              onMouseLeave={closeMegaMenuDelayed}
+            >
+              {(() => {
+                const Component = megaMenuComponents[activeMegaMenu];
+                return <Component />;
+              })()}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
 
+      {/* Mobile Menu — rendered OUTSIDE header to avoid stacking context issues */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -289,7 +292,7 @@ export function Header() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden fixed inset-0 top-[56px] z-50 bg-ivory overflow-y-auto"
+            className={`lg:hidden fixed inset-0 z-[100] bg-ivory overflow-y-auto ${isScrolled ? "top-14" : "top-20"}`}
           >
             <MobileMenuContent
               lang={lang}
@@ -305,7 +308,7 @@ export function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
 
@@ -355,15 +358,8 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
 
   return (
     <nav className="flex flex-col">
-      {/* Close button */}
-      <div className="flex justify-end px-5 pt-4">
-        <button onClick={close} className="text-chocolate p-1">
-          <X size={24} />
-        </button>
-      </div>
-
       {/* Nav items */}
-      <div className="flex flex-col">
+      <div className="flex flex-col pt-2">
         {mobileNavItems.map((item) => (
           <div key={item.key} className="border-b border-border/50">
             {item.hasChildren ? (
