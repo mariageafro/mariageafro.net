@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Star, MapPin, Heart, Globe } from "lucide-react";
@@ -38,6 +38,9 @@ export default function CategoryPage() {
     const cat = categories.find(c => c.slug === slug);
     if (cat) updateFilter("categorie", cat.id);
   }, [slug, categories]);
+
+  // Redirect salle-lieu to dedicated /lieux page with sidebar
+  if (slug === "salle-lieu") return <Navigate to="/lieux" replace />;
 
   return (
     <Layout>
