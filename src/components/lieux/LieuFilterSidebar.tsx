@@ -1,5 +1,6 @@
 import { X, RotateCcw, Navigation, Loader2, Star, ChevronDown, Building2, Castle, Hotel, UtensilsCrossed, TreePine, Warehouse, Landmark, Ship, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
 import type { PrestatairesFilters } from "@/hooks/use-prestataires";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,10 +28,9 @@ interface LieuFilterSidebarProps {
 }
 
 const ratingOptions = [
-  { label: "Toutes les notes", value: 0 },
-  { label: "4+ étoiles", value: 4 },
-  { label: "4.5+ étoiles", value: 4.5 },
-  { label: "5 étoiles", value: 5 },
+  { label: "4+ étoiles", value: 4, stars: 4 },
+  { label: "4.5+ étoiles", value: 4.5, stars: 4.5 },
+  { label: "5 étoiles", value: 5, stars: 5 },
 ];
 
 const venueIcons: Record<string, React.ReactNode> = {
@@ -65,11 +65,23 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string;
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="pt-2 space-y-2">{children}</div>
+            <div className="pt-2 space-y-1">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function CheckboxItem({ label, checked, onChange, icon }: { label: string; checked: boolean; onChange: (v: boolean) => void; icon?: React.ReactNode }) {
+  return (
+    <label className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-secondary/60 transition-colors group">
+      <Checkbox checked={checked} onCheckedChange={onChange} />
+      {icon && <span className={`${checked ? "text-champagne" : "text-muted-foreground"} transition-colors`}>{icon}</span>}
+      <span className={`font-body text-sm flex-1 ${checked ? "text-chocolate font-medium" : "text-muted-foreground group-hover:text-chocolate"} transition-colors`}>
+        {label}
+      </span>
+    </label>
   );
 }
 
@@ -85,7 +97,7 @@ export function LieuFilterSidebar({
   const selectClass = "w-full px-3 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer";
 
   const activeFilterCount = [
-    filters.ville, filters.culture, filters.langue,
+    filters.ville.length > 0 ? "yes" : "", filters.culture.length > 0 ? "yes" : "", filters.langue.length > 0 ? "yes" : "",
     filters.noteMin > 0 ? "yes" : "", filters.country, geo.enabled ? "yes" : "",
     venueTypeFilter.length > 0 ? "yes" : ""
   ].filter(Boolean).length;
@@ -125,18 +137,15 @@ export function LieuFilterSidebar({
 
       {/* Venue Type */}
       <FilterSection title="🏛️ Type de lieu">
-        <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
+        <div className="space-y-0.5 max-h-56 overflow-y-auto pr-1">
           {venueTypes.map((type) => (
-            <button
+            <CheckboxItem
               key={type}
-              onClick={() => toggleVenueType(type)}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-body text-sm transition-all ${
-                venueTypeFilter.includes(type) ? "bg-champagne/15 text-champagne-dark font-medium" : "hover:bg-secondary text-muted-foreground"
-              }`}
-            >
-              {venueIcons[type] || <Building2 size={14} />}
-              <span>{type}</span>
-            </button>
+              label={type}
+              checked={venueTypeFilter.includes(type)}
+              onChange={() => toggleVenueType(type)}
+              icon={venueIcons[type] || <Building2 size={14} />}
+            />
           ))}
         </div>
       </FilterSection>
@@ -171,62 +180,100 @@ export function LieuFilterSidebar({
             ))}
           </div>
         )}
-        <select
-          value={filters.ville.length === 1 ? filters.ville[0] : ''}
-          onChange={(e) => updateFilter('ville', e.target.value ? [e.target.value] : [])}
-          className={selectClass}
-          disabled={geo.enabled}
-        >
-          <option value="">Toutes les villes</option>
-          <optgroup label="Villes principales">
-            {PRIORITY_CITIES.map((c) => (
-              <option key={c.name} value={c.name}>{c.name} ({c.country})</option>
-            ))}
-          </optgroup>
+        {/* Ville checkboxes */}
+        <div className="mt-3 space-y-0.5 max-h-48 overflow-y-auto pr-1">
+          <CheckboxItem
+            label="Toutes les villes"
+            checked={filters.ville.length === 0}
+            onChange={() => updateFilter('ville', [])}
+          />
+          {PRIORITY_CITIES.map((c) => (
+            <CheckboxItem
+              key={c.name}
+              label={`${c.name} (${c.country})`}
+              checked={filters.ville.includes(c.name)}
+              onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, c.name] : filters.ville.filter(v => v !== c.name))}
+            />
+          ))}
           {otherVilles.length > 0 && (
-            <optgroup label="Autres villes">
+            <>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-2 mb-1 px-2">Autres villes</p>
               {otherVilles.map((v) => (
-                <option key={v} value={v}>{v}</option>
+                <CheckboxItem
+                  key={v}
+                  label={v}
+                  checked={filters.ville.includes(v)}
+                  onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, v] : filters.ville.filter(x => x !== v))}
+                />
               ))}
-            </optgroup>
+            </>
           )}
-        </select>
+        </div>
       </FilterSection>
 
       {/* Culture */}
       <FilterSection title="🌍 Culture" defaultOpen={false}>
-        <select
-          value={filters.culture.length === 1 ? filters.culture[0] : ''}
-          onChange={(e) => updateFilter('culture', e.target.value ? [e.target.value] : [])}
-          className={selectClass}
-        >
-          <option value="">Toutes les cultures</option>
+        <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
+          <CheckboxItem
+            label="Toutes les cultures"
+            checked={filters.culture.length === 0}
+            onChange={() => updateFilter('culture', [])}
+          />
           {cultures.map((c) => (
-            <option key={c} value={c}>{c}</option>
+            <CheckboxItem
+              key={c}
+              label={c}
+              checked={filters.culture.includes(c)}
+              onChange={(checked) => updateFilter('culture', checked ? [...filters.culture, c] : filters.culture.filter(x => x !== c))}
+            />
           ))}
-        </select>
+        </div>
+      </FilterSection>
+
+      {/* Langue */}
+      <FilterSection title="💬 Langue" defaultOpen={false}>
+        <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
+          <CheckboxItem
+            label="Toutes les langues"
+            checked={filters.langue.length === 0}
+            onChange={() => updateFilter('langue', [])}
+          />
+          {langues.map((l) => (
+            <CheckboxItem
+              key={l}
+              label={l}
+              checked={filters.langue.includes(l)}
+              onChange={(checked) => updateFilter('langue', checked ? [...filters.langue, l] : filters.langue.filter(x => x !== l))}
+            />
+          ))}
+        </div>
       </FilterSection>
 
       {/* Rating */}
       <FilterSection title="⭐ Note minimum">
-        <div className="space-y-1">
+        <div className="space-y-0.5">
+          <CheckboxItem
+            label="Toutes les notes"
+            checked={filters.noteMin === 0}
+            onChange={() => updateFilter('noteMin', 0)}
+          />
           {ratingOptions.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => updateFilter('noteMin', opt.value)}
-              className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg font-body text-sm transition-all ${
-                filters.noteMin === opt.value ? "bg-champagne/15 text-champagne-dark font-medium" : "hover:bg-secondary text-muted-foreground"
-              }`}
-            >
-              {opt.value > 0 && (
+            <label key={opt.value} className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-secondary/60 transition-colors group">
+              <Checkbox
+                checked={filters.noteMin === opt.value}
+                onCheckedChange={() => updateFilter('noteMin', filters.noteMin === opt.value ? 0 : opt.value)}
+              />
+              <div className="flex items-center gap-1.5">
                 <div className="flex gap-0.5">
-                  {Array.from({ length: Math.floor(opt.value) }).map((_, i) => (
+                  {Array.from({ length: Math.floor(opt.stars) }).map((_, i) => (
                     <Star key={i} size={12} className="text-gold fill-gold" />
                   ))}
                 </div>
-              )}
-              <span>{opt.label}</span>
-            </button>
+                <span className={`font-body text-sm ${filters.noteMin === opt.value ? "text-chocolate font-medium" : "text-muted-foreground"}`}>
+                  {opt.label}
+                </span>
+              </div>
+            </label>
           ))}
         </div>
       </FilterSection>
@@ -244,6 +291,15 @@ export function LieuFilterSidebar({
           <option value="avis">Avis (décroissant)</option>
         </select>
       </FilterSection>
+
+      {/* Mobile apply button */}
+      {isMobile && onClose && (
+        <div className="pt-4">
+          <Button variant="gold" className="w-full" onClick={onClose}>
+            Appliquer les filtres
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
