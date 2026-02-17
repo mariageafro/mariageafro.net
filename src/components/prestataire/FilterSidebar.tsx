@@ -111,7 +111,7 @@ export function FilterSidebar({
   const selectClass = "w-full px-3 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer";
 
   const activeFilterCount = [
-    filters.ville, filters.categorie, filters.culture, filters.langue,
+    filters.ville.length > 0 ? "yes" : "", filters.categorie, filters.culture.length > 0 ? "yes" : "", filters.langue.length > 0 ? "yes" : "",
     filters.noteMin > 0 ? "yes" : "", filters.country, geo.enabled ? "yes" : ""
   ].filter(Boolean).length;
 
@@ -174,15 +174,15 @@ export function FilterSidebar({
         <div className="mt-3 space-y-0.5 max-h-48 overflow-y-auto pr-1">
           <CheckboxItem
             label="Toutes les villes"
-            checked={!filters.ville}
-            onChange={() => updateFilter('ville', '')}
+            checked={filters.ville.length === 0}
+            onChange={() => updateFilter('ville', [])}
           />
           {PRIORITY_CITIES.map((c) => (
             <CheckboxItem
               key={c.name}
               label={`${c.name} (${c.country})`}
-              checked={filters.ville === c.name}
-              onChange={() => updateFilter('ville', filters.ville === c.name ? '' : c.name)}
+              checked={filters.ville.includes(c.name)}
+              onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, c.name] : filters.ville.filter(v => v !== c.name))}
             />
           ))}
           {otherVilles.length > 0 && (
@@ -192,8 +192,8 @@ export function FilterSidebar({
                 <CheckboxItem
                   key={v}
                   label={v}
-                  checked={filters.ville === v}
-                  onChange={() => updateFilter('ville', filters.ville === v ? '' : v)}
+                  checked={filters.ville.includes(v)}
+                  onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, v] : filters.ville.filter(x => x !== v))}
                 />
               ))}
             </>
@@ -251,15 +251,15 @@ export function FilterSidebar({
         <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
           <CheckboxItem
             label="Toutes les cultures"
-            checked={!filters.culture}
-            onChange={() => updateFilter('culture', '')}
+            checked={filters.culture.length === 0}
+            onChange={() => updateFilter('culture', [])}
           />
           {cultures.map((c) => (
             <CheckboxItem
               key={c}
               label={c}
-              checked={filters.culture === c}
-              onChange={() => updateFilter('culture', filters.culture === c ? '' : c)}
+              checked={filters.culture.includes(c)}
+              onChange={(checked) => updateFilter('culture', checked ? [...filters.culture, c] : filters.culture.filter(x => x !== c))}
             />
           ))}
         </div>
@@ -270,15 +270,15 @@ export function FilterSidebar({
         <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
           <CheckboxItem
             label="Toutes les langues"
-            checked={!filters.langue}
-            onChange={() => updateFilter('langue', '')}
+            checked={filters.langue.length === 0}
+            onChange={() => updateFilter('langue', [])}
           />
           {langues.map((l) => (
             <CheckboxItem
               key={l}
               label={l}
-              checked={filters.langue === l}
-              onChange={() => updateFilter('langue', filters.langue === l ? '' : l)}
+              checked={filters.langue.includes(l)}
+              onChange={(checked) => updateFilter('langue', checked ? [...filters.langue, l] : filters.langue.filter(x => x !== l))}
             />
           ))}
         </div>

@@ -80,7 +80,7 @@ export default function Prestataires() {
     }
   };
 
-  const hasActiveFilters = filters.search || filters.ville || filters.categorie || filters.culture || filters.langue || filters.noteMin > 0 || filters.country || geo.enabled;
+  const hasActiveFilters = filters.search || filters.ville.length > 0 || filters.categorie || filters.culture.length > 0 || filters.langue.length > 0 || filters.noteMin > 0 || filters.country || geo.enabled;
 
   // Pagination
   const totalPages = Math.ceil(prestataires.length / ITEMS_PER_PAGE);

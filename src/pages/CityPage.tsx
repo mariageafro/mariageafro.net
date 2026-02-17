@@ -33,7 +33,7 @@ export default function CityPage() {
 
   useEffect(() => {
     const villeName = cityToVille[city || ""];
-    if (villeName) updateFilter("ville", villeName);
+    if (villeName) updateFilter("ville", [villeName]);
   }, [city]);
 
   return (

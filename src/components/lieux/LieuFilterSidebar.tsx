@@ -172,8 +172,8 @@ export function LieuFilterSidebar({
           </div>
         )}
         <select
-          value={filters.ville}
-          onChange={(e) => updateFilter('ville', e.target.value)}
+          value={filters.ville.length === 1 ? filters.ville[0] : ''}
+          onChange={(e) => updateFilter('ville', e.target.value ? [e.target.value] : [])}
           className={selectClass}
           disabled={geo.enabled}
         >
@@ -196,8 +196,8 @@ export function LieuFilterSidebar({
       {/* Culture */}
       <FilterSection title="🌍 Culture" defaultOpen={false}>
         <select
-          value={filters.culture}
-          onChange={(e) => updateFilter('culture', e.target.value)}
+          value={filters.culture.length === 1 ? filters.culture[0] : ''}
+          onChange={(e) => updateFilter('culture', e.target.value ? [e.target.value] : [])}
           className={selectClass}
         >
           <option value="">Toutes les cultures</option>
