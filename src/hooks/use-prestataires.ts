@@ -16,6 +16,7 @@ export type PrestatairesFilters = {
   search: string;
   ville: string[];
   categorie: string;
+  sousCategorie: string;
   culture: string[];
   langue: string[];
   noteMin: number;
@@ -27,6 +28,7 @@ const defaultFilters: PrestatairesFilters = {
   search: '',
   ville: [],
   categorie: '',
+  sousCategorie: '',
   culture: [],
   langue: [],
   noteMin: 0,
@@ -91,6 +93,7 @@ export function usePrestataires(initialFilters?: Partial<PrestatairesFilters>) {
 
       if (filters.ville.length > 0) query = query.in('ville', filters.ville);
       if (filters.categorie) query = query.eq('categorie_id', filters.categorie);
+      if (filters.sousCategorie) query = query.eq('sous_categorie', filters.sousCategorie);
       if (filters.country) query = query.eq('country_id', filters.country);
       if (filters.search) query = query.or(`nom_entreprise.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       

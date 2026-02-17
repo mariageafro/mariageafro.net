@@ -51,13 +51,15 @@ export default function Prestataires() {
 
   const { geo, radius, setRadius, requestLocation, disableGeo } = useGeolocation();
 
-  // Sync URL category param
+  // Sync URL params (category, sub, search)
   useEffect(() => {
     const catSlug = searchParams.get("category");
     if (catSlug && categories.length > 0) {
       const cat = categories.find(c => c.slug === catSlug);
       if (cat) updateFilter("categorie", cat.id);
     }
+    const subSlug = searchParams.get("sub");
+    if (subSlug) updateFilter("sousCategorie", subSlug);
     const searchQuery = searchParams.get("search");
     if (searchQuery) updateFilter("search", searchQuery);
   }, [searchParams, categories]);
@@ -80,7 +82,7 @@ export default function Prestataires() {
     }
   };
 
-  const hasActiveFilters = filters.search || filters.ville.length > 0 || filters.categorie || filters.culture.length > 0 || filters.langue.length > 0 || filters.noteMin > 0 || filters.country || geo.enabled;
+  const hasActiveFilters = filters.search || filters.ville.length > 0 || filters.categorie || filters.sousCategorie || filters.culture.length > 0 || filters.langue.length > 0 || filters.noteMin > 0 || filters.country || geo.enabled;
 
   // Pagination
   const totalPages = Math.ceil(prestataires.length / ITEMS_PER_PAGE);
