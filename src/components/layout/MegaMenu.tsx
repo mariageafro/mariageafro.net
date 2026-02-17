@@ -34,7 +34,7 @@ export function MegaMenu() {
                 {cat.subs.map((sub) => (
                   <li key={sub.slug}>
                     <Link
-                      to={`/categories/${cat.slug}?sub=${sub.slug}`}
+                      to={`/prestataires?sub=${sub.slug}`}
                       className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg font-body text-sm text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group/sub"
                     >
                       {sub.icon && (
