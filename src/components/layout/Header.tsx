@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin, Shirt, Heart } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin, Shirt, Heart, Camera, Music, Utensils, Palette, Sparkles, Scissors, Church, Car } from "lucide-react";
 import { mainCategories } from "@/components/layout/MegaMenuData";
 import { plannerItems } from "@/components/layout/MegaMenuPlannerData";
 import { marieeItems } from "@/components/layout/MegaMenuMarieeData";
@@ -383,25 +383,25 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                       <div className="px-6 py-3 space-y-1">
                         <p className="text-[11px] uppercase tracking-widest text-muted-foreground px-3 pb-1 font-semibold">Les essentiels</p>
                         {[
-                          { emoji: "📸", label: "Photographe", href: "/categories/image-souvenirs?sub=photographe" },
-                          { emoji: "🎥", label: "Vidéaste", href: "/categories/image-souvenirs?sub=videaste" },
-                          { emoji: "🎶", label: "DJ Mariage", href: "/categories/animation-ambiance?sub=dj-mariage" },
-                          { emoji: "🍽️", label: "Traiteur africain", href: "/categories/traiteurs-gastronomie?sub=traiteur-africain" },
-                          { emoji: "🌸", label: "Décorateur", href: "/categories/decoration-lieux?sub=decorateur" },
-                          { emoji: "💄", label: "Maquilleuse afro", href: "/categories/beaute?sub=maquilleuse-afro" },
-                          { emoji: "✂️", label: "Coiffeuse afro", href: "/categories/beaute?sub=coiffeuse-afro" },
-                          { emoji: "🎂", label: "Wedding Cake", href: "/categories/traiteurs-gastronomie?sub=wedding-cake" },
-                          { emoji: "⛪", label: "Wedding Planner", href: "/categories/ceremonies-coutumes?sub=wedding-planner" },
-                          { emoji: "🚗", label: "Transport", href: "/categories/logistique-services?sub=transport-mariage" },
-                        ].map(item => (
+                          { label: "Photographe", href: "/categories/image-souvenirs?sub=photographe", icon: Camera },
+                          { label: "Vidéaste", href: "/categories/image-souvenirs?sub=videaste", icon: Camera },
+                          { label: "DJ Mariage", href: "/categories/animation-ambiance?sub=dj-mariage", icon: Music },
+                          { label: "Traiteur africain", href: "/categories/traiteurs-gastronomie?sub=traiteur-africain", icon: Utensils },
+                          { label: "Décorateur", href: "/categories/decoration-lieux?sub=decorateur", icon: Palette },
+                          { label: "Maquilleuse afro", href: "/categories/beaute?sub=maquilleuse-afro", icon: Sparkles },
+                          { label: "Coiffeuse afro", href: "/categories/beaute?sub=coiffeuse-afro", icon: Scissors },
+                          { label: "Wedding Cake", href: "/categories/traiteurs-gastronomie?sub=wedding-cake", icon: Utensils },
+                          { label: "Wedding Planner", href: "/categories/ceremonies-coutumes?sub=wedding-planner", icon: Church },
+                          { label: "Transport", href: "/categories/logistique-services?sub=transport-mariage", icon: Car },
+                        ].map(cat => (
                           <Link
-                            key={item.href}
-                            to={item.href}
+                            key={cat.href}
+                            to={cat.href}
                             onClick={close}
                             className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
                           >
-                            <span className="text-base shrink-0">{item.emoji}</span>
-                            {item.label}
+                            <cat.icon size={16} className="text-champagne shrink-0" />
+                            {cat.label}
                           </Link>
                         ))}
                         <Link to="/prestataires" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1 border-t border-border/30 pt-3">
