@@ -51,6 +51,8 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminCountries from "./pages/admin/AdminCountries";
 import AdminImport from "./pages/admin/AdminImport";
 import AdminPages from "./pages/admin/AdminPages";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +112,8 @@ const App = () => (
             }>
               <Route index element={<AdminOverview />} />
               <Route path="vendors" element={<AdminVendors />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="subscriptions" element={<AdminSubscriptions />} />
               <Route path="media" element={<AdminMediaPage />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="countries" element={<AdminCountries />} />

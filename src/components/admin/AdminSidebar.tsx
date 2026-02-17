@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import {
-  LayoutDashboard, Users, Image, FolderTree, Globe, Upload, FileText, Menu, X,
+  LayoutDashboard, Users, Image, FolderTree, Globe, Upload, FileText, Menu, X, CreditCard, UserCog,
 } from "lucide-react";
 import { useState } from "react";
 import logoImg from "@/assets/logo-mariageafro.png";
@@ -8,6 +8,8 @@ import logoImg from "@/assets/logo-mariageafro.png";
 const links = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, end: true },
   { to: "/admin/vendors", label: "Prestataires", icon: Users },
+  { to: "/admin/users", label: "Utilisateurs", icon: UserCog },
+  { to: "/admin/subscriptions", label: "Abonnements", icon: CreditCard },
   { to: "/admin/media", label: "Médias", icon: Image },
   { to: "/admin/categories", label: "Catégories", icon: FolderTree },
   { to: "/admin/countries", label: "Pays", icon: Globe },
