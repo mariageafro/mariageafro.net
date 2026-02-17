@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams, Link, Navigate, useSearchParams } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, MapPin, Globe, Search, Grid, List, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
@@ -20,19 +20,14 @@ import categoryTenues from "@/assets/category-tenues.jpg";
 import categoryBeaute from "@/assets/category-beaute.jpg";
 
 const categoryMeta: Record<string, { title: string; description: string; image: string }> = {
-  videaste: { title: "Vidéastes", description: "Vidéastes qui subliment vos moments précieux en films d'exception.", image: categoryDj },
-  photographe: { title: "Photographes", description: "Les meilleurs photographes de mariage afro, capturant l'émotion et la beauté de vos traditions.", image: categoryPhoto },
-  "dj-musique": { title: "DJ & Musique", description: "DJ spécialisés dans les sonorités afro, caribéennes et urbaines pour une ambiance inoubliable.", image: categoryDj },
-  "wedding-planner": { title: "Wedding Planners", description: "Organisateurs de mariage experts en traditions et cultures afro.", image: categoryPlanner },
-  animation: { title: "Animation", description: "Maîtres de cérémonie et animateurs pour un événement vibrant et mémorable.", image: categoryPhoto },
-  "coiffure-beaute": { title: "Coiffure & Beauté", description: "Maquilleurs et coiffeurs experts en beauté afro.", image: categoryBeaute },
-  decoration: { title: "Décoration", description: "Décorateurs qui créent des ambiances uniques inspirées de vos cultures.", image: categoryDeco },
-  traiteur: { title: "Traiteur", description: "Traiteurs spécialisés dans les saveurs africaines et caribéennes.", image: categoryTraiteur },
-  "salle-lieu": { title: "Salle & Lieu", description: "Les plus beaux lieux de réception pour votre mariage.", image: categoryPlanner },
-  "tenues-couture": { title: "Tenues & Couture", description: "Créateurs de tenues traditionnelles pour un mariage authentique.", image: categoryTenues },
-  transport: { title: "Transport", description: "Services de transport premium pour votre jour J.", image: categoryDj },
-  "faire-part": { title: "Faire-part & Papeterie", description: "Créations papetières élégantes pour vos invitations.", image: categoryPlanner },
-  "cadeaux-invites": { title: "Cadeaux Invités", description: "Idées cadeaux originales pour gâter vos invités le jour J.", image: categoryBeaute },
+  "image-souvenirs": { title: "Image & Souvenirs", description: "Photographes, vidéastes, drone, photobooth 360° et créateurs de contenus pour immortaliser votre mariage.", image: categoryPhoto },
+  "animation-ambiance": { title: "Animation & Ambiance", description: "DJ, MC, groupes live, chorales gospel, percussionnistes et griots pour une ambiance inoubliable.", image: categoryDj },
+  "mode-beaute": { title: "Mode & Beauté", description: "Créateurs de robes, tenues traditionnelles, coiffeuses afro, maquilleuses et stylistes sur mesure.", image: categoryBeaute },
+  "traiteurs-gastronomie": { title: "Traiteurs & Gastronomie", description: "Traiteurs africains, afro-fusion, wedding cake, chefs privés et bars à cocktails.", image: categoryTraiteur },
+  "decoration-lieux": { title: "Décoration & Lieux", description: "Décorateurs, fleuristes, location de mobilier, salles de réception et domaines.", image: categoryDeco },
+  "ceremonies-coutumes": { title: "Cérémonies & Coutumes", description: "Wedding planners, maîtres de cérémonie, conseillers coutumiers, officiants religieux et laïques.", image: categoryPlanner },
+  "logistique-services": { title: "Logistique & Services", description: "Transport, hébergement, conciergerie, sécurité, garde d'enfants, faire-part et cadeaux invités.", image: categoryDj },
+  "bijoux-accessoires": { title: "Bijoux & Accessoires", description: "Bijoutiers, alliances sur mesure, bijoux traditionnels, chaussures et parfums personnalisés.", image: categoryTenues },
 };
 
 const ITEMS_PER_PAGE = 12;
@@ -113,8 +108,6 @@ export default function CategoryPage() {
   useEffect(() => {
     if (currentPage > 1) setPage(1);
   }, [filters, geoLocation]);
-
-  if (slug === "salle-lieu") return <Navigate to="/lieux" replace />;
 
   return (
     <Layout>

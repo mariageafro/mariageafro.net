@@ -45,12 +45,12 @@ const navLinks = [
 ];
 
 const featuredCategories = [
-  { name: "Vidéaste", slug: "videaste" },
-  { name: "Photographe", slug: "photographe" },
-  { name: "DJ & Musique", slug: "dj-musique" },
-  { name: "Wedding Planner", slug: "wedding-planner" },
-  { name: "Animation", slug: "animation" },
-  { name: "Beauté", slug: "coiffure-beaute" },
+  { name: "📸 Image & Souvenirs", slug: "image-souvenirs" },
+  { name: "🎶 Animation & Ambiance", slug: "animation-ambiance" },
+  { name: "👗 Mode & Beauté", slug: "mode-beaute" },
+  { name: "🍽️ Traiteurs & Gastronomie", slug: "traiteurs-gastronomie" },
+  { name: "🌸 Décoration & Lieux", slug: "decoration-lieux" },
+  { name: "⛪ Cérémonies & Coutumes", slug: "ceremonies-coutumes" },
 ];
 
 const megaMenuComponents: Record<Exclude<MegaMenuKey, null>, React.FC> = {
