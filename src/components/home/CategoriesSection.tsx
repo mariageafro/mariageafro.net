@@ -30,33 +30,33 @@ const categoryImages: Record<string, string> = {
   "decoration": categoryDecoration,
   "robes-mariee": categoryRobes,
   "tenues-couture": categoryTenuesCouture,
-  "transport": categoryTransport,
+  "transport": categoryTransport
 };
 
 const featuredSlugs = ["videaste", "photographe", "dj-musique", "wedding-planner", "animation", "coiffure-beaute"];
 
 
 export function CategoriesSection() {
-  const [categories, setCategories] = useState<{ name: string; slug: string; count: number; featured: boolean; image: string }[]>([]);
+  const [categories, setCategories] = useState<{name: string;slug: string;count: number;featured: boolean;image: string;}[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const [catRes, countRes] = await Promise.all([
-        supabase.from('categories').select('id, name, slug').order('name'),
-        supabase.from('prestataires').select('categorie_id').eq('statut', 'actif').not('photo_url', 'is', null).neq('photo_url', ''),
-      ]);
+      supabase.from('categories').select('id, name, slug').order('name'),
+      supabase.from('prestataires').select('categorie_id').eq('statut', 'actif').not('photo_url', 'is', null).neq('photo_url', '')]
+      );
 
       const counts: Record<string, number> = {};
-      (countRes.data ?? []).forEach(p => {
+      (countRes.data ?? []).forEach((p) => {
         if (p.categorie_id) counts[p.categorie_id] = (counts[p.categorie_id] || 0) + 1;
       });
 
-      const mapped = (catRes.data ?? []).map(cat => ({
+      const mapped = (catRes.data ?? []).map((cat) => ({
         name: cat.name,
         slug: cat.slug,
         count: counts[cat.id] || 0,
         featured: featuredSlugs.includes(cat.slug),
-        image: categoryImages[cat.slug] || categoryVideaste,
+        image: categoryImages[cat.slug] || categoryVideaste
       }));
 
       setCategories(mapped);
@@ -65,7 +65,7 @@ export function CategoriesSection() {
   }, []);
 
   return (
-    <section className="pt-16 md:pt-24 pb-16 md:pb-24 lg:pb-32 bg-gradient-warm relative z-[1] texture-grain">
+    <section className="pt-16 md:pt-24 pb-16 md:pb-24 lg:pb-32 bg-gradient-warm relative z-[1] texture-grain mx-0 px-0 my-[82px]">
       <div className="container-editorial">
         {/* Header */}
         <motion.div
