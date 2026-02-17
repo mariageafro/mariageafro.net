@@ -9,6 +9,7 @@ import { useGeolocation } from "@/hooks/use-geolocation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DevenirPrestatairePopup } from "@/components/home/DevenirPrestatairePopup";
 import { FilterSidebar } from "@/components/prestataire/FilterSidebar";
+import { FavoriteButton } from "@/components/prestataire/FavoriteButton";
 import { supabase } from "@/integrations/supabase/client";
 
 import categoryVideaste from "@/assets/category-videaste.jpg";
@@ -286,12 +287,7 @@ export default function Prestataires() {
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             loading="lazy"
                           />
-                          <button
-                            className="absolute top-3 right-3 w-9 h-9 rounded-full bg-ivory/90 flex items-center justify-center hover:bg-ivory transition-colors"
-                            onClick={(e) => e.preventDefault()}
-                          >
-                            <Heart size={16} className="text-chocolate" />
-                          </button>
+                          <FavoriteButton prestataireId={p.id} className="absolute top-3 right-3" />
                           {p.badge_type && p.badge_type !== 'FREE' && (
                             <div className="absolute top-3 left-3">
                               <span className="px-2.5 py-1 rounded-full bg-champagne/90 font-body text-[10px] font-semibold text-primary-foreground uppercase tracking-wider">

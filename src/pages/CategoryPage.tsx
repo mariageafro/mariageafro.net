@@ -1,8 +1,9 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { Star, MapPin, Heart, Globe } from "lucide-react";
+import { Star, MapPin, Globe } from "lucide-react";
 import { usePrestataires } from "@/hooks/use-prestataires";
+import { FavoriteButton } from "@/components/prestataire/FavoriteButton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 
@@ -86,9 +87,7 @@ export default function CategoryPage() {
                   <Link to={`/prestataires/${p.slug}`} className="group block card-premium">
                     <div className="relative overflow-hidden aspect-[4/3]">
                       <img src={p.cover_url || categoryDj} alt={p.nom_entreprise} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-                      <button className="absolute top-3 right-3 w-9 h-9 rounded-full bg-ivory/90 flex items-center justify-center hover:bg-ivory transition-colors">
-                        <Heart size={16} className="text-chocolate" />
-                      </button>
+                      <FavoriteButton prestataireId={p.id} className="absolute top-3 right-3" />
                       {p.categories && (
                         <div className="absolute bottom-3 left-3">
                           <span className="px-3 py-1 rounded-full bg-ivory/90 font-body text-xs font-medium text-chocolate">{p.categories.name}</span>
