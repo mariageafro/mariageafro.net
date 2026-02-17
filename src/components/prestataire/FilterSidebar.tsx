@@ -88,8 +88,10 @@ export function FilterSidebar({
   geo, radius, setRadius, onToggleGeo, onSetGeoLocation,
   hasActiveFilters, categoryCounts, onClose, isMobile, hideCategories,
 }: FilterSidebarProps) {
-  const priorityCityNames = PRIORITY_CITIES.map(c => c.name);
-  const otherVilles = villes.filter(v => !priorityCityNames.includes(v));
+  // Only show priority cities that actually have vendors
+  const availablePriorityCities = PRIORITY_CITIES.filter(c => villes.includes(c.name));
+  const priorityCityNames = availablePriorityCities.map(c => c.name);
+  const otherVilles = villes.filter(v => !PRIORITY_CITIES.some(pc => pc.name === v));
 
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [selectedSubs, setSelectedSubs] = useState<Set<string>>(new Set());
@@ -177,7 +179,7 @@ export function FilterSidebar({
             checked={filters.ville.length === 0}
             onChange={() => updateFilter('ville', [])}
           />
-          {PRIORITY_CITIES.map((c) => (
+          {availablePriorityCities.map((c) => (
             <CheckboxItem
               key={c.name}
               label={`${c.name} (${c.country})`}
