@@ -6,7 +6,7 @@ import { usePrestaireDetail } from "@/hooks/use-prestataire-detail";
 import { PrestaireGallery } from "@/components/prestataire/PrestaireGallery";
 import { PrestaireReviews } from "@/components/prestataire/PrestaireReviews";
 import { PrestaireContactCard } from "@/components/prestataire/PrestaireContactCard";
-import categoryDj from "@/assets/category-dj.jpg";
+import { SimilarVendors } from "@/components/prestataire/SimilarVendors";
 
 export default function ProfilPrestataire() {
   const { prestataire, contacts, reviews, medias, isLoading, error } = usePrestaireDetail();
@@ -48,12 +48,12 @@ export default function ProfilPrestataire() {
 
   return (
     <Layout>
-      {/* Hero */}
+      {/* Hero Gallery */}
       <section className="pt-24">
         <div className="container-editorial">
           <PrestaireGallery
             medias={medias}
-            coverUrl={categoryDj}
+            coverUrl={prestataire.photo_url}
             businessName={prestataire.nom_entreprise}
           />
         </div>
@@ -159,11 +159,20 @@ export default function ProfilPrestataire() {
               />
             </div>
 
-            {/* Sidebar */}
-            {prestataire && <PrestaireContactCard prestataire={prestataire} contacts={contacts} />}
+            {/* Sidebar - sticky */}
+            <div className="lg:col-span-1">
+              <PrestaireContactCard prestataire={prestataire} contacts={contacts} />
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Similar Vendors Carousel */}
+      <SimilarVendors
+        currentId={prestataire.id}
+        categoryId={prestataire.categorie_id}
+        pays={prestataire.pays}
+      />
     </Layout>
   );
 }

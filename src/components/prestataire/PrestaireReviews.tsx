@@ -31,6 +31,13 @@ export function PrestaireReviews({ reviews, avgRating, reviewCount }: PrestaireR
     );
   }
 
+  // Rating distribution
+  const distribution = [5, 4, 3, 2, 1].map(star => ({
+    star,
+    count: reviews.filter(r => r.note === star).length,
+    pct: (reviews.filter(r => r.note === star).length / reviewCount) * 100,
+  }));
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -47,19 +54,43 @@ export function PrestaireReviews({ reviews, avgRating, reviewCount }: PrestaireR
         </div>
       </div>
 
-      {/* Rating Summary */}
+      {/* Rating Summary with distribution bars */}
       <div className="mb-8 p-6 rounded-2xl bg-secondary">
-        <div className="flex items-center gap-4">
-          <div>
-            <div className="text-4xl font-serif text-chocolate mb-1">{avgRating.toFixed(1)}</div>
-            <div className="flex gap-0.5 mb-2">
-              {Array.from({ length: Math.round(avgRating) }).map((_, i) => (
-                <Star key={i} size={14} className="text-gold fill-gold" />
+        <div className="flex flex-col sm:flex-row gap-6">
+          <div className="flex-shrink-0 text-center sm:text-left">
+            <div className="text-5xl font-serif text-chocolate mb-1">{avgRating.toFixed(1)}</div>
+            <div className="flex gap-0.5 justify-center sm:justify-start mb-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  size={16}
+                  className={i < Math.round(avgRating) ? 'text-gold fill-gold' : 'text-muted-foreground/30'}
+                />
               ))}
             </div>
             <p className="font-body text-sm text-muted-foreground">
-              Basé sur {reviewCount} avis
+              {reviewCount} avis
             </p>
+          </div>
+
+          {/* Distribution bars */}
+          <div className="flex-1 space-y-2">
+            {distribution.map(({ star, count, pct }) => (
+              <div key={star} className="flex items-center gap-3">
+                <span className="font-body text-sm text-muted-foreground w-4 text-right">{star}</span>
+                <Star size={12} className="text-gold fill-gold flex-shrink-0" />
+                <div className="flex-1 h-2.5 rounded-full bg-background overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${pct}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    className="h-full rounded-full bg-gradient-to-r from-gold to-champagne"
+                  />
+                </div>
+                <span className="font-body text-xs text-muted-foreground w-6">{count}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -76,20 +107,29 @@ export function PrestaireReviews({ reviews, avgRating, reviewCount }: PrestaireR
             className="p-6 rounded-2xl bg-secondary"
           >
             <div className="flex items-start justify-between mb-3">
-              <div>
-                <h4 className="font-serif text-lg text-chocolate">Client</h4>
-                <p className="font-body text-xs text-muted-foreground">
-                  {format(new Date(review.created_at), 'MMMM yyyy', { locale: fr })}
-                </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-champagne/20 flex items-center justify-center font-serif text-chocolate text-lg">
+                  C
+                </div>
+                <div>
+                  <h4 className="font-serif text-lg text-chocolate">Client</h4>
+                  <p className="font-body text-xs text-muted-foreground">
+                    {format(new Date(review.created_at), 'MMMM yyyy', { locale: fr })}
+                  </p>
+                </div>
               </div>
               <div className="flex gap-0.5">
-                {Array.from({ length: review.note }).map((_, i) => (
-                  <Star key={i} size={14} className="text-gold fill-gold" />
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    size={14}
+                    className={i < review.note ? 'text-gold fill-gold' : 'text-muted-foreground/30'}
+                  />
                 ))}
               </div>
             </div>
             {review.commentaire && (
-              <p className="font-body text-muted-foreground">{review.commentaire}</p>
+              <p className="font-body text-muted-foreground leading-relaxed">{review.commentaire}</p>
             )}
           </motion.div>
         ))}
