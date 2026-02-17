@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Search, MapPin, Star, Heart, Grid, List, X, SlidersHorizontal, Globe, Navigation, Loader2 } from "lucide-react";
@@ -8,8 +8,8 @@ import { usePrestataires } from "@/hooks/use-prestataires";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
-import { useEffect } from "react";
 import { DevenirPrestatairePopup } from "@/components/home/DevenirPrestatairePopup";
+import { supabase } from "@/integrations/supabase/client";
 
 import categoryVideaste from "@/assets/category-videaste.jpg";
 import categoryPhotographe from "@/assets/category-photographe.jpg";
@@ -38,6 +38,7 @@ export default function Prestataires() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchParams] = useSearchParams();
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
 
   const {
     prestataires,
@@ -52,6 +53,26 @@ export default function Prestataires() {
     geoLocation,
     setGeoLocation,
   } = usePrestataires();
+
+  // Fetch vendor counts per category
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const { data } = await supabase
+        .from('prestataires')
+        .select('categorie_id')
+        .eq('statut', 'actif')
+        .not('photo_url', 'is', null)
+        .neq('photo_url', '');
+      if (data) {
+        const counts: Record<string, number> = {};
+        data.forEach(p => {
+          if (p.categorie_id) counts[p.categorie_id] = (counts[p.categorie_id] || 0) + 1;
+        });
+        setCategoryCounts(counts);
+      }
+    };
+    fetchCounts();
+  }, []);
 
   const { geo, radius, setRadius, requestLocation, disableGeo } = useGeolocation();
 
@@ -89,7 +110,7 @@ export default function Prestataires() {
 
   const hasActiveFilters = filters.search || filters.ville || filters.categorie || filters.culture || filters.langue || filters.noteMin > 0 || filters.country || geo.enabled;
 
-  const selectClass = "px-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer";
+  const selectClass = "px-3 py-2 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer max-w-[200px]";
 
   // Priority cities for the ville dropdown
   const priorityCityNames = PRIORITY_CITIES.map(c => c.name);
@@ -140,9 +161,18 @@ export default function Prestataires() {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-chocolate/90 via-chocolate/40 to-transparent flex items-end">
-                      <p className="font-serif text-sm text-ivory p-3 group-hover:text-gold transition-colors">
-                        {category.name}
-                      </p>
+                      <div className="p-3">
+                        <p className="font-serif text-sm text-ivory group-hover:text-gold transition-colors">
+                          {category.name}
+                        </p>
+                        {(() => {
+                          const cat = categories.find(c => c.slug === category.slug);
+                          const count = cat ? categoryCounts[cat.id] || 0 : 0;
+                          return count > 0 ? (
+                            <p className="font-body text-xs text-ivory/70">{count}</p>
+                          ) : null;
+                        })()}
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -232,7 +262,7 @@ export default function Prestataires() {
           )}
 
           {/* Desktop Filters */}
-          <div className={`mt-3 gap-3 flex-wrap items-center ${showMobileFilters ? 'flex' : 'hidden lg:flex'}`}>
+          <div className={`mt-3 gap-2 flex-wrap items-center ${showMobileFilters ? 'flex' : 'hidden lg:flex'}`}>
             {/* Ville with priority cities */}
             <select
               value={filters.ville}
