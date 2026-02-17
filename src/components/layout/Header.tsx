@@ -327,7 +327,7 @@ interface MobileMenuContentProps {
 }
 
 function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, role, signOut, close, favCount }: MobileMenuContentProps) {
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [expandedSection, setExpandedSection] = useState<string | null>("Prestataires");
   const navigate = useNavigate();
 
   const toggle = (key: string, href: string) => {
@@ -341,8 +341,8 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
   };
 
   const mobileNavItems = [
-    { key: "Mon Mariage", href: "/mon-mariage", hasChildren: true },
     { key: "Prestataires", href: "/prestataires", hasChildren: true },
+    { key: "Mon Mariage", href: "/mon-mariage", hasChildren: true },
     { key: "Lieux", href: "/categories/salle-lieu", hasChildren: true },
     { key: "Mariée", href: "/categories/tenues-couture", hasChildren: true },
     { key: "Marié", href: "/categories/tenues-couture", hasChildren: true },
