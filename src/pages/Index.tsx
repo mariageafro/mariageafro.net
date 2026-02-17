@@ -20,8 +20,8 @@ function DemoBanner() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative rounded-3xl border border-primary/20 bg-white/40 backdrop-blur-xl shadow-elegant p-8 md:p-12 text-center overflow-hidden"
-        >
+          className="relative rounded-3xl border border-primary/20 bg-white/40 backdrop-blur-xl shadow-elegant p-8 md:p-12 text-center overflow-hidden my-[61px]">
+
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-accent/10 rounded-full blur-3xl" />
           <div className="relative">
@@ -47,8 +47,8 @@ function DemoBanner() {
           </div>
         </motion.div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
 
 const Index = () => {
@@ -62,8 +62,8 @@ const Index = () => {
       <InspirationSection />
       <ProSection />
       <DevenirPrestatairePopup />
-    </Layout>
-  );
+    </Layout>);
+
 };
 
 export default Index;
