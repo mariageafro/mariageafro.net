@@ -1,7 +1,8 @@
 import {
-  MapPin, Utensils, Music, Camera, Sparkles, Layout,
-  Video, Car, Bus, Palette, FileText, Gift,
-  Mic2, Church, PartyPopper, Scissors, Crown, Plane
+  Camera, Video, Music, Utensils, MapPin, Layout,
+  Palette, Gift, PartyPopper, Scissors, Crown, Plane,
+  FileText, Car, Mic2, Church, Sparkles, Gem,
+  ChefHat, Flower2, Users, HeartHandshake
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -13,28 +14,24 @@ export interface MegaMenuItem {
 }
 
 export const mainCategories: MegaMenuItem[] = [
-  { label: "Photo mariage", icon: Camera, href: "/categories/photographe" },
-  { label: "Vidéo mariage", icon: Video, href: "/categories/videaste" },
-  { label: "Musique mariage", icon: Music, href: "/categories/dj-musique" },
-  { label: "Traiteur mariage", icon: Utensils, href: "/categories/traiteur" },
-  { label: "Voiture mariage", icon: Car, href: "/categories/transport" },
-  { label: "Wedding Planner", icon: Layout, href: "/categories/wedding-planner" },
-  { label: "Salle & Lieu", icon: MapPin, href: "/categories/salle-lieu" },
-  { label: "Décoration mariage", icon: Palette, href: "/categories/decoration" },
-  { label: "Faire-part mariage", icon: FileText, href: "/categories/faire-part" },
-  { label: "Cadeaux invités", icon: Gift, href: "/categories/cadeaux-invites" },
-  { label: "Animation mariage", icon: PartyPopper, href: "/categories/animation" },
-  { label: "Wedding Planner", icon: Layout, href: "/categories/wedding-planner" },
+  { label: "📸 Image & Souvenirs", icon: Camera, href: "/categories/image-souvenirs" },
+  { label: "🎶 Animation & Ambiance", icon: Music, href: "/categories/animation-ambiance" },
+  { label: "👗 Mode & Beauté", icon: Scissors, href: "/categories/mode-beaute" },
+  { label: "🍽️ Traiteurs & Gastronomie", icon: Utensils, href: "/categories/traiteurs-gastronomie" },
+  { label: "🌸 Décoration & Lieux", icon: Palette, href: "/categories/decoration-lieux" },
+  { label: "⛪ Cérémonies & Coutumes", icon: Church, href: "/categories/ceremonies-coutumes" },
+  { label: "✈️ Logistique & Services", icon: Car, href: "/categories/logistique-services" },
+  { label: "💍 Bijoux & Accessoires", icon: Gem, href: "/categories/bijoux-accessoires" },
 ];
 
 export const otherCategories: { label: string; href: string; highlight?: boolean }[] = [
-  { label: "Tenues & Couture", href: "/categories/tenues-couture" },
-  { label: "Coiffure & Beauté", href: "/categories/coiffure-beaute" },
-  { label: "Wedding Cake", href: "/categories/traiteur" },
-  { label: "Officiants", href: "/prestataires" },
-  { label: "Food Truck", href: "/prestataires" },
-  { label: "Vin et Spiritueux", href: "/prestataires" },
-  { label: "Chorale Gospel", href: "/categories/dj-musique" },
-  { label: "Henné / Art corporel", href: "/categories/coiffure-beaute" },
-  { label: "Destination Weddings", href: "/categories/salle-lieu", highlight: true },
+  { label: "Photographe", href: "/categories/image-souvenirs" },
+  { label: "Vidéaste", href: "/categories/image-souvenirs" },
+  { label: "DJ mariage", href: "/categories/animation-ambiance" },
+  { label: "Wedding Planner", href: "/categories/ceremonies-coutumes" },
+  { label: "Traiteur africain", href: "/categories/traiteurs-gastronomie" },
+  { label: "Coiffeuse & Maquilleuse afro", href: "/categories/mode-beaute" },
+  { label: "Décorateur", href: "/categories/decoration-lieux" },
+  { label: "Salle & Domaine", href: "/categories/decoration-lieux" },
+  { label: "Destination Weddings", href: "/categories/logistique-services", highlight: true },
 ];

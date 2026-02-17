@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Plane, Sparkles } from "lucide-react";
+import { Plane } from "lucide-react";
 import { mainCategories, otherCategories } from "./MegaMenuData";
 
 export function MegaMenu() {
@@ -12,7 +12,7 @@ export function MegaMenu() {
         </h3>
 
         {/* Main categories grid */}
-        <div className="grid grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 mb-8">
           {mainCategories.map((cat) => {
             const Icon = cat.icon;
             return (
