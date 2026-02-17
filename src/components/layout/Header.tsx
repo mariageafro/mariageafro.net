@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin, Shirt, Heart } from "lucide-react";
 import { mainCategories } from "@/components/layout/MegaMenuData";
 import { plannerItems } from "@/components/layout/MegaMenuPlannerData";
@@ -325,9 +325,16 @@ interface MobileMenuContentProps {
 
 function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, role, signOut, close, favCount }: MobileMenuContentProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const toggle = (key: string) => {
-    setExpandedSection(prev => prev === key ? null : key);
+  const toggle = (key: string, href: string) => {
+    if (expandedSection === key) {
+      // Already open → navigate to the section page
+      close();
+      navigate(href);
+    } else {
+      setExpandedSection(key);
+    }
   };
 
   const mobileNavItems = [
@@ -362,8 +369,8 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
             {item.hasChildren ? (
               <>
                 <button
-                  onClick={() => toggle(item.key)}
-                  className="w-full flex items-center justify-between px-6 py-4 font-body text-base text-chocolate hover:text-champagne transition-colors"
+                   onClick={() => toggle(item.key, item.href)}
+                   className="w-full flex items-center justify-between px-6 py-4 font-body text-base text-chocolate hover:text-champagne transition-colors"
                 >
                   <span>{translateUI(item.key, lang)}</span>
                   <ChevronRight
