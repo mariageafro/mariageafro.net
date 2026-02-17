@@ -46,7 +46,7 @@ export default function WeddingSite() {
     if (!code) return;
     (async () => {
       const { data: wp } = await supabase
-        .from("user_wedding_profile")
+        .from("user_wedding_profile_public" as any)
         .select("partner_one_first_name, partner_two_first_name, couple_display_name, couple_quote, wedding_date, city, country, site_hero_image_url, site_theme, site_welcome_text, site_share_code, user_id")
         .eq("site_share_code", code)
         .maybeSingle();
