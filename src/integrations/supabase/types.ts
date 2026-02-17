@@ -734,6 +734,7 @@ export type Database = {
           id: string
           name: string
           slug: string
+          sort_order: number | null
         }
         Insert: {
           category_id: string
@@ -743,6 +744,7 @@ export type Database = {
           id?: string
           name: string
           slug: string
+          sort_order?: number | null
         }
         Update: {
           category_id?: string
@@ -752,6 +754,7 @@ export type Database = {
           id?: string
           name?: string
           slug?: string
+          sort_order?: number | null
         }
         Relationships: [
           {
