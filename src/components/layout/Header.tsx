@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useUserRole } from "@/hooks/use-user-role";
 import { useLanguage, translateUI } from "@/contexts/language-context";
+import { useFavorites } from "@/hooks/use-favorites";
 import { MegaMenu } from "@/components/layout/MegaMenu";
 import { MegaMenuPlanner } from "@/components/layout/MegaMenuPlanner";
 import { MegaMenuMariee } from "@/components/layout/MegaMenuMariee";
@@ -73,6 +74,7 @@ export function Header() {
   const { isAuthenticated, user, signOut } = useAuthContext();
   const { role } = useUserRole(user?.id);
   const { lang, setLang } = useLanguage();
+  const { count: favCount } = useFavorites();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -214,11 +216,16 @@ export function Header() {
                   ) : role !== 'admin' ? (
                     <Link
                       to="/mes-favoris"
-                      className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
+                      className={`relative text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
                         showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
                       }`}
                     >
                       <Heart className="w-4 h-4" />
+                      {favCount > 0 && (
+                        <span className="absolute -top-1 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-champagne text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
+                          {favCount > 99 ? '99+' : favCount}
+                        </span>
+                      )}
                       <span className="hidden xl:inline">Favoris</span>
                     </Link>
                   ) : null}
@@ -292,6 +299,7 @@ export function Header() {
               role={role}
               signOut={signOut}
               close={() => setIsMobileMenuOpen(false)}
+              favCount={favCount}
             />
           </motion.div>
         )}
@@ -311,9 +319,10 @@ interface MobileMenuContentProps {
   role: string | null;
   signOut: () => void;
   close: () => void;
+  favCount: number;
 }
 
-function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, role, signOut, close }: MobileMenuContentProps) {
+function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, role, signOut, close, favCount }: MobileMenuContentProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const toggle = (key: string) => {
@@ -550,6 +559,11 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
             )}
             <Link to="/mes-favoris" onClick={close} className="font-body text-base py-2 text-chocolate hover:text-champagne flex items-center gap-2">
               <Heart className="w-4 h-4" /> Mes Favoris
+              {favCount > 0 && (
+                <span className="min-w-[20px] h-[20px] rounded-full bg-champagne text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
+                  {favCount}
+                </span>
+              )}
             </Link>
             <div className="text-sm text-muted-foreground">{user?.email}</div>
             <Button
