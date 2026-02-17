@@ -1,15 +1,24 @@
 import { Link } from "react-router-dom";
-import { Plane, ChevronRight } from "lucide-react";
+import { Plane, ChevronRight, Crown } from "lucide-react";
 import { megaMenuCategories } from "./MegaMenuData";
 
 export function MegaMenu() {
   return (
     <div className="w-full bg-popover shadow-xl border-b border-border z-50 max-h-[80vh] overflow-y-auto">
       <div className="max-w-7xl mx-auto px-6 pt-7 pb-5">
-        {/* Title */}
-        <h3 className="font-serif text-lg text-chocolate mb-5">
-          Trouvez vos prestataires
-        </h3>
+        {/* Top bar: title + Premium CTA */}
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-serif text-lg text-chocolate">
+            Trouvez vos prestataires
+          </h3>
+          <Link
+            to="/prestataires-premium"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-champagne to-champagne-dark text-white text-xs font-body font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all"
+          >
+            <Crown size={13} />
+            Prestataires Premium ✨
+          </Link>
+        </div>
 
         {/* Categories grid – 3 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
