@@ -174,7 +174,7 @@ export const demoGuests: DemoGuest[] = guestNames.map(([fn, ln, grp], i) => ({
 export const demoTimeline = [
   { id: "tl0", start_time: "06:00", end_time: "08:00", title: "Préparatifs mariée", address: "Suite Présidentielle, Hôtel Renaissance", responsible: "Glam by Aïcha & Hair by Caro", budget: 800, icon: "💄" },
   { id: "tl1", start_time: "07:00", end_time: "08:30", title: "Préparatifs marié", address: "Suite VIP, Hôtel Renaissance", responsible: "Prestige Homme", budget: 300, icon: "🤵" },
-  { id: "tl2", start_time: "08:30", end_time: "10:30", title: "Cérémonie de la Dot", address: "Résidence familiale Nadia, Montreuil", responsible: "Familles + Grâce Events", budget: 1200, icon: "🎁" },
+  { id: "tl2", start_time: "08:30", end_time: "10:00", title: "Séance photo couple – First Look", address: "Jardins du Palais Royal, Paris", responsible: "Issa Photography", budget: 0, icon: "📸" },
   { id: "tl3", start_time: "10:00", end_time: "11:00", title: "Mairie du 8ème", address: "Mairie du 8ème, 3 Rue de Lisbonne, Paris", responsible: "Coordinatrice Sandra", budget: 0, icon: "🏛️" },
   { id: "tl4", start_time: "11:30", end_time: "12:30", title: "Cérémonie religieuse", address: "Église Saint-Sulpice, Paris", responsible: "Gospel Voices + Coordinatrice", budget: 800, icon: "⛪" },
   { id: "tl5", start_time: "13:00", end_time: "14:30", title: "Photos couple", address: "Pont Alexandre III & Jardin des Tuileries", responsible: "Marc Visuals + SkyView Pro", budget: 500, icon: "📸" },
@@ -208,7 +208,7 @@ export const demoTasks = [
   { id: "t4", title: "Commander les faire-part", category: "papeterie", done: true, priority: "medium", due_date: "2026-04-01" },
   { id: "t5", title: "Choisir la robe", category: "tenues", done: true, priority: "high", due_date: "2026-03-01" },
   { id: "t6", title: "Réserver le DJ", category: "musique", done: true, priority: "medium", due_date: "2026-03-15" },
-  { id: "t7", title: "Organiser la dot", category: "tradition", done: true, priority: "high", due_date: "2026-04-15" },
+  { id: "t7", title: "Préparer les tenues traditionnelles", category: "tradition", done: true, priority: "high", due_date: "2026-04-15" },
   { id: "t8", title: "Envoyer les faire-part", category: "papeterie", done: true, priority: "high", due_date: "2026-06-01" },
   { id: "t9", title: "Finaliser le plan de table", category: "organisation", done: true, priority: "high", due_date: "2026-07-01" },
   { id: "t10", title: "Confirmer tous les prestataires", category: "general", done: true, priority: "urgent", due_date: "2026-07-15" },
