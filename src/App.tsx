@@ -40,6 +40,7 @@ import WeddingSiteEditor from "./pages/wedding/WeddingSiteEditor";
 import WeddingTemplates from "./pages/wedding/WeddingTemplates";
 import TemplatePreview from "./pages/wedding/TemplatePreview";
 import DemoMariage from "./pages/DemoMariage";
+import Lieux from "./pages/Lieux";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import AdminOverview from "./pages/admin/AdminOverview";
@@ -70,6 +71,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/prestataires" element={<Prestataires />} />
+            <Route path="/lieux" element={<Lieux />} />
             <Route path="/prestataires/ville/:city" element={<CityPage />} />
             <Route path="/prestataires/:id" element={<ProfilPrestataire />} />
             <Route path="/categories/:slug" element={<CategoryPage />} />
