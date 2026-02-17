@@ -57,38 +57,27 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // MariageAfro Extended Palette
+        // MariageAfro Custom Colors
+        champagne: {
+          DEFAULT: "hsl(var(--champagne))",
+          light: "hsl(var(--champagne-light))",
+          dark: "hsl(var(--champagne-dark))",
+        },
+        ivory: "hsl(var(--ivory))",
+        cream: "hsl(var(--cream))",
+        chocolate: {
+          DEFAULT: "hsl(var(--chocolate))",
+          light: "hsl(var(--chocolate-light))",
+        },
         gold: {
           DEFAULT: "hsl(var(--gold))",
           muted: "hsl(var(--gold-muted))",
         },
-        sienna: {
-          DEFAULT: "hsl(var(--sienna))",
-          light: "hsl(var(--sienna-light))",
-        },
-        vert: "hsl(var(--vert))",
-        bordeaux: "hsl(var(--bordeaux))",
-        charbon: "hsl(var(--charbon))",
-        // Backwards compat aliases
-        champagne: {
-          DEFAULT: "hsl(var(--sienna))",
-          light: "hsl(var(--sienna-light))",
-          dark: "hsl(var(--sienna))",
-        },
-        ivory: "hsl(var(--background))",
-        cream: "hsl(var(--muted))",
-        chocolate: {
-          DEFAULT: "hsl(var(--charbon))",
-          light: "hsl(var(--muted-foreground))",
-        },
-        "warm-beige": "hsl(var(--muted))",
+        "warm-beige": "hsl(var(--warm-beige))",
       },
       fontFamily: {
-        display: ['Playfair Display', 'Georgia', 'serif'],
-        heading: ['Montserrat', 'system-ui', 'sans-serif'],
-        body: ['Lato', 'system-ui', 'sans-serif'],
-        // Backwards compat
-        serif: ['Playfair Display', 'Georgia', 'serif'],
+        serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+        body: ['Lora', 'Georgia', 'serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -105,7 +94,7 @@ export default {
           to: { height: "0" },
         },
         "fade-up": {
-          from: { opacity: "0", transform: "translateY(20px)" },
+          from: { opacity: "0", transform: "translateY(30px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
@@ -124,10 +113,10 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-up": "fade-up 0.6s ease-out forwards",
-        "fade-in": "fade-in 0.4s ease-out forwards",
-        "slide-in-right": "slide-in-right 0.4s ease-out forwards",
-        "scale-in": "scale-in 0.3s ease-out forwards",
+        "fade-up": "fade-up 0.8s ease-out forwards",
+        "fade-in": "fade-in 0.6s ease-out forwards",
+        "slide-in-right": "slide-in-right 0.5s ease-out forwards",
+        "scale-in": "scale-in 0.4s ease-out forwards",
       },
     },
   },
