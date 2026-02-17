@@ -14,10 +14,10 @@ type Prestataire = Tables<'prestataires'> & {
 
 export type PrestatairesFilters = {
   search: string;
-  ville: string;
+  ville: string[];
   categorie: string;
-  culture: string;
-  langue: string;
+  culture: string[];
+  langue: string[];
   noteMin: number;
   sort: 'pertinence' | 'note' | 'avis' | 'distance';
   country: string;
@@ -25,10 +25,10 @@ export type PrestatairesFilters = {
 
 const defaultFilters: PrestatairesFilters = {
   search: '',
-  ville: '',
+  ville: [],
   categorie: '',
-  culture: '',
-  langue: '',
+  culture: [],
+  langue: [],
   noteMin: 0,
   sort: 'pertinence',
   country: '',
@@ -89,10 +89,8 @@ export function usePrestataires(initialFilters?: Partial<PrestatairesFilters>) {
         .not('photo_url', 'is', null)
         .neq('photo_url', '');
 
-      if (filters.ville) query = query.eq('ville', filters.ville);
+      if (filters.ville.length > 0) query = query.in('ville', filters.ville);
       if (filters.categorie) query = query.eq('categorie_id', filters.categorie);
-      if (filters.culture) query = query.ilike('origine_culturelle', `%${filters.culture}%`);
-      if (filters.langue) query = query.contains('langues', [filters.langue]);
       if (filters.country) query = query.eq('country_id', filters.country);
       if (filters.search) query = query.or(`nom_entreprise.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       
@@ -151,6 +149,20 @@ export function usePrestataires(initialFilters?: Partial<PrestatairesFilters>) {
       // Filter by minimum rating
       if (filters.noteMin > 0) {
         results = results.filter(p => p.avg_rating >= filters.noteMin);
+      }
+
+      // Filter by cultures (multi-select, client-side)
+      if (filters.culture.length > 0) {
+        results = results.filter(p =>
+          p.origine_culturelle && filters.culture.some(c => p.origine_culturelle!.toLowerCase().includes(c.toLowerCase()))
+        );
+      }
+
+      // Filter by langues (multi-select, client-side)
+      if (filters.langue.length > 0) {
+        results = results.filter(p =>
+          p.langues && filters.langue.some(l => p.langues!.includes(l))
+        );
       }
 
       // Filter by radius when geolocation is active

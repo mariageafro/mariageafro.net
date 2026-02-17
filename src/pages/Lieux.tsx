@@ -76,7 +76,7 @@ export default function Lieux() {
     );
   }, [prestataires, venueTypeFilter]);
 
-  const hasActiveFilters = filters.search || filters.ville || filters.culture || filters.langue || filters.noteMin > 0 || filters.country || geo.enabled || venueTypeFilter.length > 0;
+  const hasActiveFilters = filters.search || filters.ville.length > 0 || filters.culture.length > 0 || filters.langue.length > 0 || filters.noteMin > 0 || filters.country || geo.enabled || venueTypeFilter.length > 0;
 
   // Pagination
   const totalPages = Math.ceil(filteredLieux.length / ITEMS_PER_PAGE);
