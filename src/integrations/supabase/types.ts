@@ -978,7 +978,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_wedding_profile_public: {
+        Row: {
+          city: string | null
+          country: string | null
+          couple_display_name: string | null
+          couple_quote: string | null
+          partner_one_first_name: string | null
+          partner_two_first_name: string | null
+          site_hero_image_url: string | null
+          site_share_code: string | null
+          site_theme: string | null
+          site_welcome_text: string | null
+          user_id: string | null
+          wedding_date: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          couple_display_name?: string | null
+          couple_quote?: string | null
+          partner_one_first_name?: string | null
+          partner_two_first_name?: string | null
+          site_hero_image_url?: string | null
+          site_share_code?: string | null
+          site_theme?: string | null
+          site_welcome_text?: string | null
+          user_id?: string | null
+          wedding_date?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          couple_display_name?: string | null
+          couple_quote?: string | null
+          partner_one_first_name?: string | null
+          partner_two_first_name?: string | null
+          site_hero_image_url?: string | null
+          site_share_code?: string | null
+          site_theme?: string | null
+          site_welcome_text?: string | null
+          user_id?: string | null
+          wedding_date?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_approve_review: {
