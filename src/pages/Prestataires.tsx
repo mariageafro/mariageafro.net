@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Star, Heart, Grid, List, SlidersHorizontal, Globe, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, MapPin, Star, Heart, Grid, List, SlidersHorizontal, Globe, ChevronLeft, ChevronRight, BadgeCheck, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useSearchParams } from "react-router-dom";
 import { usePrestataires } from "@/hooks/use-prestataires";
@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import categoryVideaste from "@/assets/category-videaste.jpg";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 24;
 
 export default function Prestataires() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -279,67 +279,84 @@ export default function Prestataires() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: index * 0.03 }}
                     >
-                      <Link to={`/prestataires/${p.slug}`} className={`group block card-premium ${viewMode === 'list' ? 'flex' : ''}`}>
-                        <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 shrink-0' : 'aspect-[4/3]'}`}>
-                          <img
-                            src={p.cover_url || p.photo_url || categoryVideaste}
-                            alt={p.nom_entreprise}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            loading="lazy"
-                          />
-                          <FavoriteButton prestataireId={p.id} className="absolute top-3 right-3" />
-                          {p.badge_type && p.badge_type !== 'FREE' && (
-                            <div className="absolute top-3 left-3">
-                              <span className="px-2.5 py-1 rounded-full bg-champagne/90 font-body text-[10px] font-semibold text-primary-foreground uppercase tracking-wider">
-                                {p.badge_type === 'PREMIUM' ? 'Premium' : p.badge_type === 'VIP' ? 'VIP' : p.badge_type === 'FOUNDER' ? 'Fondateur' : p.badge_type}
-                              </span>
-                            </div>
-                          )}
-                          {p.categories && (
-                            <div className="absolute bottom-3 left-3">
-                              <span className="px-3 py-1 rounded-full bg-ivory/90 font-body text-xs font-medium text-chocolate">
-                                {p.categories.name}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-4 flex-1">
-                          <h3 className="font-serif text-base text-chocolate mb-1 group-hover:text-champagne transition-colors line-clamp-1">
-                            {p.nom_entreprise}
-                          </h3>
-                          {p.ville && (
-                            <div className="flex items-center gap-1.5 text-muted-foreground font-body text-xs mb-2">
-                              <MapPin size={12} />
-                              {p.ville}{p.pays ? `, ${p.pays}` : ''}
-                              {p.distance !== undefined && (
-                                <span className="ml-1 text-champagne-dark font-medium">· {p.distance < 1 ? '<1' : Math.round(p.distance)} km</span>
+                      <div className={`group card-premium ${viewMode === 'list' ? 'flex' : ''}`}>
+                        <Link to={`/prestataires/${p.slug}`} className={`block ${viewMode === 'list' ? 'flex flex-1' : ''}`}>
+                          <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 shrink-0' : 'aspect-[4/3]'}`}>
+                            <img
+                              src={p.cover_url || p.photo_url || categoryVideaste}
+                              alt={p.nom_entreprise}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                              loading="lazy"
+                            />
+                            <FavoriteButton prestataireId={p.id} className="absolute top-3 right-3" />
+                            {p.badge_type && p.badge_type !== 'FREE' && (
+                              <div className="absolute top-3 left-3">
+                                <span className="px-2.5 py-1 rounded-full bg-champagne/90 font-body text-[10px] font-semibold text-primary-foreground uppercase tracking-wider">
+                                  {p.badge_type === 'PREMIUM' ? 'Premium' : p.badge_type === 'VIP' ? 'VIP' : p.badge_type === 'FOUNDER' ? 'Fondateur' : p.badge_type}
+                                </span>
+                              </div>
+                            )}
+                            {p.categories && (
+                              <div className="absolute bottom-3 left-3">
+                                <span className="px-3 py-1 rounded-full bg-ivory/90 font-body text-xs font-medium text-chocolate">
+                                  {p.categories.name}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-4 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-serif text-base text-chocolate group-hover:text-champagne transition-colors line-clamp-1 flex-1">
+                                {p.nom_entreprise}
+                              </h3>
+                              {p.verified && (
+                                <BadgeCheck size={16} className="text-champagne shrink-0" />
                               )}
                             </div>
-                          )}
-                          {p.origine_culturelle && (
-                            <p className="font-body text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
-                              <Globe size={11} />
-                              {p.origine_culturelle}
-                            </p>
-                          )}
-                          <div className="flex items-center justify-between mt-auto">
-                            <div className="flex items-center gap-1">
+                            {p.ville && (
+                              <div className="flex items-center gap-1.5 text-muted-foreground font-body text-xs mb-2">
+                                <MapPin size={12} />
+                                {p.ville}{p.pays ? `, ${p.pays}` : ''}
+                                {p.distance !== undefined && (
+                                  <span className="ml-1 text-champagne-dark font-medium">· {p.distance < 1 ? '<1' : Math.round(p.distance)} km</span>
+                                )}
+                              </div>
+                            )}
+                            {p.origine_culturelle && (
+                              <p className="font-body text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+                                <Globe size={11} />
+                                {p.origine_culturelle}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-1 mb-3">
                               {p.review_count > 0 ? (
                                 <>
                                   <Star size={14} className="text-gold fill-gold" />
                                   <span className="font-body text-sm font-medium">{p.avg_rating.toFixed(1)}</span>
-                                  <span className="font-body text-xs text-muted-foreground">({p.review_count})</span>
+                                  <span className="font-body text-xs text-muted-foreground">({p.review_count} avis)</span>
                                 </>
                               ) : (
                                 <span className="font-body text-xs text-muted-foreground italic">Nouveau</span>
                               )}
                             </div>
-                            <span className="font-body text-xs text-champagne font-medium group-hover:underline">
-                              Voir →
-                            </span>
+                            <div className="flex gap-2">
+                              <span className="flex-1 text-center py-1.5 rounded-lg bg-champagne/10 text-champagne font-body text-xs font-semibold group-hover:bg-champagne group-hover:text-primary-foreground transition-all">
+                                Voir profil
+                              </span>
+                            </div>
                           </div>
+                        </Link>
+                        <div className="px-4 pb-4 -mt-1">
+                          <Link
+                            to={`/prestataires/${p.slug}#contact`}
+                            className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg border border-border text-muted-foreground font-body text-xs font-medium hover:border-champagne hover:text-champagne transition-all"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MessageCircle size={12} />
+                            Contacter
+                          </Link>
                         </div>
-                      </Link>
+                      </div>
                     </motion.div>
                   ))}
                 </div>
