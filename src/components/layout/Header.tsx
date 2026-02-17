@@ -47,7 +47,8 @@ const navLinks = [
 const featuredCategories = [
   { name: "📸 Image & Souvenirs", slug: "image-souvenirs" },
   { name: "🎶 Animation & Ambiance", slug: "animation-ambiance" },
-  { name: "👗 Mode & Beauté", slug: "mode-beaute" },
+  { name: "👗 Mode & Tenues", slug: "mode-tenues" },
+  { name: "💄 Beauté", slug: "beaute" },
   { name: "🍽️ Traiteurs & Gastronomie", slug: "traiteurs-gastronomie" },
   { name: "🌸 Décoration & Lieux", slug: "decoration-lieux" },
   { name: "⛪ Cérémonies & Coutumes", slug: "ceremonies-coutumes" },

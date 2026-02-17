@@ -16,7 +16,8 @@ export interface MegaMenuItem {
 export const mainCategories: MegaMenuItem[] = [
   { label: "📸 Image & Souvenirs", icon: Camera, href: "/categories/image-souvenirs" },
   { label: "🎶 Animation & Ambiance", icon: Music, href: "/categories/animation-ambiance" },
-  { label: "👗 Mode & Beauté", icon: Scissors, href: "/categories/mode-beaute" },
+  { label: "👗 Mode & Tenues", icon: Scissors, href: "/categories/mode-tenues" },
+  { label: "💄 Beauté", icon: Sparkles, href: "/categories/beaute" },
   { label: "🍽️ Traiteurs & Gastronomie", icon: Utensils, href: "/categories/traiteurs-gastronomie" },
   { label: "🌸 Décoration & Lieux", icon: Palette, href: "/categories/decoration-lieux" },
   { label: "⛪ Cérémonies & Coutumes", icon: Church, href: "/categories/ceremonies-coutumes" },
@@ -30,7 +31,7 @@ export const otherCategories: { label: string; href: string; highlight?: boolean
   { label: "DJ mariage", href: "/categories/animation-ambiance" },
   { label: "Wedding Planner", href: "/categories/ceremonies-coutumes" },
   { label: "Traiteur africain", href: "/categories/traiteurs-gastronomie" },
-  { label: "Coiffeuse & Maquilleuse afro", href: "/categories/mode-beaute" },
+  { label: "Coiffeuse & Maquilleuse afro", href: "/categories/beaute" },
   { label: "Décorateur", href: "/categories/decoration-lieux" },
   { label: "Salle & Domaine", href: "/categories/decoration-lieux" },
   { label: "Destination Weddings", href: "/categories/logistique-services", highlight: true },
