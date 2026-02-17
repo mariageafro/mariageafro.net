@@ -332,9 +332,8 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
 
   const toggle = (key: string, href: string) => {
     if (expandedSection === key) {
-      // Already open → navigate to the section page
-      close();
-      navigate(href);
+      // Already open → just collapse it
+      setExpandedSection(null);
     } else {
       setExpandedSection(key);
     }
