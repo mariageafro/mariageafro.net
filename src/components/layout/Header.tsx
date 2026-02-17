@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin, Shirt, Heart } from "lucide-react";
-import { mainCategories, otherCategories } from "@/components/layout/MegaMenuData";
+import { mainCategories } from "@/components/layout/MegaMenuData";
 import { plannerItems } from "@/components/layout/MegaMenuPlannerData";
 import { marieeItems } from "@/components/layout/MegaMenuMarieeData";
 import { marieItems } from "@/components/layout/MegaMenuMarieData";
