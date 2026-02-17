@@ -327,7 +327,7 @@ interface MobileMenuContentProps {
 }
 
 function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, role, signOut, close, favCount }: MobileMenuContentProps) {
-  const [expandedSection, setExpandedSection] = useState<string | null>("Prestataires");
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const toggle = (key: string, href: string) => {
