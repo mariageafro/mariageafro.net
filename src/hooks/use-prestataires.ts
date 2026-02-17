@@ -34,13 +34,15 @@ const defaultFilters: PrestatairesFilters = {
   country: '',
 };
 
-export function usePrestataires() {
+export function usePrestataires(initialFilters?: Partial<PrestatairesFilters>) {
   const [searchParams] = useSearchParams();
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const lockedFilters = initialFilters || {};
   const [filters, setFilters] = useState<PrestatairesFilters>(() => ({
     ...defaultFilters,
     country: searchParams.get('country') || '',
+    ...lockedFilters,
   }));
   const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
   const [villes, setVilles] = useState<string[]>([]);
@@ -189,7 +191,7 @@ export function usePrestataires() {
       setFilters(prev => ({ ...prev, [key]: value }));
     },
     resetFilters: () => {
-      setFilters(defaultFilters);
+      setFilters({ ...defaultFilters, ...lockedFilters });
       setGeoLocation(null);
     },
     categories,

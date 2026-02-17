@@ -32,12 +32,8 @@ export default function Lieux() {
   const {
     prestataires, isLoading, filters, updateFilter, resetFilters,
     categories, villes, cultures, langues, geoLocation, setGeoLocation,
-  } = usePrestataires();
+  } = usePrestataires({ categorie: LIEU_CATEGORY_ID });
 
-  // Force category filter to Lieux on mount
-  useEffect(() => {
-    updateFilter("categorie", LIEU_CATEGORY_ID);
-  }, []);
 
   // Fetch sub-categories for lieux
   useEffect(() => {
@@ -102,11 +98,9 @@ export default function Lieux() {
   }, [filters, geoLocation, venueTypeFilter]);
 
   const handleResetAll = () => {
-    resetFilters();
     disableGeo();
     setVenueTypeFilter([]);
-    // Re-apply lieu category after reset
-    setTimeout(() => updateFilter("categorie", LIEU_CATEGORY_ID), 0);
+    resetFilters(); // Hook preserves locked categorie filter
   };
 
   return (
