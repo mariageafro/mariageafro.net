@@ -8,14 +8,18 @@ export function MegaMenuCommunaute() {
         {/* Left: grouped themes */}
         <div className="flex-1">
           <h3 className="font-serif text-lg text-chocolate mb-5">Groupes par thème</h3>
-          <div className="grid grid-cols-3 gap-x-8 gap-y-2">
+          <div className="grid grid-cols-3 gap-x-8 gap-y-1">
             {communauteThemes.map((item) => (
               <Link
                 key={item.label}
                 to={item.href}
-                className="flex items-center gap-2.5 text-sm font-body text-chocolate hover:text-champagne transition-colors py-1.5 group"
+                className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group"
               >
-                {item.icon && <item.icon className="w-4 h-4 text-muted-foreground group-hover:text-champagne transition-colors flex-shrink-0" />}
+                {item.icon && (
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-champagne/10 text-champagne shrink-0">
+                    <item.icon size={13} />
+                  </span>
+                )}
                 {item.label}
               </Link>
             ))}
@@ -26,14 +30,18 @@ export function MegaMenuCommunaute() {
           <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3 font-body">
             Découvrez les nouveautés
           </p>
-          <div className="space-y-2">
+          <div className="space-y-1">
             {communauteNewItems.map((item) => (
               <Link
                 key={item.label}
                 to={item.href}
-                className="flex items-center gap-2.5 text-sm font-body text-chocolate hover:text-champagne transition-colors py-1.5 group"
+                className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group"
               >
-                {item.icon && <item.icon className="w-4 h-4 text-muted-foreground group-hover:text-champagne transition-colors flex-shrink-0" />}
+                {item.icon && (
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-champagne/10 text-champagne shrink-0">
+                    <item.icon size={13} />
+                  </span>
+                )}
                 {item.label}
               </Link>
             ))}

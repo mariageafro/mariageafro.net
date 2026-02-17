@@ -14,12 +14,12 @@ export function MegaMenuPays() {
               <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3 font-body">
                 {group.continent}
               </p>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {group.countries.map((country) => (
                   <Link
                     key={country.label}
                     to={country.href}
-                    className="flex items-center gap-2.5 text-sm font-body text-chocolate hover:text-champagne transition-colors py-1.5 group"
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group"
                   >
                     <span className="text-base flex-shrink-0">{country.flag}</span>
                     {country.label}

@@ -7,14 +7,18 @@ export function MegaMenuRobes() {
       <div className="max-w-5xl mx-auto px-6 py-8 flex gap-10">
         <div className="flex-1">
           <h3 className="font-serif text-lg text-chocolate mb-5">Les dernières tendances de la mode nuptiale</h3>
-          <div className="space-y-3">
+          <div className="space-y-1">
             {robesCategories.map((item) => (
               <Link
                 key={item.label}
                 to={item.href}
-                className="flex items-center gap-3 text-sm font-body text-chocolate hover:text-champagne transition-colors py-2 group"
+                className="flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group"
               >
-                {item.icon && <item.icon className="w-5 h-5 text-muted-foreground group-hover:text-champagne transition-colors" />}
+                {item.icon && (
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-champagne/10 text-champagne shrink-0">
+                    <item.icon size={13} />
+                  </span>
+                )}
                 {item.label}
               </Link>
             ))}

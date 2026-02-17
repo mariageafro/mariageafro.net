@@ -9,16 +9,18 @@ export function MegaMenuPlanner() {
         {/* Grid 2×4 */}
         <div className="flex-1">
           <h3 className="font-serif text-lg text-chocolate mb-5">Mon Planificateur</h3>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-1">
             {plannerItems.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.label}
                   to={item.href}
-                  className="flex items-center gap-2.5 text-sm font-body text-chocolate hover:text-champagne transition-colors py-1.5 group"
+                  className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group"
                 >
-                  <Icon className="w-4 h-4 text-muted-foreground group-hover:text-champagne transition-colors flex-shrink-0" />
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-champagne/10 text-champagne shrink-0">
+                    <Icon size={13} />
+                  </span>
                   <span>{item.label}</span>
                 </Link>
               );
