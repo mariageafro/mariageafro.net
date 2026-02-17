@@ -21,8 +21,8 @@ export const mainCategories: MegaMenuItem[] = [
   { label: "Wedding Planner", icon: Layout, href: "/categories/wedding-planner" },
   { label: "Salle & Lieu", icon: MapPin, href: "/categories/salle-lieu" },
   { label: "Décoration mariage", icon: Palette, href: "/categories/decoration" },
-  { label: "Faire-part mariage", icon: FileText, href: "/prestataires" },
-  { label: "Cadeaux invités", icon: Gift, href: "/prestataires" },
+  { label: "Faire-part mariage", icon: FileText, href: "/categories/faire-part" },
+  { label: "Cadeaux invités", icon: Gift, href: "/categories/cadeaux-invites" },
   { label: "Animation mariage", icon: PartyPopper, href: "/categories/animation" },
   { label: "Wedding Planner", icon: Layout, href: "/categories/wedding-planner" },
 ];
