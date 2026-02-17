@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, CheckCircle2, Clock, Star, FolderTree, Globe } from "lucide-react";
+import { Users, CheckCircle2, Clock, Star, FolderTree, Globe, CreditCard, UserCog } from "lucide-react";
 import { Loader2 } from "lucide-react";
 
 export default function AdminOverview() {
@@ -10,13 +10,16 @@ export default function AdminOverview() {
 
   useEffect(() => {
     (async () => {
-      const [prestaRes, reviewsRes, catRes, countryRes] = await Promise.all([
+      const [prestaRes, reviewsRes, catRes, countryRes, usersRes, subsRes] = await Promise.all([
         supabase.from("prestataires").select("statut"),
         supabase.from("avis").select("id", { count: "exact", head: true }),
         supabase.from("categories").select("id", { count: "exact", head: true }),
         supabase.from("countries").select("id", { count: "exact", head: true }),
+        supabase.from("profiles").select("id", { count: "exact", head: true }),
+        supabase.from("abonnements").select("actif"),
       ]);
       const all = prestaRes.data ?? [];
+      const allSubs = subsRes.data ?? [];
       setStats({
         total: all.length,
         actif: all.filter((p) => p.statut === "actif").length,
@@ -24,6 +27,8 @@ export default function AdminOverview() {
         avis: reviewsRes.count ?? 0,
         categories: catRes.count ?? 0,
         countries: countryRes.count ?? 0,
+        users: usersRes.count ?? 0,
+        subs_active: allSubs.filter((s) => s.actif).length,
       });
       setLoading(false);
     })();
@@ -35,6 +40,8 @@ export default function AdminOverview() {
     { label: "Total prestataires", value: stats.total, icon: Users, color: "text-blue-400" },
     { label: "Actifs", value: stats.actif, icon: CheckCircle2, color: "text-green-400" },
     { label: "En attente", value: stats.en_attente, icon: Clock, color: "text-yellow-400" },
+    { label: "Utilisateurs", value: stats.users, icon: UserCog, color: "text-indigo-400" },
+    { label: "Abonnements actifs", value: stats.subs_active, icon: CreditCard, color: "text-emerald-400" },
     { label: "Avis", value: stats.avis, icon: Star, color: "text-champagne" },
     { label: "Catégories", value: stats.categories, icon: FolderTree, color: "text-purple-400" },
     { label: "Pays", value: stats.countries, icon: Globe, color: "text-cyan-400" },
