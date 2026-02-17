@@ -23,7 +23,7 @@ export function MegaMenu() {
                 <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-champagne/10 text-champagne shrink-0">
                   <cat.icon size={14} />
                 </span>
-                <span className="font-serif text-sm font-semibold text-chocolate group-hover:text-champagne transition-colors">
+                <span className="font-serif text-base font-semibold text-chocolate group-hover:text-champagne transition-colors">
                   {cat.label}
                 </span>
                 <ChevronRight size={13} className="text-muted-foreground/50 group-hover:text-champagne transition-colors" />
@@ -35,7 +35,7 @@ export function MegaMenu() {
                   <li key={sub.slug}>
                     <Link
                       to={`/categories/${cat.slug}?sub=${sub.slug}`}
-                      className="flex items-center gap-2 px-2 py-1 rounded-lg font-body text-[13px] text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group/sub"
+                      className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg font-body text-sm text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group/sub"
                     >
                       {sub.icon && (
                         <sub.icon size={12} className="text-muted-foreground/40 group-hover/sub:text-champagne transition-colors shrink-0" />
