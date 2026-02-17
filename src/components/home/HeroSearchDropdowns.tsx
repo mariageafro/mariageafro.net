@@ -79,12 +79,13 @@ export function HeroSearchDropdowns() {
   const { geo, radius, setRadius, requestLocation } = useGeolocation();
 
   const catRef = useRef<HTMLDivElement>(null);
+  const catDropdownRef = useRef<HTMLDivElement>(null);
   const locRef = useRef<HTMLDivElement>(null);
 
   // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (catRef.current && !catRef.current.contains(e.target as Node)) setShowCatDropdown(false);
+      if (catRef.current && !catRef.current.contains(e.target as Node) && catDropdownRef.current && !catDropdownRef.current.contains(e.target as Node)) setShowCatDropdown(false);
       if (locRef.current && !locRef.current.contains(e.target as Node)) setShowLocDropdown(false);
     };
     document.addEventListener("mousedown", handler);
@@ -138,7 +139,7 @@ export function HeroSearchDropdowns() {
       {/* ─── Desktop ─── */}
       <div className="hidden sm:flex bg-ivory/95 backdrop-blur-sm rounded-2xl shadow-elegant overflow-visible relative">
         {/* Category input */}
-        <div ref={catRef} className="flex-1 relative">
+        <div ref={catRef} className="flex-1">
           <button
             onClick={() => { setShowCatDropdown(!showCatDropdown); setShowLocDropdown(false); }}
             className="w-full flex items-center gap-3 px-6 py-4 border-r border-border text-left"
@@ -154,96 +155,6 @@ export function HeroSearchDropdowns() {
             </div>
           </button>
 
-          {/* ─── Category Mega Dropdown ─── */}
-          {showCatDropdown && (
-            <div
-              className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-border z-[9999]"
-              style={{ width: "min(900px, 92vw)" }}
-            >
-              <div className="max-h-[75vh] overflow-y-auto overscroll-contain">
-                {/* 3×3 category grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 p-5">
-                  {megaMenuCategories.map((cat) => {
-                    const CatIcon = cat.icon;
-                    return (
-                      <div key={cat.slug}>
-                        {/* Category header */}
-                        <Link
-                          to={`/categories/${cat.slug}`}
-                          onClick={() => setShowCatDropdown(false)}
-                          className="flex items-center gap-2 group mb-2"
-                        >
-                          <span className="flex items-center justify-center w-6 h-6 rounded-md bg-champagne/10 text-champagne shrink-0">
-                            <CatIcon size={13} />
-                          </span>
-                          <span className="font-serif text-sm font-semibold text-chocolate group-hover:text-champagne transition-colors">
-                            {cat.label}
-                          </span>
-                          <ChevronRight size={12} className="text-muted-foreground/50 group-hover:text-champagne transition-colors" />
-                        </Link>
-                        {/* Sub-categories */}
-                        <ul className="space-y-0.5 pl-0.5">
-                          {cat.subs.slice(0, 5).map((sub) => (
-                            <li key={sub.slug}>
-                              <button
-                                onClick={() => selectCategory(cat.slug, sub.label)}
-                                className={`w-full flex items-center gap-2 px-2 py-1 rounded-md font-body text-xs text-left transition-all
-                                  ${isSelected(sub.label, cat.slug)
-                                    ? "bg-champagne/10 text-champagne"
-                                    : "text-muted-foreground hover:text-champagne hover:bg-champagne/5"
-                                  }`}
-                              >
-                                {sub.icon && <sub.icon size={11} className="shrink-0" />}
-                                {sub.label}
-                              </button>
-                            </li>
-                          ))}
-                          {cat.subs.length > 5 && (
-                            <li>
-                              <Link
-                                to={`/categories/${cat.slug}`}
-                                onClick={() => setShowCatDropdown(false)}
-                                className="flex items-center gap-1 px-2 py-1 font-body text-xs text-champagne hover:text-champagne-dark transition-colors"
-                              >
-                                Voir tout →
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* ── Par Pays ── */}
-                <div className="border-t border-border/40 px-5 py-3">
-                  <p className="flex items-center gap-2 font-semibold text-chocolate font-body text-[13px] mb-2">
-                    <Globe size={16} className="text-champagne" /> Trouver par pays
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {paysItems.map((pays) => (
-                      <Link
-                        key={pays.slug}
-                        to={`/pays/${pays.slug}`}
-                        onClick={() => setShowCatDropdown(false)}
-                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border/50 text-xs font-body text-chocolate hover:bg-champagne/10 hover:border-champagne/40 transition-colors"
-                      >
-                        <span>{pays.flag}</span>
-                        <span>{pays.label}</span>
-                      </Link>
-                    ))}
-                    <Link
-                      to="/trouver-par-pays"
-                      onClick={() => setShowCatDropdown(false)}
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-champagne/30 bg-champagne/5 text-xs font-body font-semibold text-champagne hover:bg-champagne/10 transition-colors"
-                    >
-                      Voir tous les pays →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Location input */}
@@ -376,6 +287,95 @@ export function HeroSearchDropdowns() {
           Rechercher
         </Button>
       </div>
+
+      {/* ─── Category Mega Dropdown (positioned to match search bar width) ─── */}
+      {showCatDropdown && (
+        <div
+          ref={catDropdownRef}
+          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-border z-[9999] hidden sm:block"
+        >
+          <div className="max-h-[75vh] overflow-y-auto overscroll-contain">
+            {/* 3×3 category grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 p-5">
+              {megaMenuCategories.map((cat) => {
+                const CatIcon = cat.icon;
+                return (
+                  <div key={cat.slug}>
+                    <Link
+                      to={`/categories/${cat.slug}`}
+                      onClick={() => setShowCatDropdown(false)}
+                      className="flex items-center gap-2 group mb-2"
+                    >
+                      <span className="flex items-center justify-center w-6 h-6 rounded-md bg-champagne/10 text-champagne shrink-0">
+                        <CatIcon size={13} />
+                      </span>
+                      <span className="font-serif text-sm font-semibold text-chocolate group-hover:text-champagne transition-colors">
+                        {cat.label}
+                      </span>
+                      <ChevronRight size={12} className="text-muted-foreground/50 group-hover:text-champagne transition-colors" />
+                    </Link>
+                    <ul className="space-y-0.5 pl-0.5">
+                      {cat.subs.slice(0, 5).map((sub) => (
+                        <li key={sub.slug}>
+                          <button
+                            onClick={() => selectCategory(cat.slug, sub.label)}
+                            className={`w-full flex items-center gap-2 px-2 py-1 rounded-md font-body text-xs text-left transition-all
+                              ${isSelected(sub.label, cat.slug)
+                                ? "bg-champagne/10 text-champagne"
+                                : "text-muted-foreground hover:text-champagne hover:bg-champagne/5"
+                              }`}
+                          >
+                            {sub.icon && <sub.icon size={11} className="shrink-0" />}
+                            {sub.label}
+                          </button>
+                        </li>
+                      ))}
+                      {cat.subs.length > 5 && (
+                        <li>
+                          <Link
+                            to={`/categories/${cat.slug}`}
+                            onClick={() => setShowCatDropdown(false)}
+                            className="flex items-center gap-1 px-2 py-1 font-body text-xs text-champagne hover:text-champagne-dark transition-colors"
+                          >
+                            Voir tout →
+                          </Link>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* ── Par Pays ── */}
+            <div className="border-t border-border/40 px-5 py-3">
+              <p className="flex items-center gap-2 font-semibold text-chocolate font-body text-[13px] mb-2">
+                <Globe size={16} className="text-champagne" /> Trouver par pays
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {paysItems.map((pays) => (
+                  <Link
+                    key={pays.slug}
+                    to={`/pays/${pays.slug}`}
+                    onClick={() => setShowCatDropdown(false)}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border/50 text-xs font-body text-chocolate hover:bg-champagne/10 hover:border-champagne/40 transition-colors"
+                  >
+                    <span>{pays.flag}</span>
+                    <span>{pays.label}</span>
+                  </Link>
+                ))}
+                <Link
+                  to="/trouver-par-pays"
+                  onClick={() => setShowCatDropdown(false)}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-champagne/30 bg-champagne/5 text-xs font-body font-semibold text-champagne hover:bg-champagne/10 transition-colors"
+                >
+                  Voir tous les pays →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Geo radius when active */}
       {geo.enabled && (
