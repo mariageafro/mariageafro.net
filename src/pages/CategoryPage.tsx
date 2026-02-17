@@ -22,7 +22,8 @@ import categoryBeaute from "@/assets/category-beaute.jpg";
 const categoryMeta: Record<string, { title: string; description: string; image: string }> = {
   "image-souvenirs": { title: "Image & Souvenirs", description: "Photographes, vidéastes, drone, photobooth 360° et créateurs de contenus pour immortaliser votre mariage.", image: categoryPhoto },
   "animation-ambiance": { title: "Animation & Ambiance", description: "DJ, MC, groupes live, chorales gospel, percussionnistes et griots pour une ambiance inoubliable.", image: categoryDj },
-  "mode-beaute": { title: "Mode & Beauté", description: "Créateurs de robes, tenues traditionnelles, coiffeuses afro, maquilleuses et stylistes sur mesure.", image: categoryBeaute },
+  "mode-tenues": { title: "Mode & Tenues", description: "Créateurs de robes de mariée, tenues traditionnelles, stylistes sur mesure et location de tenues.", image: categoryBeaute },
+  "beaute": { title: "Beauté", description: "Maquilleuses afro, coiffeuses, barbiers, esthéticiennes et prothésistes ongulaires pour le jour J.", image: categoryBeaute },
   "traiteurs-gastronomie": { title: "Traiteurs & Gastronomie", description: "Traiteurs africains, afro-fusion, wedding cake, chefs privés et bars à cocktails.", image: categoryTraiteur },
   "decoration-lieux": { title: "Décoration & Lieux", description: "Décorateurs, fleuristes, location de mobilier, salles de réception et domaines.", image: categoryDeco },
   "ceremonies-coutumes": { title: "Cérémonies & Coutumes", description: "Wedding planners, maîtres de cérémonie, conseillers coutumiers, officiants religieux et laïques.", image: categoryPlanner },
