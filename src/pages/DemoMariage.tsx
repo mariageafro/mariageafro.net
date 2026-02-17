@@ -124,7 +124,7 @@ export default function DemoMariage() {
   return (
     <Layout>
       {/* Demo banner */}
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-primary/90 to-accent/90 backdrop-blur-md text-primary-foreground text-center py-2.5 px-4 font-body text-sm">
+      <div className="bg-gradient-to-r from-primary/90 to-accent/90 text-primary-foreground text-center py-2.5 px-4 font-body text-sm">
         <Sparkles className="inline mr-2" size={14} />
         Vous visualisez un mariage de démonstration — Expérience immersive
         <Link to="/mon-mariage/onboarding" className="ml-3 underline font-semibold hover:text-white transition-colors">
