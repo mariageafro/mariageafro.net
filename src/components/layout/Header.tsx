@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin, Shirt } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin, Shirt, Heart } from "lucide-react";
 import { mainCategories, otherCategories } from "@/components/layout/MegaMenuData";
 import { plannerItems } from "@/components/layout/MegaMenuPlannerData";
 import { marieeItems } from "@/components/layout/MegaMenuMarieeData";
@@ -212,9 +212,15 @@ export function Header() {
                       <span className="hidden xl:inline">Espace Pro</span>
                     </Link>
                   ) : role !== 'admin' ? (
-                    <span className={`text-sm px-3 py-1.5 hidden xl:inline ${showSolid ? "text-chocolate" : "text-ivory"}`}>
-                      {user?.email}
-                    </span>
+                    <Link
+                      to="/mes-favoris"
+                      className={`text-sm font-medium px-3 py-1.5 rounded flex items-center gap-2 transition-colors ${
+                        showSolid ? "text-chocolate hover:bg-champagne/10" : "text-ivory hover:bg-white/10"
+                      }`}
+                    >
+                      <Heart className="w-4 h-4" />
+                      <span className="hidden xl:inline">Favoris</span>
+                    </Link>
                   ) : null}
                  <Button
                    variant="ghost"
@@ -542,6 +548,9 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                 <LayoutDashboard className="w-4 h-4" /> Espace Pro
               </Link>
             )}
+            <Link to="/mes-favoris" onClick={close} className="font-body text-base py-2 text-chocolate hover:text-champagne flex items-center gap-2">
+              <Heart className="w-4 h-4" /> Mes Favoris
+            </Link>
             <div className="text-sm text-muted-foreground">{user?.email}</div>
             <Button
               variant="outline"

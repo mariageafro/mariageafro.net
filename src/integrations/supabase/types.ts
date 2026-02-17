@@ -763,6 +763,35 @@ export type Database = {
           },
         ]
       }
+      user_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          prestataire_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          prestataire_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          prestataire_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_favorites_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
