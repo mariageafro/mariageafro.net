@@ -1,57 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
-import { motion } from "framer-motion";
-import { Search, MapPin, Star, Heart, Grid, List, X, SlidersHorizontal, Globe, Navigation, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, MapPin, Star, Heart, Grid, List, SlidersHorizontal, Globe, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useSearchParams } from "react-router-dom";
 import { usePrestataires } from "@/hooks/use-prestataires";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
 import { DevenirPrestatairePopup } from "@/components/home/DevenirPrestatairePopup";
+import { FilterSidebar } from "@/components/prestataire/FilterSidebar";
 import { supabase } from "@/integrations/supabase/client";
 
 import categoryVideaste from "@/assets/category-videaste.jpg";
-import categoryPhotographe from "@/assets/category-photographe.jpg";
-import categoryDjMusique from "@/assets/category-djmusique.jpg";
-import categoryWeddingPlanner from "@/assets/category-weddingplanner.jpg";
-import categoryAnimation from "@/assets/category-animation.jpg";
-import categoryCoiffureBeaute from "@/assets/category-coiffurebeaute.jpg";
 
-const ratingOptions = [
-  { label: "Toutes", value: 0 },
-  { label: "4+ ★", value: 4 },
-  { label: "4.5+ ★", value: 4.5 },
-  { label: "5 ★", value: 5 },
-];
-
-const featuredCategories = [
-  { name: "Vidéaste", slug: "videaste", image: categoryVideaste },
-  { name: "Photographe", slug: "photographe", image: categoryPhotographe },
-  { name: "DJ & Musique", slug: "dj-musique", image: categoryDjMusique },
-  { name: "Wedding Planner", slug: "wedding-planner", image: categoryWeddingPlanner },
-  { name: "Animation", slug: "animation", image: categoryAnimation },
-  { name: "Coiffure & Beauté", slug: "coiffure-beaute", image: categoryCoiffureBeaute },
-];
+const ITEMS_PER_PAGE = 12;
 
 export default function Prestataires() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
 
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+
   const {
-    prestataires,
-    isLoading,
-    filters,
-    updateFilter,
-    resetFilters,
-    categories,
-    villes,
-    cultures,
-    langues,
-    geoLocation,
-    setGeoLocation,
+    prestataires, isLoading, filters, updateFilter, resetFilters,
+    categories, villes, cultures, langues, geoLocation, setGeoLocation,
   } = usePrestataires();
 
   // Fetch vendor counts per category
@@ -83,11 +57,8 @@ export default function Prestataires() {
       const cat = categories.find(c => c.slug === catSlug);
       if (cat) updateFilter("categorie", cat.id);
     }
-    // Sync search param from AI recommendations
     const searchQuery = searchParams.get("search");
-    if (searchQuery) {
-      updateFilter("search", searchQuery);
-    }
+    if (searchQuery) updateFilter("search", searchQuery);
   }, [searchParams, categories]);
 
   // Sync geolocation with hook
@@ -110,15 +81,29 @@ export default function Prestataires() {
 
   const hasActiveFilters = filters.search || filters.ville || filters.categorie || filters.culture || filters.langue || filters.noteMin > 0 || filters.country || geo.enabled;
 
-  const selectClass = "px-3 py-2 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer max-w-[200px]";
+  // Pagination
+  const totalPages = Math.ceil(prestataires.length / ITEMS_PER_PAGE);
+  const paginatedPrestataires = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return prestataires.slice(start, start + ITEMS_PER_PAGE);
+  }, [prestataires, currentPage]);
 
-  // Priority cities for the ville dropdown
-  const priorityCityNames = PRIORITY_CITIES.map(c => c.name);
-  const otherVilles = villes.filter(v => !priorityCityNames.includes(v));
+  const setPage = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    if (page <= 1) params.delete("page");
+    else params.set("page", String(page));
+    setSearchParams(params);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    if (currentPage > 1) setPage(1);
+  }, [filters, geoLocation]);
 
   return (
     <Layout>
-      {/* Hero - DO NOT MODIFY */}
+      {/* Hero */}
       <section className="pt-32 pb-12 bg-gradient-warm">
         <div className="container-editorial">
           <motion.div
@@ -137,383 +122,287 @@ export default function Prestataires() {
         </div>
       </section>
 
-      {/* Featured Categories - scrolls naturally */}
-      <section className="py-12 bg-background">
-        <div className="container-editorial">
-          <h2 className="font-serif text-2xl text-chocolate mb-8">Catégories vedettes</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-            {featuredCategories.map((category, index) => (
-              <motion.div
-                key={category.slug}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.08 }}
-              >
-                <Link
-                  to={`/categories/${category.slug}`}
-                  className="group block rounded-lg overflow-hidden aspect-square"
-                >
-                  <div className="relative h-full">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+      {/* Main content with sidebar */}
+      <section className="bg-gradient-warm min-h-screen">
+        <div className="container-editorial py-8">
+          <div className="flex gap-8">
+            {/* Sidebar - Desktop */}
+            <aside className="hidden lg:block w-[300px] shrink-0">
+              <div className="bg-card rounded-2xl border border-border shadow-card">
+                <FilterSidebar
+                  filters={filters}
+                  updateFilter={updateFilter}
+                  resetFilters={() => { resetFilters(); disableGeo(); }}
+                  categories={categories}
+                  villes={villes}
+                  cultures={cultures}
+                  langues={langues}
+                  geo={geo}
+                  radius={radius}
+                  setRadius={setRadius}
+                  onToggleGeo={handleToggleGeo}
+                  onSetGeoLocation={setGeoLocation}
+                  hasActiveFilters={!!hasActiveFilters}
+                  categoryCounts={categoryCounts}
+                />
+              </div>
+            </aside>
+
+            {/* Mobile filter drawer */}
+            <AnimatePresence>
+              {showMobileFilters && (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-foreground/40 backdrop-blur-sm z-50 lg:hidden"
+                    onClick={() => setShowMobileFilters(false)}
+                  />
+                  <motion.div
+                    initial={{ x: "-100%" }}
+                    animate={{ x: 0 }}
+                    exit={{ x: "-100%" }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    className="fixed inset-y-0 left-0 w-[320px] max-w-[85vw] bg-card z-50 shadow-elegant overflow-y-auto lg:hidden"
+                  >
+                    <FilterSidebar
+                      filters={filters}
+                      updateFilter={updateFilter}
+                      resetFilters={() => { resetFilters(); disableGeo(); }}
+                      categories={categories}
+                      villes={villes}
+                      cultures={cultures}
+                      langues={langues}
+                      geo={geo}
+                      radius={radius}
+                      setRadius={setRadius}
+                      onToggleGeo={handleToggleGeo}
+                      onSetGeoLocation={setGeoLocation}
+                      hasActiveFilters={!!hasActiveFilters}
+                      categoryCounts={categoryCounts}
+                      onClose={() => setShowMobileFilters(false)}
+                      isMobile
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-chocolate/90 via-chocolate/40 to-transparent flex items-end">
-                      <div className="p-3">
-                        <p className="font-serif text-sm text-ivory group-hover:text-gold transition-colors">
-                          {category.name}
-                        </p>
-                        {(() => {
-                          const cat = categories.find(c => c.slug === category.slug);
-                          const count = cat ? categoryCounts[cat.id] || 0 : 0;
-                          return count > 0 ? (
-                            <p className="font-body text-xs text-ivory/70">{count}</p>
-                          ) : null;
-                        })()}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Compact Filter Bar - sticky */}
-      <section className="py-4 bg-ivory/95 backdrop-blur-md border-b border-border sticky top-14 z-40">
-        <div className="container-editorial">
-          {/* Search bar + toggle */}
-          <div className="flex gap-3 items-center">
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
-              <input
-                type="text"
-                placeholder="Rechercher un prestataire..."
-                value={filters.search}
-                onChange={(e) => updateFilter('search', e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50"
-              />
-            </div>
-
-            {/* Geolocation Button */}
-            <Button
-              variant={geo.enabled ? "default" : "outline"}
-              size="sm"
-              onClick={handleToggleGeo}
-              className={`shrink-0 gap-1.5 ${geo.enabled ? "bg-champagne text-primary-foreground hover:bg-champagne-dark" : ""}`}
-              disabled={geo.loading}
-            >
-              {geo.loading ? <Loader2 size={16} className="animate-spin" /> : <Navigation size={16} />}
-              <span className="hidden sm:inline">Autour de moi</span>
-            </Button>
-
-            {/* Mobile filter toggle */}
-            <Button
-              variant="outline"
-              className="lg:hidden"
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
-            >
-              <SlidersHorizontal size={18} />
-            </Button>
-
-            {/* View Toggle */}
-            <div className="hidden sm:flex gap-1 p-1 bg-secondary rounded-lg">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-md transition-colors ${viewMode === "grid" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
-              >
-                <Grid size={20} />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2 rounded-md transition-colors ${viewMode === "list" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
-              >
-                <List size={20} />
-              </button>
-            </div>
-          </div>
-
-          {/* Geo status messages */}
-          {geo.error && (
-            <p className="mt-2 text-sm font-body text-destructive">{geo.error}</p>
-          )}
-
-          {/* Radius selector when geo is active */}
-          {geo.enabled && (
-            <div className="flex items-center gap-2 mt-3">
-              <span className="font-body text-sm text-muted-foreground">Rayon :</span>
-              {RADIUS_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  onClick={() => { setRadius(opt.value); setGeoLocation({ lat: geo.lat!, lng: geo.lng!, radius: opt.value }); }}
-                  className={`px-3 py-1 rounded-full font-body text-xs transition-all ${
-                    radius === opt.value
-                      ? "bg-champagne text-primary-foreground shadow-md"
-                      : "bg-secondary text-muted-foreground hover:bg-champagne/10"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Desktop Filters */}
-          <div className={`mt-3 gap-2 flex-wrap items-center ${showMobileFilters ? 'flex' : 'hidden lg:flex'}`}>
-            {/* Ville with priority cities */}
-            <select
-              value={filters.ville}
-              onChange={(e) => updateFilter('ville', e.target.value)}
-              className={selectClass}
-              disabled={geo.enabled}
-            >
-              <option value="">📍 Toutes les villes</option>
-              <optgroup label="Villes principales">
-                {PRIORITY_CITIES.map((c) => (
-                  <option key={c.name} value={c.name}>{c.name} ({c.country})</option>
-                ))}
-              </optgroup>
-              {otherVilles.length > 0 && (
-                <optgroup label="Autres villes">
-                  {otherVilles.map((v) => (
-                    <option key={v} value={v}>{v}</option>
-                  ))}
-                </optgroup>
+                  </motion.div>
+                </>
               )}
-            </select>
+            </AnimatePresence>
 
-            {/* Catégorie */}
-            <select
-              value={filters.categorie}
-              onChange={(e) => updateFilter('categorie', e.target.value)}
-              className={selectClass}
-            >
-              <option value="">🏷️ Toutes les catégories</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-
-            {/* Culture */}
-            <select
-              value={filters.culture}
-              onChange={(e) => updateFilter('culture', e.target.value)}
-              className={selectClass}
-            >
-              <option value="">🌍 Toutes les cultures</option>
-              {cultures.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-
-            {/* Langue */}
-            <select
-              value={filters.langue}
-              onChange={(e) => updateFilter('langue', e.target.value)}
-              className={selectClass}
-            >
-              <option value="">💬 Toutes les langues</option>
-              {langues.map((l) => (
-                <option key={l} value={l}>{l}</option>
-              ))}
-            </select>
-
-            {/* Note minimum */}
-            <select
-              value={filters.noteMin}
-              onChange={(e) => updateFilter('noteMin', Number(e.target.value))}
-              className={selectClass}
-            >
-              {ratingOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>⭐ {opt.label}</option>
-              ))}
-            </select>
-
-            {/* Sort */}
-            <select
-              value={filters.sort}
-              onChange={(e) => updateFilter('sort', e.target.value as any)}
-              className={selectClass}
-            >
-              <option value="pertinence">Pertinence</option>
-              {geo.enabled && <option value="distance">Distance</option>}
-              <option value="note">Note (décroissant)</option>
-              <option value="avis">Avis (décroissant)</option>
-            </select>
-
-            {hasActiveFilters && (
-              <Button variant="ghost" size="sm" onClick={() => { resetFilters(); disableGeo(); }} className="text-muted-foreground">
-                <X size={16} className="mr-1" />
-                Réinitialiser
-              </Button>
-            )}
-          </div>
-
-          {/* Category Pills - scroll naturally */}
-          <div className="flex gap-2 mt-3 overflow-x-auto pb-2 -mx-1 px-1">
-            <button
-              onClick={() => updateFilter('categorie', '')}
-              className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
-                !filters.categorie
-                  ? "bg-champagne text-primary-foreground shadow-md"
-                  : "bg-secondary text-muted-foreground hover:bg-champagne/10"
-              }`}
-            >
-              Tous
-            </button>
-            {(() => {
-              // Vidéaste first, then Photographe, then DJ, then Wedding Planner
-              const priorityOrder = ['Vidéaste', 'Photographe', 'DJ & Musique', 'Wedding Planner', 'Animation', 'Coiffure & Beauté'];
-              const sorted = [
-                ...priorityOrder.map(name => categories.find(cat => cat.name === name)).filter(Boolean) as typeof categories,
-                ...categories.filter(cat => !priorityOrder.includes(cat.name) && cat.name !== 'Caraïbes'),
-              ];
-              return sorted.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
-                  className={`px-4 py-2 rounded-full font-body text-sm whitespace-nowrap transition-all ${
-                    filters.categorie === cat.id
-                      ? "bg-champagne text-primary-foreground shadow-md"
-                      : "bg-secondary text-muted-foreground hover:bg-champagne/10"
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              ));
-            })()}
-          </div>
-        </div>
-      </section>
-
-      {/* Results */}
-      <section className="section-padding bg-gradient-warm">
-        <div className="container-editorial">
-          <div className="flex items-center justify-between mb-8">
-            <p className="font-body text-muted-foreground">
-              <span className="font-medium text-foreground">{prestataires.length}</span> prestataire{prestataires.length !== 1 ? 's' : ''} trouvé{prestataires.length !== 1 ? 's' : ''}
-              {geo.enabled && ` dans un rayon de ${radius} km`}
-            </p>
-          </div>
-
-          {isLoading ? (
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="card-premium">
-                  <Skeleton className="aspect-[4/3] w-full" />
-                  <div className="p-5 space-y-3">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-4 w-full" />
-                  </div>
+            {/* Right content */}
+            <div className="flex-1 min-w-0">
+              {/* Search bar + controls */}
+              <div className="flex gap-3 items-center mb-6">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+                  <input
+                    type="text"
+                    placeholder="Rechercher un prestataire..."
+                    value={filters.search}
+                    onChange={(e) => updateFilter('search', e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50"
+                  />
                 </div>
-              ))}
-            </div>
-          ) : prestataires.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="font-serif text-chocolate mb-2">Aucun prestataire trouvé</h3>
-              <p className="font-body text-muted-foreground mb-6">
-                Essayez de modifier vos filtres pour élargir la recherche.
-              </p>
-              <Button variant="gold" onClick={() => { resetFilters(); disableGeo(); }}>
-                Réinitialiser les filtres
-              </Button>
-            </div>
-          ) : (
-            <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"}`}>
-              {prestataires.map((p, index) => (
-                <motion.div
-                  key={p.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.03 }}
+
+                {/* Mobile filter toggle */}
+                <Button
+                  variant="outline"
+                  className="lg:hidden shrink-0 gap-2"
+                  onClick={() => setShowMobileFilters(true)}
                 >
-                  <Link to={`/prestataires/${p.slug}`} className={`group block card-premium ${viewMode === 'list' ? 'flex' : ''}`}>
-                    <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 shrink-0' : 'aspect-[4/3]'}`}>
-                      <img
-                        src={p.cover_url || categoryVideaste}
-                        alt={p.nom_entreprise}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        loading="lazy"
-                      />
-                      <button className="absolute top-3 right-3 w-9 h-9 rounded-full bg-ivory/90 flex items-center justify-center hover:bg-ivory transition-colors">
-                        <Heart size={16} className="text-chocolate" />
-                      </button>
-                      {p.categories && (
-                        <div className="absolute bottom-3 left-3">
-                          <span className="px-3 py-1 rounded-full bg-ivory/90 font-body text-xs font-medium text-chocolate">
-                            {p.categories.name}
-                          </span>
-                        </div>
-                      )}
-                      {p.verified && (
-                        <div className="absolute top-3 left-3">
-                          <span className="px-2 py-1 rounded-full bg-champagne/90 font-body text-[10px] font-semibold text-primary-foreground uppercase tracking-wider">
-                            Vérifié
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-5 flex-1">
-                      <h3 className="font-serif text-lg text-chocolate mb-1 group-hover:text-champagne transition-colors">
-                        {p.nom_entreprise}
-                      </h3>
-                      {p.ville && (
-                        <div className="flex items-center gap-1.5 text-muted-foreground font-body text-sm mb-2">
-                          <MapPin size={14} />
-                          {p.ville}{p.pays ? `, ${p.pays}` : ''}
-                          {p.distance !== undefined && (
-                            <span className="ml-1 text-champagne-dark font-medium">· {p.distance < 1 ? '<1' : Math.round(p.distance)} km</span>
-                          )}
-                        </div>
-                      )}
-                      {p.origine_culturelle && (
-                        <p className="font-body text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
-                          <Globe size={12} />
-                          {p.origine_culturelle}
-                        </p>
-                      )}
-                      {p.langues && p.langues.length > 0 && (
-                        <div className="flex gap-1 flex-wrap mb-3">
-                          {p.langues.slice(0, 3).map(l => (
-                            <span key={l} className="px-2 py-0.5 rounded-full bg-secondary font-body text-[11px] text-muted-foreground">
-                              {l}
-                            </span>
-                          ))}
-                          {p.langues.length > 3 && (
-                            <span className="px-2 py-0.5 rounded-full bg-secondary font-body text-[11px] text-muted-foreground">
-                              +{p.langues.length - 3}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1">
-                          {p.review_count > 0 ? (
-                            <>
-                              <Star size={16} className="text-gold fill-gold" />
-                              <span className="font-body text-sm font-medium">{p.avg_rating.toFixed(1)}</span>
-                              <span className="font-body text-xs text-muted-foreground">({p.review_count} avis)</span>
-                            </>
-                          ) : (
-                            <span className="font-body text-xs text-muted-foreground italic">Nouveau</span>
-                          )}
-                        </div>
-                        <span className="font-body text-xs text-champagne font-medium group-hover:underline">
-                          Voir le profil →
-                        </span>
+                  <SlidersHorizontal size={18} />
+                  <span className="hidden sm:inline">Filtres</span>
+                </Button>
+
+                {/* View Toggle */}
+                <div className="hidden sm:flex gap-1 p-1 bg-secondary rounded-lg shrink-0">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded-md transition-colors ${viewMode === "grid" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
+                  >
+                    <Grid size={18} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded-md transition-colors ${viewMode === "list" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
+                  >
+                    <List size={18} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Results count */}
+              <div className="flex items-center justify-between mb-6">
+                <p className="font-body text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{prestataires.length}</span> prestataire{prestataires.length !== 1 ? 's' : ''} trouvé{prestataires.length !== 1 ? 's' : ''}
+                  {geo.enabled && ` dans un rayon de ${radius} km`}
+                </p>
+                {totalPages > 1 && (
+                  <p className="font-body text-xs text-muted-foreground">
+                    Page {currentPage} / {totalPages}
+                  </p>
+                )}
+              </div>
+
+              {/* Grid */}
+              {isLoading ? (
+                <div className="grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="card-premium">
+                      <Skeleton className="aspect-[4/3] w-full" />
+                      <div className="p-5 space-y-3">
+                        <Skeleton className="h-5 w-3/4" />
+                        <Skeleton className="h-4 w-1/2" />
+                        <Skeleton className="h-4 w-full" />
                       </div>
                     </div>
-                  </Link>
-                </motion.div>
-              ))}
+                  ))}
+                </div>
+              ) : paginatedPrestataires.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="text-6xl mb-4">🔍</div>
+                  <h3 className="font-serif text-chocolate mb-2">Aucun prestataire trouvé</h3>
+                  <p className="font-body text-muted-foreground mb-6">
+                    Essayez de modifier vos filtres pour élargir la recherche.
+                  </p>
+                  <Button variant="gold" onClick={() => { resetFilters(); disableGeo(); }}>
+                    Réinitialiser les filtres
+                  </Button>
+                </div>
+              ) : (
+                <div className={`grid gap-5 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3" : "grid-cols-1"}`}>
+                  {paginatedPrestataires.map((p, index) => (
+                    <motion.div
+                      key={p.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.03 }}
+                    >
+                      <Link to={`/prestataires/${p.slug}`} className={`group block card-premium ${viewMode === 'list' ? 'flex' : ''}`}>
+                        <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 shrink-0' : 'aspect-[4/3]'}`}>
+                          <img
+                            src={p.cover_url || p.photo_url || categoryVideaste}
+                            alt={p.nom_entreprise}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            loading="lazy"
+                          />
+                          <button
+                            className="absolute top-3 right-3 w-9 h-9 rounded-full bg-ivory/90 flex items-center justify-center hover:bg-ivory transition-colors"
+                            onClick={(e) => e.preventDefault()}
+                          >
+                            <Heart size={16} className="text-chocolate" />
+                          </button>
+                          {p.badge_type && p.badge_type !== 'FREE' && (
+                            <div className="absolute top-3 left-3">
+                              <span className="px-2.5 py-1 rounded-full bg-champagne/90 font-body text-[10px] font-semibold text-primary-foreground uppercase tracking-wider">
+                                {p.badge_type === 'PREMIUM' ? 'Premium' : p.badge_type === 'VIP' ? 'VIP' : p.badge_type === 'FOUNDER' ? 'Fondateur' : p.badge_type}
+                              </span>
+                            </div>
+                          )}
+                          {p.categories && (
+                            <div className="absolute bottom-3 left-3">
+                              <span className="px-3 py-1 rounded-full bg-ivory/90 font-body text-xs font-medium text-chocolate">
+                                {p.categories.name}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-4 flex-1">
+                          <h3 className="font-serif text-base text-chocolate mb-1 group-hover:text-champagne transition-colors line-clamp-1">
+                            {p.nom_entreprise}
+                          </h3>
+                          {p.ville && (
+                            <div className="flex items-center gap-1.5 text-muted-foreground font-body text-xs mb-2">
+                              <MapPin size={12} />
+                              {p.ville}{p.pays ? `, ${p.pays}` : ''}
+                              {p.distance !== undefined && (
+                                <span className="ml-1 text-champagne-dark font-medium">· {p.distance < 1 ? '<1' : Math.round(p.distance)} km</span>
+                              )}
+                            </div>
+                          )}
+                          {p.origine_culturelle && (
+                            <p className="font-body text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+                              <Globe size={11} />
+                              {p.origine_culturelle}
+                            </p>
+                          )}
+                          <div className="flex items-center justify-between mt-auto">
+                            <div className="flex items-center gap-1">
+                              {p.review_count > 0 ? (
+                                <>
+                                  <Star size={14} className="text-gold fill-gold" />
+                                  <span className="font-body text-sm font-medium">{p.avg_rating.toFixed(1)}</span>
+                                  <span className="font-body text-xs text-muted-foreground">({p.review_count})</span>
+                                </>
+                              ) : (
+                                <span className="font-body text-xs text-muted-foreground italic">Nouveau</span>
+                              )}
+                            </div>
+                            <span className="font-body text-xs text-champagne font-medium group-hover:underline">
+                              Voir →
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && !isLoading && (
+                <div className="flex items-center justify-center gap-2 mt-10">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage <= 1}
+                    onClick={() => setPage(currentPage - 1)}
+                    className="gap-1"
+                  >
+                    <ChevronLeft size={16} /> Précédent
+                  </Button>
+
+                  <div className="flex gap-1">
+                    {Array.from({ length: Math.min(totalPages, 10) }).map((_, i) => {
+                      let pageNum: number;
+                      if (totalPages <= 10) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 4) {
+                        pageNum = totalPages - 9 + i;
+                      } else {
+                        pageNum = currentPage - 4 + i;
+                      }
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setPage(pageNum)}
+                          className={`w-9 h-9 rounded-lg font-body text-sm transition-all ${
+                            currentPage === pageNum
+                              ? "bg-champagne text-primary-foreground shadow-sm font-medium"
+                              : "hover:bg-secondary text-muted-foreground"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage >= totalPages}
+                    onClick={() => setPage(currentPage + 1)}
+                    className="gap-1"
+                  >
+                    Suivant <ChevronRight size={16} />
+                  </Button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </section>
       <DevenirPrestatairePopup />
