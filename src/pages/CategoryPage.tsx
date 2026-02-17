@@ -32,6 +32,7 @@ const categoryMeta: Record<string, { title: string; description: string; image: 
   "tenues-couture": { title: "Tenues & Couture", description: "Créateurs de tenues traditionnelles pour un mariage authentique.", image: categoryTenues },
   transport: { title: "Transport", description: "Services de transport premium pour votre jour J.", image: categoryDj },
   "faire-part": { title: "Faire-part & Papeterie", description: "Créations papetières élégantes pour vos invitations.", image: categoryPlanner },
+  "cadeaux-invites": { title: "Cadeaux Invités", description: "Idées cadeaux originales pour gâter vos invités le jour J.", image: categoryBeaute },
 };
 
 const ITEMS_PER_PAGE = 12;
