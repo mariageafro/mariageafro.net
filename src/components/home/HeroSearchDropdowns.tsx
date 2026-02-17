@@ -1,70 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Search, MapPin, Navigation, Loader2, ChevronDown, Globe } from "lucide-react";
-import {
-  Camera, Video, Music, Utensils, Car, Palette,
-  PartyPopper, Layout, Scissors, Crown, FileText, Gift, MapPin as MapPinIcon,
-  Building2, Castle, Hotel, Church, Tent, Ship, UtensilsCrossed,
-  Flower2, ClipboardList, Clapperboard, Moon, Cake, Shirt, Gem, Sparkles,
-  Heart,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { RADIUS_OPTIONS } from "@/lib/priority-cities";
-
-/* ── Category Items ── */
-interface CatItem { icon: typeof Camera; label: string; slug: string; highlight?: boolean }
-
-const col1Items: CatItem[] = [
-  { icon: MapPinIcon, label: "Lieux de mariage", slug: "salle-lieu" },
-  { icon: Building2, label: "Domaine mariage", slug: "salle-lieu" },
-  { icon: Hotel, label: "Auberge mariage", slug: "salle-lieu" },
-  { icon: Hotel, label: "Hôtel mariage", slug: "salle-lieu" },
-  { icon: Utensils, label: "Restaurant mariage", slug: "salle-lieu" },
-  { icon: Building2, label: "Salle mariage", slug: "salle-lieu" },
-  { icon: Castle, label: "Château mariage", slug: "salle-lieu", highlight: true },
-  { icon: Ship, label: "Bateau mariage", slug: "salle-lieu" },
-  { icon: MapPinIcon, label: "Mariages à la plage", slug: "salle-lieu" },
-  { icon: Utensils, label: "Traiteur mariage", slug: "traiteur" },
-  { icon: FileText, label: "Faire part mariage", slug: "faire-part" },
-  { icon: Gift, label: "Cadeaux invités mariage", slug: "cadeaux-invites" },
-  { icon: Camera, label: "Photo mariage", slug: "photographe" },
-];
-
-const col2Items: CatItem[] = [
-  { icon: Music, label: "Musique mariage", slug: "dj-musique" },
-  { icon: Car, label: "Voiture mariage", slug: "transport" },
-  { icon: Car, label: "Bus mariage", slug: "transport" },
-  { icon: Palette, label: "Décoration mariage", slug: "decoration" },
-  { icon: Tent, label: "Chapiteau mariage", slug: "salle-lieu" },
-  { icon: PartyPopper, label: "Animation mariage", slug: "animation" },
-  { icon: Flower2, label: "Fleurs mariage", slug: "decoration" },
-  { icon: ClipboardList, label: "Liste de mariage", slug: "liste" },
-  { icon: Layout, label: "Organisation mariage", slug: "wedding-planner" },
-  { icon: Clapperboard, label: "Vidéo mariage", slug: "videaste" },
-  { icon: Moon, label: "Lune de miel", slug: "lune-de-miel" },
-  { icon: Cake, label: "Wedding cake", slug: "traiteur" },
-];
-
-const col3Items: CatItem[] = [
-  { icon: Church, label: "Officiants", slug: "officiants" },
-  { icon: UtensilsCrossed, label: "Food Truck", slug: "traiteur" },
-  { icon: Crown, label: "Vin et Spiritueux", slug: "traiteur" },
-  { icon: Gem, label: "Bijoux mariage", slug: "tenues-couture" },
-];
-
-const marieeItems: CatItem[] = [
-  { icon: Shirt, label: "Robe de mariée", slug: "tenues-couture" },
-  { icon: Sparkles, label: "Accessoires mariage", slug: "tenues-couture" },
-  { icon: Shirt, label: "Robe de cocktail", slug: "tenues-couture" },
-  { icon: Scissors, label: "Esthétique coiffure mariage", slug: "coiffure-beaute" },
-];
-
-const marieItems: CatItem[] = [
-  { icon: Shirt, label: "Costumes mariage", slug: "tenues-couture" },
-  { icon: Heart, label: "Soins beauté", slug: "coiffure-beaute" },
-  { icon: Sparkles, label: "Accessoires marié", slug: "tenues-couture" },
-];
+import { megaMenuCategories } from "@/components/layout/MegaMenuData";
 
 /* ── Par Pays ── */
 const paysItems = [
@@ -83,9 +24,9 @@ const paysItems = [
 ];
 
 /* ── Flat list for mobile ── */
-const searchCategories = [
-  ...col1Items, ...col2Items, ...col3Items, ...marieeItems, ...marieItems,
-].filter((item, index, arr) => arr.findIndex(i => i.label === item.label) === index);
+const searchCategories = megaMenuCategories.flatMap(cat =>
+  cat.subs.map(sub => ({ icon: sub.icon || cat.icon, label: sub.label, slug: cat.slug }))
+);
 
 /* ── Location Data ── */
 const regions = [
@@ -124,36 +65,7 @@ const internationalCountries = [
   { flag: "🇭🇹", name: "Haïti" },
 ];
 
-/* ── Reusable column item renderer ── */
-function CatButton({
-  cat,
-  isHeader,
-  isSelected,
-  onSelect,
-}: {
-  cat: CatItem;
-  isHeader?: boolean;
-  isSelected: boolean;
-  onSelect: () => void;
-}) {
-  const Icon = cat.icon;
-  return (
-    <button
-      onClick={onSelect}
-      className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-lg transition-colors
-        ${cat.highlight ? "text-champagne font-medium" : ""}
-        ${isHeader ? "font-semibold text-chocolate text-[13px]" : "text-sm"}
-        ${isSelected ? "bg-champagne/10 text-champagne" : "text-chocolate hover:bg-muted/50"}
-      `}
-    >
-      <Icon
-        size={isHeader ? 18 : 16}
-        className={`shrink-0 ${cat.highlight ? "text-champagne" : "text-muted-foreground"}`}
-      />
-      <span className="font-body">{cat.label}</span>
-    </button>
-  );
-}
+
 
 export function HeroSearchDropdowns() {
   const navigate = useNavigate();
@@ -246,107 +158,67 @@ export function HeroSearchDropdowns() {
           {showCatDropdown && (
             <div
               className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-border z-[9999]"
-              style={{ width: "min(780px, 90vw)" }}
+              style={{ width: "min(900px, 92vw)" }}
             >
-              <div className="max-h-[70vh] overflow-y-auto overscroll-contain">
-                {/* 3-column grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/40">
-                  {/* ── Column 1: Lieux ── */}
-                  <div className="p-3 space-y-0.5">
-                    {col1Items.map((cat) => (
-                      <CatButton
-                        key={cat.label}
-                        cat={cat}
-                        isHeader={cat.label === "Lieux de mariage"}
-                        isSelected={isSelected(cat.label, cat.slug)}
-                        onSelect={() => selectCategory(cat.slug, cat.label)}
-                      />
-                    ))}
-                  </div>
-
-                  {/* ── Column 2: Musique + Services ── */}
-                  <div className="p-3 space-y-0.5">
-                    {col2Items.map((cat) => (
-                      <CatButton
-                        key={cat.label}
-                        cat={cat}
-                        isHeader={cat.label === "Musique mariage"}
-                        isSelected={isSelected(cat.label, cat.slug)}
-                        onSelect={() => selectCategory(cat.slug, cat.label)}
-                      />
-                    ))}
-                  </div>
-
-                  {/* ── Column 3: Officiants + Mariée + Marié + Par Pays + Outils ── */}
-                  <div className="p-3 space-y-0.5">
-                    {/* Officiants */}
-                    {col3Items.map((cat) => (
-                      <CatButton
-                        key={cat.label}
-                        cat={cat}
-                        isHeader={cat.label === "Officiants"}
-                        isSelected={isSelected(cat.label, cat.slug)}
-                        onSelect={() => selectCategory(cat.slug, cat.label)}
-                      />
-                    ))}
-
-                    {/* Mariée */}
-                    <div className="pt-3 mt-1 border-t border-border/30">
-                      <p className="flex items-center gap-2 px-3 py-2 font-semibold text-chocolate font-body text-[13px]">
-                        <Shirt size={18} className="text-muted-foreground" /> Mariée
-                      </p>
-                      {marieeItems.map((cat) => (
-                        <button
-                          key={cat.label}
-                          onClick={() => selectCategory(cat.slug, cat.label)}
-                          className={`w-full flex items-center gap-2 px-3 py-1.5 text-left rounded-lg transition-colors text-sm font-body
-                            ${isSelected(cat.label, cat.slug) ? "bg-champagne/10 text-champagne" : "text-chocolate hover:bg-muted/50"}
-                          `}
+              <div className="max-h-[75vh] overflow-y-auto overscroll-contain">
+                {/* 3×3 category grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 p-5">
+                  {megaMenuCategories.map((cat) => {
+                    const CatIcon = cat.icon;
+                    return (
+                      <div key={cat.slug}>
+                        {/* Category header */}
+                        <Link
+                          to={`/categories/${cat.slug}`}
+                          onClick={() => setShowCatDropdown(false)}
+                          className="flex items-center gap-2 group mb-2"
                         >
-                          <span className="ml-7">{cat.label}</span>
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Marié */}
-                    <div className="pt-3 mt-1 border-t border-border/30">
-                      <p className="flex items-center gap-2 px-3 py-2 font-semibold text-chocolate font-body text-[13px]">
-                        <Shirt size={18} className="text-muted-foreground" /> Marié
-                      </p>
-                      {marieItems.map((cat) => (
-                        <button
-                          key={cat.label}
-                          onClick={() => selectCategory(cat.slug, cat.label)}
-                          className={`w-full flex items-center gap-2 px-3 py-1.5 text-left rounded-lg transition-colors text-sm font-body
-                            ${isSelected(cat.label, cat.slug) ? "bg-champagne/10 text-champagne" : "text-chocolate hover:bg-muted/50"}
-                          `}
-                        >
-                          <span className="ml-7">{cat.label}</span>
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Outils card */}
-                    <div className="mt-3 p-4 rounded-xl border border-border bg-muted/20">
-                      <p className="font-serif text-sm font-semibold text-chocolate mb-1">Outils d'organisation</p>
-                      <p className="text-xs text-muted-foreground leading-relaxed mb-2">
-                        Liste de tâches, Budget, Plan de table et autres outils pratiques et gratuits !
-                      </p>
-                      <Link
-                        to="/outils-maries"
-                        onClick={() => setShowCatDropdown(false)}
-                        className="text-xs font-semibold text-champagne hover:text-champagne-dark transition-colors"
-                      >
-                        Découvrez nos outils
-                      </Link>
-                    </div>
-                  </div>
+                          <span className="flex items-center justify-center w-6 h-6 rounded-md bg-champagne/10 text-champagne shrink-0">
+                            <CatIcon size={13} />
+                          </span>
+                          <span className="font-serif text-sm font-semibold text-chocolate group-hover:text-champagne transition-colors">
+                            {cat.label}
+                          </span>
+                          <ChevronRight size={12} className="text-muted-foreground/50 group-hover:text-champagne transition-colors" />
+                        </Link>
+                        {/* Sub-categories */}
+                        <ul className="space-y-0.5 pl-0.5">
+                          {cat.subs.slice(0, 5).map((sub) => (
+                            <li key={sub.slug}>
+                              <button
+                                onClick={() => selectCategory(cat.slug, sub.label)}
+                                className={`w-full flex items-center gap-2 px-2 py-1 rounded-md font-body text-xs text-left transition-all
+                                  ${isSelected(sub.label, cat.slug)
+                                    ? "bg-champagne/10 text-champagne"
+                                    : "text-muted-foreground hover:text-champagne hover:bg-champagne/5"
+                                  }`}
+                              >
+                                {sub.icon && <sub.icon size={11} className="shrink-0" />}
+                                {sub.label}
+                              </button>
+                            </li>
+                          ))}
+                          {cat.subs.length > 5 && (
+                            <li>
+                              <Link
+                                to={`/categories/${cat.slug}`}
+                                onClick={() => setShowCatDropdown(false)}
+                                className="flex items-center gap-1 px-2 py-1 font-body text-xs text-champagne hover:text-champagne-dark transition-colors"
+                              >
+                                Voir tout →
+                              </Link>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* ── Par Pays ── */}
-                <div className="border-t border-border/40 px-4 py-3">
+                <div className="border-t border-border/40 px-5 py-3">
                   <p className="flex items-center gap-2 font-semibold text-chocolate font-body text-[13px] mb-2">
-                    <Globe size={18} className="text-champagne" /> Trouver par pays
+                    <Globe size={16} className="text-champagne" /> Trouver par pays
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {paysItems.map((pays) => (
@@ -354,7 +226,7 @@ export function HeroSearchDropdowns() {
                         key={pays.slug}
                         to={`/pays/${pays.slug}`}
                         onClick={() => setShowCatDropdown(false)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/50 text-sm font-body text-chocolate hover:bg-champagne/10 hover:border-champagne/40 transition-colors"
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border/50 text-xs font-body text-chocolate hover:bg-champagne/10 hover:border-champagne/40 transition-colors"
                       >
                         <span>{pays.flag}</span>
                         <span>{pays.label}</span>
@@ -363,7 +235,7 @@ export function HeroSearchDropdowns() {
                     <Link
                       to="/trouver-par-pays"
                       onClick={() => setShowCatDropdown(false)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-champagne/30 bg-champagne/5 text-sm font-body font-semibold text-champagne hover:bg-champagne/10 transition-colors"
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-champagne/30 bg-champagne/5 text-xs font-body font-semibold text-champagne hover:bg-champagne/10 transition-colors"
                     >
                       Voir tous les pays →
                     </Link>
@@ -540,31 +412,13 @@ export function HeroSearchDropdowns() {
             className="w-full bg-transparent font-body text-sm text-chocolate focus:outline-none cursor-pointer border-b border-border pb-2"
           >
             <option value="">Nom ou catégorie de prestataires</option>
-            <optgroup label="📍 Lieux de mariage">
-              {col1Items.map((c) => (
-                <option key={c.label} value={c.slug}>{c.label}</option>
-              ))}
-            </optgroup>
-            <optgroup label="🎵 Musique & Services">
-              {col2Items.map((c) => (
-                <option key={c.label} value={c.slug}>{c.label}</option>
-              ))}
-            </optgroup>
-            <optgroup label="⛪ Officiants & Autres">
-              {col3Items.map((c) => (
-                <option key={c.label} value={c.slug}>{c.label}</option>
-              ))}
-            </optgroup>
-            <optgroup label="👰 Mariée">
-              {marieeItems.map((c) => (
-                <option key={c.label} value={c.slug}>{c.label}</option>
-              ))}
-            </optgroup>
-            <optgroup label="🤵 Marié">
-              {marieItems.map((c) => (
-                <option key={c.label} value={c.slug}>{c.label}</option>
-              ))}
-            </optgroup>
+            {megaMenuCategories.map((cat) => (
+              <optgroup key={cat.slug} label={`${cat.emoji} ${cat.label}`}>
+                {cat.subs.map((sub) => (
+                  <option key={sub.slug} value={cat.slug}>{sub.label}</option>
+                ))}
+              </optgroup>
+            ))}
           </select>
         </div>
 
