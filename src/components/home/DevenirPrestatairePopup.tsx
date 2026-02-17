@@ -4,20 +4,22 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const STORAGE_KEY = "devenir-presta-popup-dismissed";
+const COOLDOWN_MS = 10 * 60 * 1000; // 10 minutes before showing again
 
 export function DevenirPrestatairePopup() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem(STORAGE_KEY);
-    if (dismissed) return;
+    const dismissedAt = sessionStorage.getItem(STORAGE_KEY);
+    if (dismissedAt && Date.now() - Number(dismissedAt) < COOLDOWN_MS) return;
+    sessionStorage.removeItem(STORAGE_KEY);
     const timer = setTimeout(() => setVisible(true), 3000);
     return () => clearTimeout(timer);
   }, []);
 
   const dismiss = () => {
     setVisible(false);
-    sessionStorage.setItem(STORAGE_KEY, "1");
+    sessionStorage.setItem(STORAGE_KEY, String(Date.now()));
   };
 
   return (
