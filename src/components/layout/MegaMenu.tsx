@@ -11,30 +11,35 @@ export function MegaMenu() {
           Trouvez vos prestataires
         </h3>
 
-        {/* Categories grid – 3 columns on large, 2 on medium */}
+        {/* Categories grid – 3 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
           {megaMenuCategories.map((cat) => (
             <div key={cat.slug}>
               {/* Category header */}
               <Link
                 to={`/categories/${cat.slug}`}
-                className="flex items-center gap-2 group mb-2"
+                className="flex items-center gap-2.5 group mb-3"
               >
-                <span className="text-base">{cat.emoji}</span>
+                <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-champagne/10 text-champagne shrink-0">
+                  <cat.icon size={14} />
+                </span>
                 <span className="font-serif text-sm font-semibold text-chocolate group-hover:text-champagne transition-colors">
                   {cat.label}
                 </span>
-                <ChevronRight size={14} className="text-muted-foreground group-hover:text-champagne transition-colors" />
+                <ChevronRight size={13} className="text-muted-foreground/50 group-hover:text-champagne transition-colors" />
               </Link>
 
               {/* Sub-categories list */}
-              <ul className="space-y-0.5 pl-6">
+              <ul className="space-y-0.5 pl-1">
                 {cat.subs.map((sub) => (
                   <li key={sub.slug}>
                     <Link
                       to={`/categories/${cat.slug}?sub=${sub.slug}`}
-                      className="font-body text-[13px] text-muted-foreground hover:text-champagne transition-colors leading-relaxed"
+                      className="flex items-center gap-2 px-2 py-1 rounded-lg font-body text-[13px] text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group/sub"
                     >
+                      {sub.icon && (
+                        <sub.icon size={12} className="text-muted-foreground/40 group-hover/sub:text-champagne transition-colors shrink-0" />
+                      )}
                       {sub.label}
                     </Link>
                   </li>
