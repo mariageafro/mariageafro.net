@@ -32,14 +32,14 @@ type MegaMenuKey = "prestataires" | "planner" | "mariee" | "marie" | "robes" | "
 const navLinks = [
   
   { key: "Prestataires", href: "/prestataires", megaMenu: "prestataires" as const },
+  { key: "Mon Mariage", href: "/mon-mariage", megaMenu: "planner" as const },
+  { key: "Par Pays", href: "/trouver-par-pays", megaMenu: "pays" as const },
   { key: "Lieux", href: "/categories/decoration-lieux", megaMenu: "lieux" as const },
   { key: "Mariée", href: "/categories/mode-tenues", megaMenu: "mariee" as const },
   { key: "Marié", href: "/categories/mode-tenues", megaMenu: "marie" as const },
   { key: "Robes", href: "/categories/mode-tenues", megaMenu: "robes" as const },
-  { key: "Mon Mariage", href: "/mon-mariage", megaMenu: "planner" as const },
   { key: "Idées", href: "/prestataires", megaMenu: "idees" as const },
   { key: "Communauté", href: "/prestataires", megaMenu: "communaute" as const },
-  { key: "Par Pays", href: "/trouver-par-pays", megaMenu: "pays" as const },
 ];
 
 const featuredCategories = [
