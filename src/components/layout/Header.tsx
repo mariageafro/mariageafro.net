@@ -381,18 +381,30 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                   <div className="bg-muted/30">
                     {item.key === "Prestataires" && (
                       <div className="px-6 py-3 space-y-1">
-                        {mainCategories.slice(0, 8).map(cat => (
+                        <p className="text-[11px] uppercase tracking-widest text-muted-foreground px-3 pb-1 font-semibold">Les essentiels</p>
+                        {[
+                          { emoji: "📸", label: "Photographe", href: "/categories/image-souvenirs?sub=photographe" },
+                          { emoji: "🎥", label: "Vidéaste", href: "/categories/image-souvenirs?sub=videaste" },
+                          { emoji: "🎶", label: "DJ Mariage", href: "/categories/animation-ambiance?sub=dj-mariage" },
+                          { emoji: "🍽️", label: "Traiteur africain", href: "/categories/traiteurs-gastronomie?sub=traiteur-africain" },
+                          { emoji: "🌸", label: "Décorateur", href: "/categories/decoration-lieux?sub=decorateur" },
+                          { emoji: "💄", label: "Maquilleuse afro", href: "/categories/beaute?sub=maquilleuse-afro" },
+                          { emoji: "✂️", label: "Coiffeuse afro", href: "/categories/beaute?sub=coiffeuse-afro" },
+                          { emoji: "🎂", label: "Wedding Cake", href: "/categories/traiteurs-gastronomie?sub=wedding-cake" },
+                          { emoji: "⛪", label: "Wedding Planner", href: "/categories/ceremonies-coutumes?sub=wedding-planner" },
+                          { emoji: "🚗", label: "Transport", href: "/categories/logistique-services?sub=transport-mariage" },
+                        ].map(item => (
                           <Link
-                            key={cat.href + cat.label}
-                            to={cat.href}
+                            key={item.href}
+                            to={item.href}
                             onClick={close}
                             className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
                           >
-                            <cat.icon size={16} className="text-champagne shrink-0" />
-                            {cat.label}
+                            <span className="text-base shrink-0">{item.emoji}</span>
+                            {item.label}
                           </Link>
                         ))}
-                        <Link to="/prestataires" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1">
+                        <Link to="/prestataires" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1 border-t border-border/30 pt-3">
                           Voir toutes les catégories →
                         </Link>
                       </div>
