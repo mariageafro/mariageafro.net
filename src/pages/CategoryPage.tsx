@@ -40,7 +40,8 @@ export default function CategoryPage() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
-
+  const subSlug = searchParams.get("sub");
+  const initialSubSlugs = subSlug ? [subSlug] : [];
   const meta = categoryMeta[slug || ""] || { title: slug, description: "", image: categoryDj };
 
   const {
@@ -149,6 +150,7 @@ export default function CategoryPage() {
                   hasActiveFilters={!!hasActiveFilters}
                   categoryCounts={categoryCounts}
                   hideCategories
+                  initialSubSlugs={initialSubSlugs}
                 />
               </div>
             </aside>
@@ -185,6 +187,7 @@ export default function CategoryPage() {
                       onClose={() => setShowMobileFilters(false)}
                       isMobile
                       hideCategories
+                      initialSubSlugs={initialSubSlugs}
                     />
                   </motion.div>
                 </>

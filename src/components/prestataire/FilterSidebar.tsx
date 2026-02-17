@@ -33,6 +33,8 @@ interface FilterSidebarProps {
   isMobile?: boolean;
   /** Hide the category section (useful when already on a category page) */
   hideCategories?: boolean;
+  /** Pre-selected sub-category slugs from URL */
+  initialSubSlugs?: string[];
 }
 
 const ratingOptions = [
@@ -86,7 +88,7 @@ function CheckboxItem({ label, checked, onChange, count }: { label: string; chec
 export function FilterSidebar({
   filters, updateFilter, resetFilters, categories, villes, cultures, langues,
   geo, radius, setRadius, onToggleGeo, onSetGeoLocation,
-  hasActiveFilters, categoryCounts, onClose, isMobile, hideCategories,
+  hasActiveFilters, categoryCounts, onClose, isMobile, hideCategories, initialSubSlugs,
 }: FilterSidebarProps) {
   // Only show priority cities that actually have vendors
   const availablePriorityCities = PRIORITY_CITIES.filter(c => villes.includes(c.name));
@@ -104,6 +106,18 @@ export function FilterSidebar({
     };
     fetchSubs();
   }, []);
+
+  // Pre-select sub-categories from URL params
+  useEffect(() => {
+    if (initialSubSlugs && initialSubSlugs.length > 0 && subCategories.length > 0) {
+      const matchingIds = subCategories
+        .filter(s => initialSubSlugs.includes(s.slug))
+        .map(s => s.id);
+      if (matchingIds.length > 0) {
+        setSelectedSubs(new Set(matchingIds));
+      }
+    }
+  }, [initialSubSlugs, subCategories]);
 
   // Sub-categories relevant to the selected category
   const relevantSubs = filters.categorie
