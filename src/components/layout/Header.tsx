@@ -30,7 +30,7 @@ import logo from "@/assets/logo-mariageafro.png";
 type MegaMenuKey = "prestataires" | "planner" | "mariee" | "marie" | "robes" | "idees" | "communaute" | "pays" | "lieux" | null;
 
 const navLinks = [
-  { key: "Accueil", href: "/" },
+  
   { key: "Prestataires", href: "/prestataires", megaMenu: "prestataires" as const },
   { key: "Lieux", href: "/categories/decoration-lieux", megaMenu: "lieux" as const },
   { key: "Mariée", href: "/categories/mode-tenues", megaMenu: "mariee" as const },
