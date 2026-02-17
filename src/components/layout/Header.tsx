@@ -40,8 +40,6 @@ const navLinks = [
   { key: "Idées", href: "/prestataires", megaMenu: "idees" as const },
   { key: "Communauté", href: "/prestataires", megaMenu: "communaute" as const },
   { key: "Par Pays", href: "/trouver-par-pays", megaMenu: "pays" as const },
-  { key: "Premium", href: "/prestataires-premium" },
-  { key: "✨ Démo", href: "/demo-mariage" },
 ];
 
 const featuredCategories = [

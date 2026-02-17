@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Camera } from "lucide-react";
+import { Camera, Sparkles } from "lucide-react";
 import { plannerItems } from "./MegaMenuPlannerData";
 
 export function MegaMenuPlanner() {
@@ -44,6 +44,19 @@ export function MegaMenuPlanner() {
             className="mt-4 text-xs font-body font-semibold text-champagne underline hover:text-champagne-dark transition-colors"
           >
             Télécharger l'app →
+          </Link>
+        </div>
+      </div>
+
+      {/* Demo strip */}
+      <div className="border-t border-border bg-secondary/40">
+        <div className="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-center gap-3">
+          <Sparkles className="w-4 h-4 text-champagne" />
+          <Link
+            to="/demo-mariage"
+            className="text-sm font-body font-semibold text-champagne hover:text-champagne-dark transition-colors"
+          >
+            ✨ Voir la démo — Mariage de Nadia & Junior
           </Link>
         </div>
       </div>
