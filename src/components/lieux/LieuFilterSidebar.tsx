@@ -1,4 +1,4 @@
-import { X, RotateCcw, Navigation, Loader2, Star, ChevronDown, Building2, Castle, Hotel, UtensilsCrossed, TreePine, Warehouse, Landmark, Ship, LayoutGrid } from "lucide-react";
+import { X, RotateCcw, Navigation, Loader2, Star, ChevronDown, Building2, Castle, Hotel, UtensilsCrossed, TreePine, Warehouse, Landmark, Ship, LayoutGrid, MapPin, Globe, MessageSquare, BarChart3, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
@@ -28,33 +28,41 @@ interface LieuFilterSidebarProps {
 }
 
 const ratingOptions = [
-  { label: "4+ étoiles", value: 4, stars: 4 },
-  { label: "4.5+ étoiles", value: 4.5, stars: 4.5 },
-  { label: "5 étoiles", value: 5, stars: 5 },
+  { label: "4+", value: 4, stars: 4 },
+  { label: "4.5+", value: 4.5, stars: 4.5 },
+  { label: "5", value: 5, stars: 5 },
 ];
 
 const venueIcons: Record<string, React.ReactNode> = {
-  "Salle de réception": <Building2 size={14} />,
-  "Domaine & Château": <Castle size={14} />,
-  "Hôtel": <Hotel size={14} />,
-  "Restaurant": <UtensilsCrossed size={14} />,
-  "Corps de ferme": <TreePine size={14} />,
-  "Pavillon": <Warehouse size={14} />,
-  "Espace culturel": <Landmark size={14} />,
-  "Bateau": <Ship size={14} />,
-  "Loft": <LayoutGrid size={14} />,
+  "Salle de réception": <Building2 size={13} />,
+  "Domaine & Château": <Castle size={13} />,
+  "Hôtel": <Hotel size={13} />,
+  "Restaurant": <UtensilsCrossed size={13} />,
+  "Corps de ferme": <TreePine size={13} />,
+  "Pavillon": <Warehouse size={13} />,
+  "Espace culturel": <Landmark size={13} />,
+  "Bateau": <Ship size={13} />,
+  "Loft": <LayoutGrid size={13} />,
 };
 
-function FilterSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+function FilterSection({ title, icon, children, defaultOpen = true, badge }: { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; badge?: number }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-border pb-4">
+    <div className="group/section">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full py-2 font-serif text-sm text-chocolate hover:text-champagne transition-colors"
+        className="flex items-center gap-2.5 w-full py-3 px-1 text-left transition-colors"
       >
-        {title}
-        <ChevronDown size={16} className={`transition-transform ${open ? "rotate-180" : ""}`} />
+        <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-champagne/10 text-champagne shrink-0">
+          {icon}
+        </span>
+        <span className="font-serif text-sm font-medium text-chocolate flex-1">{title}</span>
+        {badge !== undefined && badge > 0 && (
+          <span className="px-1.5 py-0.5 rounded-full bg-champagne text-primary-foreground font-body text-[10px] font-bold min-w-[20px] text-center">
+            {badge}
+          </span>
+        )}
+        <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence>
         {open && (
@@ -65,20 +73,21 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string;
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="pt-2 space-y-1">{children}</div>
+            <div className="pb-4 pl-1 pr-1">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
     </div>
   );
 }
 
 function CheckboxItem({ label, checked, onChange, icon }: { label: string; checked: boolean; onChange: (v: boolean) => void; icon?: React.ReactNode }) {
   return (
-    <label className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-secondary/60 transition-colors group">
-      <Checkbox checked={checked} onCheckedChange={onChange} />
-      {icon && <span className={`${checked ? "text-champagne" : "text-muted-foreground"} transition-colors`}>{icon}</span>}
-      <span className={`font-body text-sm flex-1 ${checked ? "text-chocolate font-medium" : "text-muted-foreground group-hover:text-chocolate"} transition-colors`}>
+    <label className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl cursor-pointer transition-all duration-150 ${checked ? "bg-champagne/8 shadow-[inset_0_0_0_1px_hsl(var(--champagne)/0.2)]" : "hover:bg-secondary/80"}`}>
+      <Checkbox checked={checked} onCheckedChange={onChange} className="border-border data-[state=checked]:bg-champagne data-[state=checked]:border-champagne" />
+      {icon && <span className={`${checked ? "text-champagne" : "text-muted-foreground/60"} transition-colors`}>{icon}</span>}
+      <span className={`font-body text-[13px] flex-1 leading-tight ${checked ? "text-chocolate font-medium" : "text-muted-foreground"} transition-colors`}>
         {label}
       </span>
     </label>
@@ -94,12 +103,10 @@ export function LieuFilterSidebar({
   const priorityCityNames = PRIORITY_CITIES.map(c => c.name);
   const otherVilles = villes.filter(v => !priorityCityNames.includes(v));
 
-  const selectClass = "w-full px-3 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer";
-
   const activeFilterCount = [
-    filters.ville.length > 0 ? "yes" : "", filters.culture.length > 0 ? "yes" : "", filters.langue.length > 0 ? "yes" : "",
-    filters.noteMin > 0 ? "yes" : "", filters.country, geo.enabled ? "yes" : "",
-    venueTypeFilter.length > 0 ? "yes" : ""
+    filters.ville.length > 0, filters.culture.length > 0, filters.langue.length > 0,
+    filters.noteMin > 0, filters.country, geo.enabled,
+    venueTypeFilter.length > 0,
   ].filter(Boolean).length;
 
   const toggleVenueType = (type: string) => {
@@ -111,191 +118,175 @@ export function LieuFilterSidebar({
   };
 
   return (
-    <div className={`${isMobile ? "" : "sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto"} space-y-1 p-5`}>
+    <div className={`${isMobile ? "" : "sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-thin"} px-4 py-5`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="font-serif text-lg text-chocolate">Filtres Lieux</h3>
-          {activeFilterCount > 0 && (
-            <span className="font-body text-xs text-champagne">{activeFilterCount} actif{activeFilterCount > 1 ? "s" : ""}</span>
-          )}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-champagne/20 to-champagne/5 border border-champagne/15">
+            <SlidersHorizontal size={16} className="text-champagne" />
+          </div>
+          <div>
+            <h3 className="font-serif text-base text-chocolate leading-tight">Filtres Lieux</h3>
+            {activeFilterCount > 0 && (
+              <span className="font-body text-[11px] text-champagne">{activeFilterCount} actif{activeFilterCount > 1 ? "s" : ""}</span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {hasActiveFilters && (
-            <button onClick={resetFilters} className="flex items-center gap-1 font-body text-xs text-muted-foreground hover:text-champagne transition-colors">
-              <RotateCcw size={12} />
-              Réinitialiser
+            <button onClick={resetFilters} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-body text-[11px] text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all">
+              <RotateCcw size={11} />
+              Reset
             </button>
           )}
           {isMobile && onClose && (
-            <button onClick={onClose} className="p-1 rounded-lg hover:bg-secondary">
-              <X size={20} />
+            <button onClick={onClose} className="p-1.5 rounded-xl hover:bg-secondary transition-colors">
+              <X size={18} className="text-muted-foreground" />
             </button>
           )}
         </div>
       </div>
 
       {/* Venue Type */}
-      <FilterSection title="🏛️ Type de lieu">
-        <div className="space-y-0.5 max-h-56 overflow-y-auto pr-1">
+      <FilterSection title="Type de lieu" icon={<Building2 size={14} />} badge={venueTypeFilter.length || undefined}>
+        <div className="space-y-0.5 max-h-52 overflow-y-auto scrollbar-thin pr-0.5">
           {venueTypes.map((type) => (
             <CheckboxItem
               key={type}
               label={type}
               checked={venueTypeFilter.includes(type)}
               onChange={() => toggleVenueType(type)}
-              icon={venueIcons[type] || <Building2 size={14} />}
+              icon={venueIcons[type] || <Building2 size={13} />}
             />
           ))}
         </div>
       </FilterSection>
 
       {/* Geolocation */}
-      <FilterSection title="📍 Localisation">
-        <Button
-          variant={geo.enabled ? "default" : "outline"}
-          size="sm"
-          onClick={onToggleGeo}
-          className={`w-full gap-2 ${geo.enabled ? "bg-champagne text-primary-foreground hover:bg-champagne-dark" : ""}`}
-          disabled={geo.loading}
-        >
-          {geo.loading ? <Loader2 size={16} className="animate-spin" /> : <Navigation size={16} />}
-          Autour de moi
-        </Button>
-        {geo.error && <p className="text-xs font-body text-destructive">{geo.error}</p>}
-        {geo.enabled && (
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            {RADIUS_OPTIONS.map(opt => (
-              <button
-                key={opt.value}
-                onClick={() => { setRadius(opt.value); onSetGeoLocation({ lat: geo.lat!, lng: geo.lng!, radius: opt.value }); }}
-                className={`px-3 py-1 rounded-full font-body text-xs transition-all ${
-                  radius === opt.value
-                    ? "bg-champagne text-primary-foreground shadow-sm"
-                    : "bg-secondary text-muted-foreground hover:bg-champagne/10"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        )}
-        {/* Ville checkboxes */}
-        <div className="mt-3 space-y-0.5 max-h-48 overflow-y-auto pr-1">
-          <CheckboxItem
-            label="Toutes les villes"
-            checked={filters.ville.length === 0}
-            onChange={() => updateFilter('ville', [])}
-          />
-          {PRIORITY_CITIES.map((c) => (
-            <CheckboxItem
-              key={c.name}
-              label={`${c.name} (${c.country})`}
-              checked={filters.ville.includes(c.name)}
-              onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, c.name] : filters.ville.filter(v => v !== c.name))}
-            />
-          ))}
-          {otherVilles.length > 0 && (
-            <>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-2 mb-1 px-2">Autres villes</p>
-              {otherVilles.map((v) => (
-                <CheckboxItem
-                  key={v}
-                  label={v}
-                  checked={filters.ville.includes(v)}
-                  onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, v] : filters.ville.filter(x => x !== v))}
-                />
+      <FilterSection title="Localisation" icon={<MapPin size={14} />} badge={filters.ville.length || (geo.enabled ? 1 : 0)}>
+        <div className="space-y-3">
+          <Button
+            variant={geo.enabled ? "default" : "outline"}
+            size="sm"
+            onClick={onToggleGeo}
+            className={`w-full gap-2 rounded-xl text-xs h-9 ${geo.enabled ? "bg-champagne text-primary-foreground hover:bg-champagne-dark border-champagne" : "border-dashed"}`}
+            disabled={geo.loading}
+          >
+            {geo.loading ? <Loader2 size={14} className="animate-spin" /> : <Navigation size={14} />}
+            Autour de moi
+          </Button>
+          {geo.error && <p className="text-[11px] font-body text-destructive">{geo.error}</p>}
+          {geo.enabled && (
+            <div className="flex flex-wrap gap-1.5">
+              {RADIUS_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => { setRadius(opt.value); onSetGeoLocation({ lat: geo.lat!, lng: geo.lng!, radius: opt.value }); }}
+                  className={`px-3 py-1.5 rounded-xl font-body text-[11px] transition-all ${
+                    radius === opt.value
+                      ? "bg-champagne text-primary-foreground shadow-sm font-medium"
+                      : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10 hover:text-champagne"
+                  }`}
+                >
+                  {opt.label}
+                </button>
               ))}
-            </>
+            </div>
           )}
+          <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
+            <CheckboxItem label="Toutes les villes" checked={filters.ville.length === 0} onChange={() => updateFilter('ville', [])} />
+            {PRIORITY_CITIES.map((c) => (
+              <CheckboxItem
+                key={c.name}
+                label={`${c.name} · ${c.country}`}
+                checked={filters.ville.includes(c.name)}
+                onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, c.name] : filters.ville.filter(v => v !== c.name))}
+              />
+            ))}
+            {otherVilles.length > 0 && (
+              <>
+                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mt-3 mb-1.5 px-2.5 font-body">Autres villes</p>
+                {otherVilles.map((v) => (
+                  <CheckboxItem key={v} label={v} checked={filters.ville.includes(v)} onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, v] : filters.ville.filter(x => x !== v))} />
+                ))}
+              </>
+            )}
+          </div>
         </div>
       </FilterSection>
 
       {/* Culture */}
-      <FilterSection title="🌍 Culture" defaultOpen={false}>
-        <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
-          <CheckboxItem
-            label="Toutes les cultures"
-            checked={filters.culture.length === 0}
-            onChange={() => updateFilter('culture', [])}
-          />
+      <FilterSection title="Culture" icon={<Globe size={14} />} defaultOpen={false} badge={filters.culture.length || undefined}>
+        <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
+          <CheckboxItem label="Toutes les cultures" checked={filters.culture.length === 0} onChange={() => updateFilter('culture', [])} />
           {cultures.map((c) => (
-            <CheckboxItem
-              key={c}
-              label={c}
-              checked={filters.culture.includes(c)}
-              onChange={(checked) => updateFilter('culture', checked ? [...filters.culture, c] : filters.culture.filter(x => x !== c))}
-            />
+            <CheckboxItem key={c} label={c} checked={filters.culture.includes(c)} onChange={(checked) => updateFilter('culture', checked ? [...filters.culture, c] : filters.culture.filter(x => x !== c))} />
           ))}
         </div>
       </FilterSection>
 
       {/* Langue */}
-      <FilterSection title="💬 Langue" defaultOpen={false}>
-        <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
-          <CheckboxItem
-            label="Toutes les langues"
-            checked={filters.langue.length === 0}
-            onChange={() => updateFilter('langue', [])}
-          />
+      <FilterSection title="Langue" icon={<MessageSquare size={14} />} defaultOpen={false} badge={filters.langue.length || undefined}>
+        <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
+          <CheckboxItem label="Toutes les langues" checked={filters.langue.length === 0} onChange={() => updateFilter('langue', [])} />
           {langues.map((l) => (
-            <CheckboxItem
-              key={l}
-              label={l}
-              checked={filters.langue.includes(l)}
-              onChange={(checked) => updateFilter('langue', checked ? [...filters.langue, l] : filters.langue.filter(x => x !== l))}
-            />
+            <CheckboxItem key={l} label={l} checked={filters.langue.includes(l)} onChange={(checked) => updateFilter('langue', checked ? [...filters.langue, l] : filters.langue.filter(x => x !== l))} />
           ))}
         </div>
       </FilterSection>
 
       {/* Rating */}
-      <FilterSection title="⭐ Note minimum">
-        <div className="space-y-0.5">
-          <CheckboxItem
-            label="Toutes les notes"
-            checked={filters.noteMin === 0}
-            onChange={() => updateFilter('noteMin', 0)}
-          />
+      <FilterSection title="Note minimum" icon={<Star size={14} />}>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => updateFilter('noteMin', 0)}
+            className={`px-3 py-2 rounded-xl font-body text-[12px] transition-all ${
+              filters.noteMin === 0 ? "bg-champagne text-primary-foreground shadow-sm font-medium" : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10"
+            }`}
+          >
+            Toutes
+          </button>
           {ratingOptions.map((opt) => (
-            <label key={opt.value} className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-secondary/60 transition-colors group">
-              <Checkbox
-                checked={filters.noteMin === opt.value}
-                onCheckedChange={() => updateFilter('noteMin', filters.noteMin === opt.value ? 0 : opt.value)}
-              />
-              <div className="flex items-center gap-1.5">
-                <div className="flex gap-0.5">
-                  {Array.from({ length: Math.floor(opt.stars) }).map((_, i) => (
-                    <Star key={i} size={12} className="text-gold fill-gold" />
-                  ))}
-                </div>
-                <span className={`font-body text-sm ${filters.noteMin === opt.value ? "text-chocolate font-medium" : "text-muted-foreground"}`}>
-                  {opt.label}
-                </span>
-              </div>
-            </label>
+            <button
+              key={opt.value}
+              onClick={() => updateFilter('noteMin', filters.noteMin === opt.value ? 0 : opt.value)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-body text-[12px] transition-all ${
+                filters.noteMin === opt.value ? "bg-champagne text-primary-foreground shadow-sm font-medium" : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10"
+              }`}
+            >
+              <Star size={11} className={filters.noteMin === opt.value ? "fill-primary-foreground" : "fill-gold text-gold"} />
+              {opt.label}
+            </button>
           ))}
         </div>
       </FilterSection>
 
       {/* Sort */}
-      <FilterSection title="📊 Trier par">
-        <select
-          value={filters.sort}
-          onChange={(e) => updateFilter('sort', e.target.value as any)}
-          className={selectClass}
-        >
-          <option value="pertinence">Pertinence</option>
-          {geo.enabled && <option value="distance">Distance</option>}
-          <option value="note">Note (décroissant)</option>
-          <option value="avis">Avis (décroissant)</option>
-        </select>
+      <FilterSection title="Trier par" icon={<BarChart3 size={14} />}>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { value: 'pertinence', label: 'Pertinence' },
+            ...(geo.enabled ? [{ value: 'distance', label: 'Distance' }] : []),
+            { value: 'note', label: 'Meilleure note' },
+            { value: 'avis', label: 'Plus d\'avis' },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => updateFilter('sort', opt.value as any)}
+              className={`px-3 py-2 rounded-xl font-body text-[12px] transition-all ${
+                filters.sort === opt.value ? "bg-champagne text-primary-foreground shadow-sm font-medium" : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </FilterSection>
 
       {/* Mobile apply button */}
       {isMobile && onClose && (
-        <div className="pt-4">
-          <Button variant="gold" className="w-full" onClick={onClose}>
+        <div className="pt-5">
+          <Button variant="gold" className="w-full rounded-xl h-11 font-body text-sm" onClick={onClose}>
             Appliquer les filtres
           </Button>
         </div>
