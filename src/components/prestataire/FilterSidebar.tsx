@@ -1,9 +1,18 @@
 import { X, RotateCcw, Navigation, Loader2, Star, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
 import type { PrestatairesFilters } from "@/hooks/use-prestataires";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+interface SubCategory {
+  id: string;
+  name: string;
+  slug: string;
+  category_id: string;
+}
 
 interface FilterSidebarProps {
   filters: PrestatairesFilters;
@@ -22,10 +31,11 @@ interface FilterSidebarProps {
   categoryCounts: Record<string, number>;
   onClose?: () => void;
   isMobile?: boolean;
+  /** Hide the category section (useful when already on a category page) */
+  hideCategories?: boolean;
 }
 
 const ratingOptions = [
-  { label: "Toutes les notes", value: 0, stars: 0 },
   { label: "4+ étoiles", value: 4, stars: 4 },
   { label: "4.5+ étoiles", value: 4.5, stars: 4.5 },
   { label: "5 étoiles", value: 5, stars: 5 },
@@ -51,7 +61,7 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string;
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="pt-2 space-y-2">{children}</div>
+            <div className="pt-2 space-y-1">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -59,13 +69,44 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string;
   );
 }
 
+function CheckboxItem({ label, checked, onChange, count }: { label: string; checked: boolean; onChange: (v: boolean) => void; count?: number }) {
+  return (
+    <label className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-secondary/60 transition-colors group">
+      <Checkbox checked={checked} onCheckedChange={onChange} />
+      <span className={`font-body text-sm flex-1 ${checked ? "text-chocolate font-medium" : "text-muted-foreground group-hover:text-chocolate"} transition-colors`}>
+        {label}
+      </span>
+      {count !== undefined && count > 0 && (
+        <span className="text-xs text-muted-foreground">{count}</span>
+      )}
+    </label>
+  );
+}
+
 export function FilterSidebar({
   filters, updateFilter, resetFilters, categories, villes, cultures, langues,
   geo, radius, setRadius, onToggleGeo, onSetGeoLocation,
-  hasActiveFilters, categoryCounts, onClose, isMobile,
+  hasActiveFilters, categoryCounts, onClose, isMobile, hideCategories,
 }: FilterSidebarProps) {
   const priorityCityNames = PRIORITY_CITIES.map(c => c.name);
   const otherVilles = villes.filter(v => !priorityCityNames.includes(v));
+
+  const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
+  const [selectedSubs, setSelectedSubs] = useState<Set<string>>(new Set());
+
+  // Fetch sub-categories
+  useEffect(() => {
+    const fetchSubs = async () => {
+      const { data } = await supabase.from('sub_categories').select('id, name, slug, category_id').order('name');
+      if (data) setSubCategories(data);
+    };
+    fetchSubs();
+  }, []);
+
+  // Sub-categories relevant to the selected category
+  const relevantSubs = filters.categorie
+    ? subCategories.filter(s => s.category_id === filters.categorie)
+    : subCategories;
 
   const selectClass = "w-full px-3 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-champagne/50 appearance-none cursor-pointer";
 
@@ -86,7 +127,7 @@ export function FilterSidebar({
         </div>
         <div className="flex items-center gap-2">
           {hasActiveFilters && (
-            <button onClick={resetFilters} className="flex items-center gap-1 font-body text-xs text-muted-foreground hover:text-champagne transition-colors">
+            <button onClick={() => { resetFilters(); setSelectedSubs(new Set()); }} className="flex items-center gap-1 font-body text-xs text-muted-foreground hover:text-champagne transition-colors">
               <RotateCcw size={12} />
               Réinitialiser
             </button>
@@ -129,104 +170,145 @@ export function FilterSidebar({
             ))}
           </div>
         )}
-        <select
-          value={filters.ville}
-          onChange={(e) => updateFilter('ville', e.target.value)}
-          className={selectClass}
-          disabled={geo.enabled}
-        >
-          <option value="">Toutes les villes</option>
-          <optgroup label="Villes principales">
-            {PRIORITY_CITIES.map((c) => (
-              <option key={c.name} value={c.name}>{c.name} ({c.country})</option>
-            ))}
-          </optgroup>
+        {/* Ville checkboxes */}
+        <div className="mt-3 space-y-0.5 max-h-48 overflow-y-auto pr-1">
+          <CheckboxItem
+            label="Toutes les villes"
+            checked={!filters.ville}
+            onChange={() => updateFilter('ville', '')}
+          />
+          {PRIORITY_CITIES.map((c) => (
+            <CheckboxItem
+              key={c.name}
+              label={`${c.name} (${c.country})`}
+              checked={filters.ville === c.name}
+              onChange={() => updateFilter('ville', filters.ville === c.name ? '' : c.name)}
+            />
+          ))}
           {otherVilles.length > 0 && (
-            <optgroup label="Autres villes">
+            <>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-2 mb-1 px-2">Autres villes</p>
               {otherVilles.map((v) => (
-                <option key={v} value={v}>{v}</option>
+                <CheckboxItem
+                  key={v}
+                  label={v}
+                  checked={filters.ville === v}
+                  onChange={() => updateFilter('ville', filters.ville === v ? '' : v)}
+                />
               ))}
-            </optgroup>
+            </>
           )}
-        </select>
+        </div>
       </FilterSection>
 
       {/* Category */}
-      <FilterSection title="🏷️ Catégorie">
-        <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
-          <button
-            onClick={() => updateFilter('categorie', '')}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-body text-sm transition-all ${
-              !filters.categorie ? "bg-champagne/15 text-champagne-dark font-medium" : "hover:bg-secondary text-muted-foreground"
-            }`}
-          >
-            <span>Toutes</span>
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-body text-sm transition-all ${
-                filters.categorie === cat.id ? "bg-champagne/15 text-champagne-dark font-medium" : "hover:bg-secondary text-muted-foreground"
-              }`}
-            >
-              <span>{cat.name}</span>
-              {categoryCounts[cat.id] ? (
-                <span className="text-xs text-muted-foreground">{categoryCounts[cat.id]}</span>
-              ) : null}
-            </button>
+      {!hideCategories && (
+        <FilterSection title="🏷️ Catégorie">
+          <div className="space-y-0.5 max-h-56 overflow-y-auto pr-1">
+            <CheckboxItem
+              label="Toutes"
+              checked={!filters.categorie}
+              onChange={() => updateFilter('categorie', '')}
+            />
+            {categories.map((cat) => (
+              <CheckboxItem
+                key={cat.id}
+                label={cat.name}
+                checked={filters.categorie === cat.id}
+                onChange={() => updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id)}
+                count={categoryCounts[cat.id]}
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
+
+      {/* Sub-categories */}
+      {relevantSubs.length > 0 && (
+        <FilterSection title="📂 Sous-catégorie" defaultOpen={!!filters.categorie}>
+          <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
+            {relevantSubs.map((sub) => (
+              <CheckboxItem
+                key={sub.id}
+                label={sub.name}
+                checked={selectedSubs.has(sub.id)}
+                onChange={(checked) => {
+                  setSelectedSubs(prev => {
+                    const next = new Set(prev);
+                    if (checked) next.add(sub.id);
+                    else next.delete(sub.id);
+                    return next;
+                  });
+                }}
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
+
+      {/* Culture */}
+      <FilterSection title="🌍 Culture" defaultOpen={false}>
+        <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
+          <CheckboxItem
+            label="Toutes les cultures"
+            checked={!filters.culture}
+            onChange={() => updateFilter('culture', '')}
+          />
+          {cultures.map((c) => (
+            <CheckboxItem
+              key={c}
+              label={c}
+              checked={filters.culture === c}
+              onChange={() => updateFilter('culture', filters.culture === c ? '' : c)}
+            />
           ))}
         </div>
       </FilterSection>
 
-      {/* Culture */}
-      <FilterSection title="🌍 Culture" defaultOpen={false}>
-        <select
-          value={filters.culture}
-          onChange={(e) => updateFilter('culture', e.target.value)}
-          className={selectClass}
-        >
-          <option value="">Toutes les cultures</option>
-          {cultures.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-      </FilterSection>
-
       {/* Langue */}
       <FilterSection title="💬 Langue" defaultOpen={false}>
-        <select
-          value={filters.langue}
-          onChange={(e) => updateFilter('langue', e.target.value)}
-          className={selectClass}
-        >
-          <option value="">Toutes les langues</option>
+        <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
+          <CheckboxItem
+            label="Toutes les langues"
+            checked={!filters.langue}
+            onChange={() => updateFilter('langue', '')}
+          />
           {langues.map((l) => (
-            <option key={l} value={l}>{l}</option>
+            <CheckboxItem
+              key={l}
+              label={l}
+              checked={filters.langue === l}
+              onChange={() => updateFilter('langue', filters.langue === l ? '' : l)}
+            />
           ))}
-        </select>
+        </div>
       </FilterSection>
 
       {/* Rating */}
       <FilterSection title="⭐ Note minimum">
-        <div className="space-y-1">
+        <div className="space-y-0.5">
+          <CheckboxItem
+            label="Toutes les notes"
+            checked={filters.noteMin === 0}
+            onChange={() => updateFilter('noteMin', 0)}
+          />
           {ratingOptions.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => updateFilter('noteMin', opt.value)}
-              className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg font-body text-sm transition-all ${
-                filters.noteMin === opt.value ? "bg-champagne/15 text-champagne-dark font-medium" : "hover:bg-secondary text-muted-foreground"
-              }`}
-            >
-              {opt.stars > 0 && (
+            <label key={opt.value} className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-secondary/60 transition-colors group">
+              <Checkbox
+                checked={filters.noteMin === opt.value}
+                onCheckedChange={() => updateFilter('noteMin', filters.noteMin === opt.value ? 0 : opt.value)}
+              />
+              <div className="flex items-center gap-1.5">
                 <div className="flex gap-0.5">
                   {Array.from({ length: Math.floor(opt.stars) }).map((_, i) => (
                     <Star key={i} size={12} className="text-gold fill-gold" />
                   ))}
                 </div>
-              )}
-              <span>{opt.label}</span>
-            </button>
+                <span className={`font-body text-sm ${filters.noteMin === opt.value ? "text-chocolate font-medium" : "text-muted-foreground"}`}>
+                  {opt.label}
+                </span>
+              </div>
+            </label>
           ))}
         </div>
       </FilterSection>
@@ -244,6 +326,15 @@ export function FilterSidebar({
           <option value="avis">Avis (décroissant)</option>
         </select>
       </FilterSection>
+
+      {/* Mobile apply button */}
+      {isMobile && onClose && (
+        <div className="pt-4">
+          <Button variant="gold" className="w-full" onClick={onClose}>
+            Appliquer les filtres
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
