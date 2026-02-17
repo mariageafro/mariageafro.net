@@ -99,7 +99,7 @@ export function FilterSidebar({
   // Fetch sub-categories
   useEffect(() => {
     const fetchSubs = async () => {
-      const { data } = await supabase.from('sub_categories').select('id, name, slug, category_id').order('name');
+      const { data } = await supabase.from('sub_categories').select('id, name, slug, category_id, sort_order').order('sort_order', { ascending: true });
       if (data) setSubCategories(data);
     };
     fetchSubs();
