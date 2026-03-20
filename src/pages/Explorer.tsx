@@ -49,7 +49,8 @@ export default function Explorer() {
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState<ExplorerFilters>(defaultExplorerFilters);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const { prestataires, isLoading, isLoadingMore, hasMore, totalCount, categories, loadMore } = useExplorerData(filters);
+  const [currentPage, setCurrentPage] = useState(1);
+  const { prestataires, isLoading, totalCount, categories } = useExplorerData(filters, currentPage);
 
   // Sync URL search params into filters on mount
   useEffect(() => {
@@ -75,9 +76,15 @@ export default function Explorer() {
 
   const updateFilter = <K extends keyof ExplorerFilters>(key: K, value: ExplorerFilters[K]) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
   };
 
-  const resetFilters = () => setFilters(defaultExplorerFilters);
+  const resetFilters = () => { setFilters(defaultExplorerFilters); setCurrentPage(1); };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -155,7 +162,7 @@ export default function Explorer() {
               {!isLoading && prestataires.length === 0 ? (
                 <ExplorerEmptyState resetFilters={resetFilters} filters={filters} />
               ) : (
-                <ExplorerGrid prestataires={prestataires} isLoading={isLoading} isLoadingMore={isLoadingMore} hasMore={hasMore} totalCount={totalCount} onLoadMore={loadMore} />
+                <ExplorerGrid prestataires={prestataires} isLoading={isLoading} totalCount={totalCount} currentPage={currentPage} onPageChange={handlePageChange} />
               )}
             </div>
           </div>
