@@ -306,6 +306,71 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
           </div>
         </div>
 
+        {/* Profession-specific metadata */}
+        {fieldConfig && fieldConfig.fields.length > 0 && (
+          <div className="space-y-4 pt-4 border-t border-border">
+            <h3 className="text-lg font-medium">Spécialités – {fieldConfig.label}</h3>
+            {[...new Set(fieldConfig.fields.map(f => f.group ?? 'Général'))].map(group => (
+              <div key={group} className="space-y-3">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{group}</p>
+                {fieldConfig.fields.filter(f => (f.group ?? 'Général') === group).map(field => (
+                  <div key={field.key}>
+                    {field.type === 'chips' && (
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">{field.label}</label>
+                        <div className="flex flex-wrap gap-1.5">
+                          {field.options?.map(opt => (
+                            <button
+                              key={opt}
+                              type="button"
+                              onClick={() => toggleMetaChip(field.key, opt)}
+                              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                                (form.vendor_metadata[field.key] ?? []).includes(opt)
+                                  ? 'bg-champagne/15 border-champagne/30 text-foreground'
+                                  : 'bg-background border-border text-muted-foreground hover:border-champagne/20'
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {field.type === 'toggle' && (
+                      <label className="flex items-center gap-3 cursor-pointer group">
+                        <button
+                          type="button"
+                          onClick={() => updateMeta(field.key, !form.vendor_metadata[field.key])}
+                          className={`w-10 h-6 rounded-full transition-colors relative ${
+                            form.vendor_metadata[field.key] ? 'bg-champagne' : 'bg-muted'
+                          }`}
+                        >
+                          <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                            form.vendor_metadata[field.key] ? 'translate-x-[18px]' : 'translate-x-0.5'
+                          }`} />
+                        </button>
+                        <span className="text-sm text-foreground">{field.label}</span>
+                      </label>
+                    )}
+                    {field.type === 'number' && (
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">{field.label}</label>
+                        <Input
+                          type="number"
+                          value={form.vendor_metadata[field.key] ?? ''}
+                          onChange={e => updateMeta(field.key, e.target.value ? parseInt(e.target.value) : null)}
+                          placeholder={field.placeholder}
+                          className="max-w-[200px]"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+
         <div>
           <label className="block text-sm font-medium mb-1">Description</label>
           <Textarea value={form.description} onChange={e => update('description', e.target.value)} rows={5} />
