@@ -51,7 +51,7 @@ export default function Prestataires() {
 
   const { geo, radius, setRadius, requestLocation, disableGeo } = useGeolocation();
 
-  // Sync URL params (category, sub, search)
+  // Sync URL params (category, sub, search, ville, culture)
   useEffect(() => {
     const catSlug = searchParams.get("category");
     if (catSlug && categories.length > 0) {
@@ -62,6 +62,10 @@ export default function Prestataires() {
     if (subSlug) updateFilter("sousCategorie", subSlug);
     const searchQuery = searchParams.get("search");
     if (searchQuery) updateFilter("search", searchQuery);
+    const villeParam = searchParams.get("ville");
+    if (villeParam) updateFilter("ville", [villeParam]);
+    const cultureParam = searchParams.get("culture");
+    if (cultureParam) updateFilter("culture", [cultureParam]);
   }, [searchParams, categories]);
 
   // Sync geolocation with hook
