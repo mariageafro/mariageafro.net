@@ -256,7 +256,7 @@ export function Header() {
               onMouseEnter={() => openDropdown(activeDropdown)}
               onMouseLeave={closeDropdownDelayed}
             >
-              {activeDropdown === "categories" && <CategoriesDropdown />}
+              {activeDropdown === "categories" && <MegaMenu />}
               {activeDropdown === "origines" && <OriginesDropdown />}
             </motion.div>
           )}
