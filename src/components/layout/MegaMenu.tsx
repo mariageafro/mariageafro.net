@@ -86,7 +86,7 @@ export function MegaMenu() {
               ✨ Prestataires Premium
             </Link>
             <Link
-              to="/prestataires"
+              to="/explorer"
               className="text-xs font-body text-muted-foreground hover:text-champagne underline transition-colors"
             >
               Voir tous les prestataires →
