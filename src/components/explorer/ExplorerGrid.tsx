@@ -1,7 +1,9 @@
+import { useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, MapPin, Plane, BadgeCheck, ArrowUpRight } from 'lucide-react';
+import { Star, MapPin, Plane, BadgeCheck, ArrowUpRight, Loader2 } from 'lucide-react';
 import { FavoriteButton } from '@/components/prestataire/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 interface Vendor {
@@ -32,7 +34,7 @@ function VendorCard({ vendor, index }: { vendor: Vendor; index: number }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: 0.5,
-        delay: Math.min(index * 0.04, 0.3),
+        delay: Math.min((index % 30) * 0.04, 0.3),
         ease: [0.16, 1, 0.3, 1],
       }}
     >
@@ -50,76 +52,74 @@ function VendorCard({ vendor, index }: { vendor: Vendor; index: number }) {
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-secondary to-warm-beige flex items-center justify-center">
-              <span className="font-serif text-5xl text-champagne/25">{vendor.nom_entreprise[0]}</span>
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-4xl font-serif">
+              {vendor.nom_entreprise.charAt(0)}
             </div>
           )}
 
-          {/* Gradient scrim */}
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          {/* Badge */}
+          {isPremium && (
+            <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-champagne/90 text-[11px] font-semibold uppercase tracking-wider text-foreground backdrop-blur-sm">
+              <BadgeCheck className="w-3 h-3" /> Premium
+            </span>
+          )}
 
-          {/* Top row */}
-          <div className="absolute top-3 left-3 right-3 flex items-start justify-between">
-            <div className="flex gap-1.5">
-              {isPremium && (
-                <span className="px-2.5 py-1 rounded-lg bg-champagne text-primary-foreground text-[10px] font-bold tracking-wide uppercase flex items-center gap-1 shadow-sm">
-                  <BadgeCheck className="w-3 h-3" />
-                  Premium
-                </span>
-              )}
-              {vendor.zone_disponibilite && vendor.zone_disponibilite !== 'France' && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-black/50 text-white text-[10px] font-medium backdrop-blur-sm">
-                  <Plane className="w-3 h-3" />
-                  {vendor.zone_disponibilite}
-                </span>
-              )}
-            </div>
+          {vendor.badge_type === 'FOUNDER' && (
+            <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-600/90 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
+              Fondateur
+            </span>
+          )}
+
+          {/* Zone dispo */}
+          {vendor.zone_disponibilite && (
+            <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-background/80 text-[10px] font-medium text-muted-foreground backdrop-blur-sm">
+              <Plane className="w-2.5 h-2.5" /> {vendor.zone_disponibilite}
+            </span>
+          )}
+
+          {/* Favorite */}
+          <div className="absolute bottom-2 right-2">
             <FavoriteButton prestataireId={vendor.id} />
-          </div>
-
-          {/* Bottom on image */}
-          <div className="absolute bottom-3 left-3 right-3">
-            {vendor.categories?.name && (
-              <span className="inline-block px-2 py-0.5 rounded-md bg-white/20 backdrop-blur-sm text-white text-[10px] font-medium tracking-wide uppercase mb-1.5">
-                {vendor.sous_categorie || vendor.categories.name}
-              </span>
-            )}
-            <h3 className="font-serif text-lg font-semibold text-white leading-tight" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}>
-              {vendor.nom_entreprise}
-            </h3>
           </div>
         </div>
 
-        {/* Details */}
+        {/* Info */}
         <div className="px-4 py-3.5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 text-xs text-muted-foreground min-w-0 flex-1">
-              {vendor.ville && (
-                <span className="inline-flex items-center gap-1 shrink-0">
-                  <MapPin className="w-3 h-3 text-champagne/70" />
-                  {vendor.ville}
-                </span>
-              )}
-              {vendor.origine_culturelle && (
-                <span className="text-champagne font-medium truncate">
-                  {vendor.origine_culturelle}
-                </span>
-              )}
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold text-foreground truncate leading-tight group-hover:text-champagne transition-colors">
+                {vendor.nom_entreprise}
+              </h3>
+              <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                {vendor.ville && (
+                  <>
+                    <MapPin className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{vendor.ville}</span>
+                  </>
+                )}
+                {vendor.origine_culturelle && (
+                  <>
+                    <span className="mx-0.5 text-border">·</span>
+                    <span className="truncate">{vendor.origine_culturelle}</span>
+                  </>
+                )}
+              </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              {vendor.avg_rating > 0 && (
-                <span className="flex items-center gap-1 text-xs">
-                  <Star className="w-3.5 h-3.5 fill-champagne text-champagne" />
-                  <span className="font-semibold text-foreground tabular-nums">{vendor.avg_rating.toFixed(1)}</span>
-                  {vendor.review_count > 0 && (
-                    <span className="text-muted-foreground">({vendor.review_count})</span>
-                  )}
-                </span>
-              )}
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-champagne/10 text-champagne group-hover:bg-champagne group-hover:text-primary-foreground transition-all duration-300">
-                <ArrowUpRight className="w-3.5 h-3.5" />
+            <ArrowUpRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-champagne shrink-0 transition-colors" />
+          </div>
+
+          {/* Rating + category */}
+          <div className="flex items-center justify-between mt-2.5 text-xs">
+            <span className="text-muted-foreground font-medium truncate">
+              {vendor.categories?.name ?? vendor.sous_categorie ?? '—'}
+            </span>
+            {vendor.avg_rating > 0 && (
+              <span className="flex items-center gap-0.5 font-semibold text-foreground">
+                <Star className="w-3 h-3 fill-champagne text-champagne" />
+                {vendor.avg_rating.toFixed(1)}
+                <span className="text-muted-foreground font-normal ml-0.5">({vendor.review_count})</span>
               </span>
-            </div>
+            )}
           </div>
         </div>
       </Link>
@@ -148,12 +148,53 @@ function LoadingSkeleton() {
   );
 }
 
+function LoadingMoreSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="rounded-xl border border-border/30 overflow-hidden">
+          <Skeleton className="aspect-[4/3] w-full" />
+          <div className="px-4 py-3.5">
+            <div className="space-y-1.5">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-3 w-16" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 interface Props {
   prestataires: Vendor[];
   isLoading: boolean;
+  isLoadingMore: boolean;
+  hasMore: boolean;
+  totalCount: number;
+  onLoadMore: () => void;
 }
 
-export function ExplorerGrid({ prestataires, isLoading }: Props) {
+export function ExplorerGrid({ prestataires, isLoading, isLoadingMore, hasMore, totalCount, onLoadMore }: Props) {
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Infinite scroll with IntersectionObserver
+  useEffect(() => {
+    if (!sentinelRef.current || !hasMore || isLoading || isLoadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          onLoadMore();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, isLoading, isLoadingMore, onLoadMore]);
+
   if (isLoading) return <LoadingSkeleton />;
 
   return (
@@ -161,7 +202,10 @@ export function ExplorerGrid({ prestataires, isLoading }: Props) {
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground">
           <span className="font-bold text-foreground tabular-nums">{prestataires.length}</span>
-          {' '}prestataire{prestataires.length !== 1 ? 's' : ''} trouvé{prestataires.length !== 1 ? 's' : ''}
+          {totalCount > prestataires.length && (
+            <span> sur <span className="font-semibold tabular-nums">{totalCount}</span></span>
+          )}
+          {' '}prestataire{totalCount !== 1 ? 's' : ''} trouvé{totalCount !== 1 ? 's' : ''}
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -169,6 +213,33 @@ export function ExplorerGrid({ prestataires, isLoading }: Props) {
           <VendorCard key={vendor.id} vendor={vendor} index={i} />
         ))}
       </div>
+
+      {/* Loading more indicator */}
+      {isLoadingMore && <LoadingMoreSkeleton />}
+
+      {/* Infinite scroll sentinel */}
+      {hasMore && !isLoadingMore && (
+        <div ref={sentinelRef} className="h-1" />
+      )}
+
+      {/* Manual fallback button */}
+      {hasMore && !isLoadingMore && (
+        <div className="flex justify-center mt-8">
+          <Button
+            variant="outline"
+            onClick={onLoadMore}
+            className="gap-2"
+          >
+            Voir plus de prestataires
+          </Button>
+        </div>
+      )}
+
+      {!hasMore && prestataires.length > 0 && (
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          Tous les prestataires sont affichés
+        </p>
+      )}
     </div>
   );
 }
