@@ -1,16 +1,1 @@
-project_id = "xeysvnkudchwidcuglhy"
-
-[functions.rsvp-public]
-verify_jwt = false
-
-[functions.export-book]
-verify_jwt = false
-
-[functions.rsvp-emails]
-verify_jwt = false
-
-[functions.cultural-recommendations]
-verify_jwt = false
-
-[functions.wedding-reminders]
-verify_jwt = false
+project_id = "kgranesporketsrballo"
