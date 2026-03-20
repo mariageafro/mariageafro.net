@@ -503,6 +503,7 @@ export type Database = {
           user_id: string
           verified: boolean
           ville: string | null
+          zone_disponibilite: string | null
         }
         Insert: {
           badge_type?: string | null
@@ -535,6 +536,7 @@ export type Database = {
           user_id: string
           verified?: boolean
           ville?: string | null
+          zone_disponibilite?: string | null
         }
         Update: {
           badge_type?: string | null
@@ -567,6 +569,7 @@ export type Database = {
           user_id?: string
           verified?: boolean
           ville?: string | null
+          zone_disponibilite?: string | null
         }
         Relationships: [
           {
