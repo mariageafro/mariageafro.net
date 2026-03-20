@@ -5,16 +5,16 @@ import logo from "@/assets/logo-mariageafro.png";
 const footerLinks = {
   navigation: [
     { name: "Accueil", href: "/" },
-    { name: "Prestataires", href: "/prestataires" },
-    { name: "Par Pays", href: "/trouver-par-pays" },
-    { name: "Premium", href: "/prestataires-premium" },
-    { name: "Blog", href: "/blog" },
+    { name: "Prestataires", href: "/explorer" },
+    { name: "Catégories", href: "/explorer" },
+    { name: "Origines & cultures", href: "/trouver-par-pays" },
+    { name: "Devenir prestataire", href: "/devenir-prestataire" },
   ],
   services: [
-    { name: "DJ & Musique", href: "/prestataires?category=dj" },
-    { name: "Photographes", href: "/prestataires?category=photo" },
-    { name: "Traiteurs", href: "/prestataires?category=traiteur" },
-    { name: "Décoration", href: "/prestataires?category=deco" },
+    { name: "Photographie & Vidéo", href: "/explorer?cat=image-souvenirs" },
+    { name: "DJ & Animation", href: "/explorer?cat=animation-ambiance" },
+    { name: "Beauté", href: "/explorer?cat=beaute" },
+    { name: "Traiteurs & Gastronomie", href: "/explorer?cat=traiteurs-gastronomie" },
   ],
   legal: [
     { name: "Mentions légales", href: "/mentions-legales" },
@@ -39,7 +39,7 @@ export function Footer() {
           <div className="lg:col-span-1">
             <img src={logo} alt="MariageAfro" className="h-20 w-auto mb-6" />
             <p className="font-body text-sm leading-relaxed text-ivory/70 mb-6">
-              La plateforme de référence pour votre mariage afro. Trouvez les meilleurs prestataires qui comprennent vos traditions et célèbrent votre culture.
+              La plateforme de référence pour votre mariage afro. Trouvez les meilleurs prestataires par métier, origine & culture et pays du mariage.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((social) => (
@@ -91,7 +91,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact & Newsletter */}
+          {/* Contact */}
           <div>
             <h4 className="font-serif text-lg font-medium text-ivory mb-6">Contact</h4>
             <a

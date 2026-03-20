@@ -52,14 +52,14 @@ export function HeroSection() {
             <span className="text-gradient-gold italic font-medium">de mariage afro</span>
           </motion.h1>
 
-          {/* Subtitle */}
+          {/* Subtitle — harmonized wording */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.35 }}
             className="font-body text-base sm:text-lg text-ivory/80 mb-10 max-w-xl mx-auto"
           >
-            Par métier, ville et origine culturelle.
+            Par métier, origine & culture et pays du mariage.
           </motion.p>
 
           {/* Search Bar */}
@@ -71,7 +71,7 @@ export function HeroSection() {
             <HeroSearchDropdowns />
           </motion.div>
 
-          {/* Stats — discreet, below search */}
+          {/* Stats */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
