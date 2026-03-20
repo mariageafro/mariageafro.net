@@ -7,9 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 /* ── Cultural origins for dropdown ── */
 const culturalOrigins = [
-  "Congolais", "Camerounais", "Sénégalais", "Ivoirien", "Malien",
-  "Guinéen", "Béninois", "Ghanéen", "Nigérian", "Haïtien",
-  "Antillais", "Afro-américain",
+  "Congo", "Cameroun", "Sénégal", "Côte d'Ivoire", "Mali",
+  "Guinée", "Bénin", "Ghana", "Nigeria", "Haïti",
+  "Antilles",
 ];
 
 /* ── Vendor type suggestions ── */
@@ -80,7 +80,7 @@ export function HeroSearchDropdowns() {
     : vendorSuggestions;
 
   // Merge DB cultures with predefined, keep predefined order first
-  const allCultures = [...new Set([...culturalOrigins, ...cultures])].filter((c) => !["africain", "afro"].includes(c.toLowerCase()));
+  const allCultures = culturalOrigins;
   const filteredCultures = culture
     ? allCultures.filter((c) => c.toLowerCase().includes(culture.toLowerCase()))
     : allCultures;
