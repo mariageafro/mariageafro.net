@@ -234,11 +234,11 @@ export function HeroSearchDropdowns() {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0, scale: 0.97 }}
-              animate={{ opacity: 1, height: "auto", scale: 1 }}
-              exit={{ opacity: 0, height: 0, scale: 0.97 }}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="overflow-hidden"
+              className="overflow-visible"
             >
               <div className="rounded-2xl bg-chocolate/60 backdrop-blur-md border border-ivory/15 px-5 py-5 space-y-4">
                 {/* Vendor type */}
