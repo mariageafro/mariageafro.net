@@ -72,11 +72,21 @@ export const VENDOR_FIELD_CONFIGS: CategoryFieldConfig[] = [
     categorySlug: 'decoration-lieux',
     label: 'Décoration & Lieux',
     fields: [
-      { key: 'deco_style', label: 'Style décoratif', type: 'chips', options: ['Moderne', 'Traditionnel', 'Bohème', 'Champêtre', 'Luxe', 'Afro-chic'], group: 'Style' },
-      { key: 'deco_scope', label: 'Périmètre', type: 'chips', options: ['Décoration salle', 'Cérémonie', 'Décoration complète'], group: 'Services' },
-      { key: 'flowers_type', label: 'Fleurs', type: 'chips', options: ['Fraîches', 'Artificielles', 'Les deux'], group: 'Services' },
-      { key: 'setup_included', label: 'Installation incluse', type: 'toggle', group: 'Prestations' },
-      { key: 'teardown_included', label: 'Désinstallation incluse', type: 'toggle', group: 'Prestations' },
+      // Decoration fields
+      { key: 'deco_style', label: 'Style décoratif', type: 'chips', options: ['Moderne', 'Traditionnel', 'Bohème', 'Champêtre', 'Luxe', 'Afro-chic'], group: 'Décoration' },
+      { key: 'deco_scope', label: 'Périmètre', type: 'chips', options: ['Décoration salle', 'Cérémonie', 'Décoration complète'], group: 'Décoration' },
+      { key: 'flowers_type', label: 'Fleurs', type: 'chips', options: ['Fraîches', 'Artificielles', 'Les deux'], group: 'Décoration' },
+      { key: 'setup_included', label: 'Installation incluse', type: 'toggle', group: 'Décoration' },
+      { key: 'teardown_included', label: 'Désinstallation incluse', type: 'toggle', group: 'Décoration' },
+      // Venue-specific fields
+      { key: 'venue_type', label: 'Type de lieu', type: 'chips', options: ['Salle de réception', 'Domaine', 'Château', 'Restaurant', 'Rooftop', 'Jardin / extérieur', 'Hôtel'], group: 'Lieu' },
+      { key: 'venue_capacity', label: 'Capacité max (invités)', type: 'number', placeholder: 'ex: 300', group: 'Lieu' },
+      { key: 'parking', label: 'Parking disponible', type: 'toggle', group: 'Lieu' },
+      { key: 'outdoor_space', label: 'Espace extérieur', type: 'toggle', group: 'Lieu' },
+      { key: 'external_caterer', label: 'Traiteur externe autorisé', type: 'toggle', group: 'Lieu' },
+      { key: 'accommodation', label: 'Hébergement sur place', type: 'toggle', group: 'Lieu' },
+      { key: 'dance_floor', label: 'Piste de danse', type: 'toggle', group: 'Lieu' },
+      { key: 'kitchen_on_site', label: 'Cuisine sur place', type: 'toggle', group: 'Lieu' },
     ],
   },
   {
