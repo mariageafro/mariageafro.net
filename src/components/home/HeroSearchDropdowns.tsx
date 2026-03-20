@@ -232,7 +232,7 @@ export function HeroSearchDropdowns() {
         {/* Location */}
         <div>
           <p className="font-body text-[11px] text-ivory/70 font-medium uppercase tracking-wider mb-1.5">Ville du mariage</p>
-          <div className="flex items-center gap-2.5 bg-secondary/60 rounded-xl px-3 py-2.5">
+          <div className="flex items-center gap-2.5 bg-white/10 rounded-xl px-3 py-2.5 border border-ivory/15">
             <MapPin size={15} className="text-champagne shrink-0" />
             <input
               type="text"
