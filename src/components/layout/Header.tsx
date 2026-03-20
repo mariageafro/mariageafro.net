@@ -296,7 +296,7 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
 
   const mobileNavItems = [
     { key: "Prestataires", href: "/prestataires", hasChildren: true },
-    { key: "Par Pays", href: "/trouver-par-pays", hasChildren: true },
+    { key: "Origines & cultures", href: "/trouver-par-pays", hasChildren: true },
     { key: "Devenir Prestataire", href: "/devenir-prestataire" },
   ];
 
@@ -352,32 +352,33 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                       </div>
                     )}
 
-                    {item.key === "Par Pays" && (
+                    {item.key === "Origines & cultures" && (
                       <div className="px-6 py-3 space-y-1">
                         {[
                           { flag: "🇨🇩", name: "Congo", code: "cd" },
                           { flag: "🇨🇲", name: "Cameroun", code: "cm" },
                           { flag: "🇸🇳", name: "Sénégal", code: "sn" },
                           { flag: "🇨🇮", name: "Côte d'Ivoire", code: "ci" },
-                          { flag: "🇳🇬", name: "Nigeria", code: "ng" },
+                          { flag: "🇲🇱", name: "Mali", code: "ml" },
+                          { flag: "🇬🇳", name: "Guinée", code: "gn" },
+                          { flag: "🇧🇯", name: "Bénin", code: "bj" },
                           { flag: "🇬🇭", name: "Ghana", code: "gh" },
-                          { flag: "🇫🇷", name: "France", code: "fr" },
-                          { flag: "🇧🇪", name: "Belgique", code: "be" },
-                          { flag: "🇬🇧", name: "Royaume-Uni", code: "gb" },
-                          { flag: "🇩🇪", name: "Allemagne", code: "de" },
-                        ].map(country => (
+                          { flag: "🇳🇬", name: "Nigeria", code: "ng" },
+                          { flag: "🇭🇹", name: "Haïti", code: "ht" },
+                          { flag: "🏝️", name: "Antilles", code: "antilles" },
+                        ].map(origin => (
                           <Link
-                            key={country.code}
-                            to={`/trouver-par-pays?pays=${country.code}`}
+                            key={origin.code}
+                            to={`/prestataires?culture=${origin.name}`}
                             onClick={close}
                             className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
                           >
-                            <span className="text-lg shrink-0">{country.flag}</span>
-                            {country.name}
+                            <span className="text-lg shrink-0">{origin.flag}</span>
+                            {origin.name}
                           </Link>
                         ))}
-                        <Link to="/trouver-par-pays" onClick={close} className="flex items-center gap-2 text-center text-xs text-champagne font-medium py-2 mt-1 justify-center">
-                          <MapPin size={12} /> Voir tous les pays →
+                        <Link to="/trouver-par-pays" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1 border-t border-border/30 pt-3">
+                          Toutes les origines →
                         </Link>
                       </div>
                     )}
