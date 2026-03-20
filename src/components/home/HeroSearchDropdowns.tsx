@@ -25,7 +25,7 @@ export function HeroSearchDropdowns() {
   const [location, setLocation] = useState("");
   const [culture, setCulture] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const [showFloatingCta, setShowFloatingCta] = useState(true);
   const [showVendorDrop, setShowVendorDrop] = useState(false);
   const [showLocDrop, setShowLocDrop] = useState(false);
   const [showCultureDrop, setShowCultureDrop] = useState(false);
@@ -74,6 +74,15 @@ export function HeroSearchDropdowns() {
     }
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
+
+  // Hide floating CTA when user scrolls past the hero
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowFloatingCta(window.scrollY < window.innerHeight * 0.7);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const closeAll = () => {
     setShowVendorDrop(false);
@@ -213,12 +222,14 @@ export function HeroSearchDropdowns() {
       </div>
 
       {/* ─── Mobile floating CTA ─── */}
-      <div className="sm:hidden fixed bottom-6 left-4 right-4 z-[9998]">
-        {!mobileOpen && (
+      <AnimatePresence>
+        {!mobileOpen && showFloatingCta && (
           <motion.div
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.6 }}
+            exit={{ y: 40, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="sm:hidden fixed bottom-6 left-4 right-4 z-[9998]"
           >
             <Button
               variant="hero"
@@ -230,7 +241,7 @@ export function HeroSearchDropdowns() {
             </Button>
           </motion.div>
         )}
-      </div>
+      </AnimatePresence>
 
       {/* ─── Mobile search panel (slide up) ─── */}
       <AnimatePresence>
