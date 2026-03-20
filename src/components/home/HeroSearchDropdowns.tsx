@@ -15,7 +15,7 @@ const culturalOrigins = [
 /* ── Vendor type suggestions ── */
 const vendorSuggestions = [
   "Photographe", "Vidéaste", "DJ", "Traiteur", "Wedding Planner",
-  "Makeup artiste afro", "Coiffeur", "Décorateur", "Salles de réception",
+  "Makeup artiste afro", "Coiffure", "Déco", "Salles de réception",
 ];
 
 /* ── Countries for MVP ── */
