@@ -22,6 +22,7 @@ export type PrestatairesFilters = {
   noteMin: number;
   sort: 'pertinence' | 'note' | 'avis' | 'distance';
   country: string;
+  zone: string;
 };
 
 const defaultFilters: PrestatairesFilters = {
@@ -34,6 +35,7 @@ const defaultFilters: PrestatairesFilters = {
   noteMin: 0,
   sort: 'pertinence',
   country: '',
+  zone: '',
 };
 
 export function usePrestataires(initialFilters?: Partial<PrestatairesFilters>) {

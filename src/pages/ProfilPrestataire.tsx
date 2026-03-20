@@ -1,6 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { MapPin, Star } from "lucide-react";
+import { MapPin, Star, Plane } from "lucide-react";
+import { getZoneLabel } from "@/lib/zone-disponibilite";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePrestaireDetail } from "@/hooks/use-prestataire-detail";
 import { PrestaireGallery } from "@/components/prestataire/PrestaireGallery";
