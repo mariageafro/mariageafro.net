@@ -35,7 +35,7 @@ export function MegaMenu() {
             <div key={cat.slug}>
               {/* Category header */}
               <Link
-                to={`/categories/${cat.slug}`}
+                to={`/explorer?cat=${cat.slug}`}
                 className="flex items-center gap-2.5 group mb-3"
               >
                 <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-champagne/10 text-champagne shrink-0">
@@ -52,7 +52,7 @@ export function MegaMenu() {
                 {cat.subs.map((sub) => (
                   <li key={sub.slug}>
                     <Link
-                      to={`/prestataires?sub=${sub.slug}`}
+                      to={`/explorer?cat=${cat.slug}&search=${encodeURIComponent(sub.label)}`}
                       className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg font-body text-sm text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all group/sub"
                     >
                       {sub.icon && (
