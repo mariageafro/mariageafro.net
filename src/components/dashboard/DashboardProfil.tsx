@@ -139,6 +139,7 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
       slug,
       lat: form.lat ? parseFloat(form.lat) : null,
       lng: form.lng ? parseFloat(form.lng) : null,
+      zone_disponibilite: form.zone_disponibilite || null,
     };
 
     // Contacts payload
