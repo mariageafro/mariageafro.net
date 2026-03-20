@@ -7,17 +7,19 @@ import { supabase } from "@/integrations/supabase/client";
 
 /* ── Cultural origins for dropdown ── */
 const culturalOrigins = [
-  "Congolais", "Ivoirien", "Camerounais", "Sénégalais", "Nigérian",
-  "Ghanéen", "Malien", "Guinéen", "Togolais", "Béninois",
-  "Haïtien", "Guadeloupéen", "Martiniquais", "Cap-verdien",
-  "Éthiopien", "Rwandais", "Burkinabè",
+  "Congolais", "Camerounais", "Sénégalais", "Ivoirien", "Malien",
+  "Guinéen", "Béninois", "Ghanéen", "Nigérian", "Haïtien",
+  "Antillais", "Afro", "Afro-américain",
 ];
 
 /* ── Vendor type suggestions ── */
 const vendorSuggestions = [
-  "Photographe", "Vidéaste", "DJ", "Wedding Planner", "Traiteur",
-  "Décorateur", "Maquilleur", "Coiffeur", "Animateur", "Chorégraphe",
+  "Photographe", "Vidéaste", "DJ", "Traiteur", "Wedding Planner",
+  "Maquilleur", "Coiffeur", "Décorateur", "Lieux",
 ];
+
+/* ── Countries for MVP ── */
+const countryOptions = ["France", "Belgique"];
 
 export function HeroSearchDropdowns() {
   const navigate = useNavigate();
