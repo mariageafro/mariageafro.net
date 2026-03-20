@@ -56,6 +56,7 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
     lat: prestataire?.lat?.toString() ?? '',
     lng: prestataire?.lng?.toString() ?? '',
     zone_disponibilite: (prestataire as any)?.zone_disponibilite ?? '',
+    vendor_metadata: ((prestataire as any)?.vendor_metadata as Record<string, any>) ?? {},
   });
 
   useEffect(() => {
