@@ -10,7 +10,7 @@ const stats = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[85vh] flex items-end sm:items-center justify-center z-0 overflow-visible pb-10 sm:pb-0">
+    <section className="relative min-h-[85vh] flex items-center justify-center z-0 overflow-visible">
       {/* Background Image */}
       <div className="absolute inset-0 overflow-hidden">
         <img
@@ -22,7 +22,7 @@ export function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container-editorial pt-28 sm:pt-28 pb-12 overflow-visible">
+      <div className="relative z-10 container-editorial pt-28 pb-12 overflow-visible">
         <div className="max-w-4xl mx-auto text-center overflow-visible">
           {/* Badge */}
           <motion.div
