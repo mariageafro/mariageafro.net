@@ -107,8 +107,13 @@ export default function ProfilPrestataire() {
                   </div>
                 </div>
 
-                {/* Cultures & Languages */}
+                {/* Zone de disponibilité + Cultures & Languages */}
                 <div className="flex flex-wrap gap-2 mt-6">
+                  {/* Zone de disponibilité */}
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-champagne/10 border border-champagne/20 text-chocolate font-body text-sm">
+                    <Plane size={13} className="text-champagne" />
+                    {getZoneLabel((prestataire as any).zone_disponibilite)}
+                  </span>
                   {prestataire.origine_culturelle && (
                     <span className="px-3 py-1 rounded-full bg-secondary text-chocolate font-body text-sm">
                       {prestataire.origine_culturelle}
