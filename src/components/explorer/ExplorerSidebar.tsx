@@ -64,7 +64,7 @@ export function ExplorerSidebar({ filters, updateFilter, categories }: Props) {
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border/50 shadow-[var(--shadow-card)] p-5 sticky top-24">
+    <div className="bg-card rounded-2xl border border-border/50 shadow-[var(--shadow-card)] p-5 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
       {/* Catégorie */}
       <SidebarSection title="Catégorie">
         <div className="flex flex-wrap gap-1.5">
