@@ -254,7 +254,7 @@ export function HeroSearchDropdowns() {
               value={culture}
               onChange={(e) => setCulture(e.target.value)}
               placeholder="Congolais, Sénégalais..."
-              className="w-full bg-transparent font-body text-sm text-chocolate placeholder:text-muted-foreground/70 focus:outline-none"
+              className="w-full bg-transparent font-body text-sm text-ivory placeholder:text-ivory/50 focus:outline-none"
             />
           </div>
         </div>
