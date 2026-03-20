@@ -225,7 +225,7 @@ export function HeroSearchDropdowns() {
               onChange={(e) => { setVendorType(e.target.value); setShowVendorDrop(true); }}
               onFocus={() => { closeAll(); setShowVendorDrop(true); }}
               placeholder="Nom ou catégorie de prestataires"
-              className="w-full bg-transparent font-body text-sm text-ivory placeholder:text-ivory/50 focus:outline-none"
+              className="w-full bg-transparent font-body text-base font-medium text-ivory placeholder:text-ivory/70 focus:outline-none drop-shadow-sm"
             />
           </div>
           {showVendorDrop && filteredVendors.length > 0 && (
