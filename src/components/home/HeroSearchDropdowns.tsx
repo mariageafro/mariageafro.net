@@ -258,7 +258,7 @@ export function HeroSearchDropdowns() {
               onChange={(e) => { setLocation(e.target.value); setShowLocDrop(true); }}
               onFocus={() => { closeAll(); setShowLocDrop(true); }}
               placeholder="Ville ou pays"
-              className="w-full bg-transparent font-body text-sm text-ivory placeholder:text-ivory/50 focus:outline-none"
+              className="w-full bg-transparent font-body text-base font-medium text-ivory placeholder:text-ivory/70 focus:outline-none drop-shadow-sm"
             />
           </div>
           {showLocDrop && filteredCities.length > 0 && (
