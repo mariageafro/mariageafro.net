@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, MapPin, Globe, Search, Grid, List, SlidersHorizontal, ChevronLeft, ChevronRight, BadgeCheck, MessageCircle } from "lucide-react";
+import { Star, MapPin, Globe, Search, Grid, List, SlidersHorizontal, ChevronLeft, ChevronRight, BadgeCheck, MessageCircle, Plane } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePrestataires } from "@/hooks/use-prestataires";
 import { useGeolocation } from "@/hooks/use-geolocation";
