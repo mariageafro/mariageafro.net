@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useUserRole } from "@/hooks/use-user-role";
+import { MegaMenu } from "@/components/layout/MegaMenu";
 import { useLanguage, translateUI } from "@/contexts/language-context";
 import { useFavorites } from "@/hooks/use-favorites";
 import logo from "@/assets/logo-mariageafro.png";
