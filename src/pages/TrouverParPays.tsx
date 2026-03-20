@@ -2,20 +2,7 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-
-const origins = [
-  { label: "Congo", flag: "🇨🇩", code: "cd" },
-  { label: "Cameroun", flag: "🇨🇲", code: "cm" },
-  { label: "Sénégal", flag: "🇸🇳", code: "sn" },
-  { label: "Côte d'Ivoire", flag: "🇨🇮", code: "ci" },
-  { label: "Mali", flag: "🇲🇱", code: "ml" },
-  { label: "Guinée", flag: "🇬🇳", code: "gn" },
-  { label: "Bénin", flag: "🇧🇯", code: "bj" },
-  { label: "Ghana", flag: "🇬🇭", code: "gh" },
-  { label: "Nigeria", flag: "🇳🇬", code: "ng" },
-  { label: "Haïti", flag: "🇭🇹", code: "ht" },
-  { label: "Antilles", flag: "🏝️", code: "antilles" },
-];
+import { CULTURAL_ORIGINS } from "@/lib/cultural-origins";
 
 export default function TrouverParPays() {
   return (
@@ -42,16 +29,16 @@ export default function TrouverParPays() {
       <section className="section-padding bg-gradient-warm">
         <div className="max-w-4xl mx-auto px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {origins.map((o, i) => (
+            {CULTURAL_ORIGINS.map((o, i) => (
               <motion.div
-                key={o.code}
+                key={o.label}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.45, delay: i * 0.06 }}
               >
                 <Link
-                  to={`/prestataires?culture=${o.label}`}
+                  to={`/prestataires?culture=${encodeURIComponent(o.filter[0])}`}
                   className="group card-premium p-5 flex items-center gap-4 hover:shadow-elegant transition-shadow"
                 >
                   <span className="text-3xl">{o.flag}</span>
