@@ -75,6 +75,15 @@ export function HeroSearchDropdowns() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
+  // Hide floating CTA when user scrolls past the hero
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowFloatingCta(window.scrollY < window.innerHeight * 0.7);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const closeAll = () => {
     setShowVendorDrop(false);
     setShowLocDrop(false);
