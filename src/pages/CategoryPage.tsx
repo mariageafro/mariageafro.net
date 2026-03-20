@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { usePrestataires } from "@/hooks/use-prestataires";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { FavoriteButton } from "@/components/prestataire/FavoriteButton";
-import { FilterSidebar } from "@/components/prestataire/FilterSidebar";
+import { FilterSidebar, ActiveFilterChips } from "@/components/prestataire/FilterSidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -221,6 +221,14 @@ export default function CategoryPage() {
                   </button>
                 </div>
               </div>
+
+              {/* Active filter chips */}
+              <ActiveFilterChips
+                filters={filters}
+                categories={categories}
+                updateFilter={updateFilter}
+                resetFilters={() => { resetFilters(); disableGeo(); }}
+              />
 
               {/* Results count */}
               <div className="flex items-center justify-between mb-6">
