@@ -32,30 +32,22 @@ export function HeroSearchDropdowns() {
   const [showCultureDrop, setShowCultureDrop] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const [cities, setCities] = useState<string[]>([]);
   const [cultures, setCultures] = useState<string[]>([]);
 
   const vendorRef = useRef<HTMLDivElement>(null);
-  const locRef = useRef<HTMLDivElement>(null);
   const cultureRef = useRef<HTMLDivElement>(null);
+  const locRef = useRef<HTMLDivElement>(null);
 
-  // Fetch real cities & cultures from DB
+  // Fetch real cultures from DB
   useEffect(() => {
-    const fetch = async () => {
-      const [villeRes, cultureRes] = await Promise.all([
-        supabase.from("prestataires").select("ville").not("ville", "is", null),
-        supabase.from("prestataires").select("origine_culturelle").not("origine_culturelle", "is", null),
-      ]);
-      if (villeRes.data) {
-        const unique = [...new Set(villeRes.data.map((v) => v.ville).filter(Boolean))] as string[];
-        setCities(unique.sort());
-      }
+    const fetchData = async () => {
+      const cultureRes = await supabase.from("prestataires").select("origine_culturelle").not("origine_culturelle", "is", null);
       if (cultureRes.data) {
         const unique = [...new Set(cultureRes.data.map((c) => c.origine_culturelle).filter(Boolean))] as string[];
         setCultures(unique.sort());
       }
     };
-    fetch();
+    fetchData();
   }, []);
 
   // Close on outside click
