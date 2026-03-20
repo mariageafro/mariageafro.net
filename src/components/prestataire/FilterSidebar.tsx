@@ -408,6 +408,10 @@ export function ActiveFilterChips({
   if (filters.noteMin > 0) {
     chips.push({ label: `★ ${filters.noteMin}+`, onRemove: () => updateFilter('noteMin', 0) });
   }
+  if (filters.zone) {
+    const zoneItem = ZONES_DISPONIBILITE.find(z => z.value === filters.zone);
+    chips.push({ label: zoneItem?.label || filters.zone, onRemove: () => updateFilter('zone', '') });
+  }
   for (const l of filters.langue) {
     chips.push({ label: l, onRemove: () => updateFilter('langue', filters.langue.filter(x => x !== l)) });
   }

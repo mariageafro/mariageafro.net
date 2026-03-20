@@ -87,7 +87,7 @@ export default function Prestataires() {
     }
   };
 
-  const hasActiveFilters = filters.search || filters.ville.length > 0 || filters.categorie || filters.sousCategorie || filters.culture.length > 0 || filters.langue.length > 0 || filters.noteMin > 0 || filters.country || geo.enabled;
+  const hasActiveFilters = filters.search || filters.ville.length > 0 || filters.categorie || filters.sousCategorie || filters.culture.length > 0 || filters.langue.length > 0 || filters.noteMin > 0 || filters.country || filters.zone || geo.enabled;
 
   // Pagination
   const totalPages = Math.ceil(prestataires.length / ITEMS_PER_PAGE);
