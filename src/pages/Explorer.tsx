@@ -49,7 +49,8 @@ export default function Explorer() {
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState<ExplorerFilters>(defaultExplorerFilters);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const { prestataires, isLoading, isLoadingMore, hasMore, totalCount, categories, loadMore } = useExplorerData(filters);
+  const [currentPage, setCurrentPage] = useState(1);
+  const { prestataires, isLoading, totalCount, categories } = useExplorerData(filters, currentPage);
 
   // Sync URL search params into filters on mount
   useEffect(() => {
