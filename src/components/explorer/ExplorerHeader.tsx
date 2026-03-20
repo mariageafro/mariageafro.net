@@ -13,9 +13,9 @@ export function ExplorerHeader({ filters, updateFilter }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <section className="relative overflow-hidden bg-chocolate">
-      {/* Deep rich background with texture */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(30,20%,22%)_0%,hsl(25,30%,14%)_70%,hsl(20,35%,10%)_100%)]" />
+    <section className="relative overflow-hidden bg-chocolate text-ivory/90">
+      {/* Match footer background */}
+      <div className="absolute inset-0 bg-chocolate" />
 
       {/* Subtle pattern */}
       <div className="absolute inset-0 opacity-[0.04]" style={{
