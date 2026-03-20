@@ -129,57 +129,21 @@ export function HeroSearchDropdowns() {
           )}
         </div>
 
-        {/* Location */}
-        <div ref={locRef} className="flex-1 relative">
-          <button
-            onClick={() => { closeAll(); setShowLocDrop(!showLocDrop); }}
-            className="w-full flex items-center gap-3 px-5 py-4 border-r border-border text-left"
-          >
-            <MapPin className="text-champagne shrink-0" size={16} />
-            <div className="flex-1 min-w-0">
-              <p className="font-body text-[10px] text-muted-foreground uppercase tracking-widest">Ville du mariage</p>
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => { setLocation(e.target.value); setShowLocDrop(true); }}
-                onFocus={() => { closeAll(); setShowLocDrop(true); }}
-                placeholder="Paris, Lyon, Bruxelles..."
-                className="w-full bg-transparent font-body text-sm text-chocolate placeholder:text-muted-foreground focus:outline-none"
-              />
-            </div>
-          </button>
-          {showLocDrop && filteredCities.length > 0 && (
-            <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border border-border z-[9999] w-full max-h-[280px] overflow-y-auto">
-              {filteredCities.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => { setLocation(c); setShowLocDrop(false); }}
-                  className={`w-full text-left px-4 py-2.5 text-sm font-body transition-colors hover:bg-champagne/5 ${
-                    location === c ? "text-champagne bg-champagne/10" : "text-chocolate"
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Cultural origin */}
+        {/* Origine & culture */}
         <div ref={cultureRef} className="flex-1 relative">
           <button
             onClick={() => { closeAll(); setShowCultureDrop(!showCultureDrop); }}
-            className="w-full flex items-center gap-3 px-5 py-4 text-left"
+            className="w-full flex items-center gap-3 px-5 py-4 border-r border-border text-left"
           >
             <Globe className="text-champagne shrink-0" size={16} />
             <div className="flex-1 min-w-0">
-              <p className="font-body text-[10px] text-muted-foreground uppercase tracking-widest">Origine culturelle</p>
+              <p className="font-body text-[10px] text-muted-foreground uppercase tracking-widest">Origine & culture</p>
               <input
                 type="text"
                 value={culture}
                 onChange={(e) => { setCulture(e.target.value); setShowCultureDrop(true); }}
                 onFocus={() => { closeAll(); setShowCultureDrop(true); }}
-                placeholder="Congolais, Sénégalais..."
+                placeholder="Congolais, Camerounais, Antillais..."
                 className="w-full bg-transparent font-body text-sm text-chocolate placeholder:text-muted-foreground focus:outline-none"
               />
             </div>
@@ -192,6 +156,42 @@ export function HeroSearchDropdowns() {
                   onClick={() => { setCulture(c); setShowCultureDrop(false); }}
                   className={`w-full text-left px-4 py-2.5 text-sm font-body transition-colors hover:bg-champagne/5 ${
                     culture === c ? "text-champagne bg-champagne/10" : "text-chocolate"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Pays du mariage */}
+        <div ref={locRef} className="flex-1 relative">
+          <button
+            onClick={() => { closeAll(); setShowLocDrop(!showLocDrop); }}
+            className="w-full flex items-center gap-3 px-5 py-4 text-left"
+          >
+            <MapPin className="text-champagne shrink-0" size={16} />
+            <div className="flex-1 min-w-0">
+              <p className="font-body text-[10px] text-muted-foreground uppercase tracking-widest">Pays du mariage</p>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => { setLocation(e.target.value); setShowLocDrop(true); }}
+                onFocus={() => { closeAll(); setShowLocDrop(true); }}
+                placeholder="France, Belgique"
+                className="w-full bg-transparent font-body text-sm text-chocolate placeholder:text-muted-foreground focus:outline-none"
+              />
+            </div>
+          </button>
+          {showLocDrop && filteredCountries.length > 0 && (
+            <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border border-border z-[9999] w-full max-h-[280px] overflow-y-auto">
+              {filteredCountries.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => { setLocation(c); setShowLocDrop(false); }}
+                  className={`w-full text-left px-4 py-2.5 text-sm font-body transition-colors hover:bg-champagne/5 ${
+                    location === c ? "text-champagne bg-champagne/10" : "text-chocolate"
                   }`}
                 >
                   {c}
