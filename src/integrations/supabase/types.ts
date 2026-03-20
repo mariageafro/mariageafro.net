@@ -501,6 +501,7 @@ export type Database = {
           statut: Database["public"]["Enums"]["prestataire_statut"]
           updated_at: string
           user_id: string
+          vendor_metadata: Json | null
           verified: boolean
           ville: string | null
           zone_disponibilite: string | null
@@ -534,6 +535,7 @@ export type Database = {
           statut?: Database["public"]["Enums"]["prestataire_statut"]
           updated_at?: string
           user_id: string
+          vendor_metadata?: Json | null
           verified?: boolean
           ville?: string | null
           zone_disponibilite?: string | null
@@ -567,6 +569,7 @@ export type Database = {
           statut?: Database["public"]["Enums"]["prestataire_statut"]
           updated_at?: string
           user_id?: string
+          vendor_metadata?: Json | null
           verified?: boolean
           ville?: string | null
           zone_disponibilite?: string | null

@@ -11,6 +11,8 @@ import { Loader2, Save, MapPin, Plane } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { PRIORITY_CITIES } from '@/lib/priority-cities';
 import { ZONES_DISPONIBILITE } from '@/lib/zone-disponibilite';
+import { getFieldConfigForCategory, type VendorField } from '@/lib/vendor-fields-config';
+import { CULTURAL_ORIGINS } from '@/lib/cultural-origins';
 
 const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/;
 
@@ -54,6 +56,7 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
     lat: prestataire?.lat?.toString() ?? '',
     lng: prestataire?.lng?.toString() ?? '',
     zone_disponibilite: (prestataire as any)?.zone_disponibilite ?? '',
+    vendor_metadata: ((prestataire as any)?.vendor_metadata as Record<string, any>) ?? {},
   });
 
   useEffect(() => {
@@ -140,6 +143,7 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
       lat: form.lat ? parseFloat(form.lat) : null,
       lng: form.lng ? parseFloat(form.lng) : null,
       zone_disponibilite: form.zone_disponibilite || null,
+      vendor_metadata: form.vendor_metadata,
     };
 
     // Contacts payload
@@ -178,6 +182,22 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
   };
 
   const update = (key: string, value: string) => setForm(f => ({ ...f, [key]: value }));
+  const updateMeta = (key: string, value: any) => setForm(f => ({
+    ...f,
+    vendor_metadata: { ...f.vendor_metadata, [key]: value },
+  }));
+
+  const selectedCategorySlug = categories.find(c => c.id === form.categorie_id)?.slug;
+  const fieldConfig = getFieldConfigForCategory(selectedCategorySlug ?? null);
+
+  const toggleMetaChip = (key: string, value: string) => {
+    const current: string[] = form.vendor_metadata[key] ?? [];
+    if (current.includes(value)) {
+      updateMeta(key, current.filter((v: string) => v !== value));
+    } else {
+      updateMeta(key, [...current, value]);
+    }
+  };
 
   return (
     <Card className="card-premium max-w-3xl">
@@ -285,6 +305,71 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
             <Input value={form.langues} onChange={e => update('langues', e.target.value)} />
           </div>
         </div>
+
+        {/* Profession-specific metadata */}
+        {fieldConfig && fieldConfig.fields.length > 0 && (
+          <div className="space-y-4 pt-4 border-t border-border">
+            <h3 className="text-lg font-medium">Spécialités – {fieldConfig.label}</h3>
+            {[...new Set(fieldConfig.fields.map(f => f.group ?? 'Général'))].map(group => (
+              <div key={group} className="space-y-3">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{group}</p>
+                {fieldConfig.fields.filter(f => (f.group ?? 'Général') === group).map(field => (
+                  <div key={field.key}>
+                    {field.type === 'chips' && (
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">{field.label}</label>
+                        <div className="flex flex-wrap gap-1.5">
+                          {field.options?.map(opt => (
+                            <button
+                              key={opt}
+                              type="button"
+                              onClick={() => toggleMetaChip(field.key, opt)}
+                              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                                (form.vendor_metadata[field.key] ?? []).includes(opt)
+                                  ? 'bg-champagne/15 border-champagne/30 text-foreground'
+                                  : 'bg-background border-border text-muted-foreground hover:border-champagne/20'
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {field.type === 'toggle' && (
+                      <label className="flex items-center gap-3 cursor-pointer group">
+                        <button
+                          type="button"
+                          onClick={() => updateMeta(field.key, !form.vendor_metadata[field.key])}
+                          className={`w-10 h-6 rounded-full transition-colors relative ${
+                            form.vendor_metadata[field.key] ? 'bg-champagne' : 'bg-muted'
+                          }`}
+                        >
+                          <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                            form.vendor_metadata[field.key] ? 'translate-x-[18px]' : 'translate-x-0.5'
+                          }`} />
+                        </button>
+                        <span className="text-sm text-foreground">{field.label}</span>
+                      </label>
+                    )}
+                    {field.type === 'number' && (
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">{field.label}</label>
+                        <Input
+                          type="number"
+                          value={form.vendor_metadata[field.key] ?? ''}
+                          onChange={e => updateMeta(field.key, e.target.value ? parseInt(e.target.value) : null)}
+                          placeholder={field.placeholder}
+                          className="max-w-[200px]"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium mb-1">Description</label>
