@@ -25,7 +25,7 @@ export function HeroSearchDropdowns() {
   const [location, setLocation] = useState("");
   const [culture, setCulture] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const [showFloatingCta, setShowFloatingCta] = useState(true);
   const [showVendorDrop, setShowVendorDrop] = useState(false);
   const [showLocDrop, setShowLocDrop] = useState(false);
   const [showCultureDrop, setShowCultureDrop] = useState(false);
