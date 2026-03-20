@@ -213,48 +213,48 @@ export function HeroSearchDropdowns() {
       </div>
 
       {/* ─── Mobile ─── */}
-      <div className="sm:hidden bg-white/15 backdrop-blur-md rounded-3xl p-5 shadow-elegant space-y-4 border border-ivory/20">
+      <div className="sm:hidden bg-white rounded-3xl p-5 shadow-elegant space-y-4 border border-border/50">
         {/* Vendor type */}
         <div>
-          <p className="font-body text-[11px] text-ivory/70 font-medium uppercase tracking-wider mb-1.5">Type de prestataire</p>
-          <div className="flex items-center gap-2.5 bg-white/10 rounded-xl px-3 py-2.5 border border-ivory/15">
+          <p className="font-body text-[11px] text-chocolate/70 font-medium uppercase tracking-wider mb-1.5">Type de prestataire</p>
+          <div className="flex items-center gap-2.5 bg-secondary/60 rounded-xl px-3 py-2.5">
             <Search size={15} className="text-champagne shrink-0" />
             <input
               type="text"
               value={vendorType}
               onChange={(e) => setVendorType(e.target.value)}
               placeholder="Photographe, DJ, vidéaste..."
-              className="w-full bg-transparent font-body text-sm text-ivory placeholder:text-ivory/50 focus:outline-none"
+              className="w-full bg-transparent font-body text-sm text-chocolate placeholder:text-muted-foreground/70 focus:outline-none"
             />
           </div>
         </div>
 
         {/* Location */}
         <div>
-          <p className="font-body text-[11px] text-ivory/70 font-medium uppercase tracking-wider mb-1.5">Ville du mariage</p>
-          <div className="flex items-center gap-2.5 bg-white/10 rounded-xl px-3 py-2.5 border border-ivory/15">
+          <p className="font-body text-[11px] text-chocolate/70 font-medium uppercase tracking-wider mb-1.5">Ville du mariage</p>
+          <div className="flex items-center gap-2.5 bg-secondary/60 rounded-xl px-3 py-2.5">
             <MapPin size={15} className="text-champagne shrink-0" />
             <input
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Paris, Lyon, Bruxelles..."
-              className="w-full bg-transparent font-body text-sm text-ivory placeholder:text-ivory/50 focus:outline-none"
+              className="w-full bg-transparent font-body text-sm text-chocolate placeholder:text-muted-foreground/70 focus:outline-none"
             />
           </div>
         </div>
 
         {/* Cultural origin */}
         <div>
-          <p className="font-body text-[11px] text-ivory/70 font-medium uppercase tracking-wider mb-1.5">Origine culturelle</p>
-          <div className="flex items-center gap-2.5 bg-white/10 rounded-xl px-3 py-2.5 border border-ivory/15">
+          <p className="font-body text-[11px] text-chocolate/70 font-medium uppercase tracking-wider mb-1.5">Origine culturelle</p>
+          <div className="flex items-center gap-2.5 bg-secondary/60 rounded-xl px-3 py-2.5">
             <Globe size={15} className="text-champagne shrink-0" />
             <input
               type="text"
               value={culture}
               onChange={(e) => setCulture(e.target.value)}
               placeholder="Congolais, Sénégalais..."
-              className="w-full bg-transparent font-body text-sm text-ivory placeholder:text-ivory/50 focus:outline-none"
+              className="w-full bg-transparent font-body text-sm text-chocolate placeholder:text-muted-foreground/70 focus:outline-none"
             />
           </div>
         </div>
