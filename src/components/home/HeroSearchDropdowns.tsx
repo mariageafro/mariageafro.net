@@ -222,12 +222,14 @@ export function HeroSearchDropdowns() {
       </div>
 
       {/* ─── Mobile floating CTA ─── */}
-      <div className="sm:hidden fixed bottom-6 left-4 right-4 z-[9998]">
-        {!mobileOpen && (
+      <AnimatePresence>
+        {!mobileOpen && showFloatingCta && (
           <motion.div
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.6 }}
+            exit={{ y: 40, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="sm:hidden fixed bottom-6 left-4 right-4 z-[9998]"
           >
             <Button
               variant="hero"
@@ -239,7 +241,7 @@ export function HeroSearchDropdowns() {
             </Button>
           </motion.div>
         )}
-      </div>
+      </AnimatePresence>
 
       {/* ─── Mobile search panel (slide up) ─── */}
       <AnimatePresence>
