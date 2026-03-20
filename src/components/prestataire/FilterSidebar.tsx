@@ -1,17 +1,9 @@
-import { X, RotateCcw, Star, ChevronDown, Sparkles, Globe, MessageSquare, FolderOpen, BarChart3, SlidersHorizontal, MapPin } from "lucide-react";
+import { X, RotateCcw, Star, ChevronDown, Sparkles, Globe, BarChart3, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { PrestatairesFilters } from "@/hooks/use-prestataires";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-
-interface SubCategory {
-  id: string;
-  name: string;
-  slug: string;
-  category_id: string;
-}
+import { useState } from "react";
 
 interface FilterSidebarProps {
   filters: PrestatairesFilters;
@@ -35,14 +27,9 @@ interface FilterSidebarProps {
 }
 
 const ratingOptions = [
-  { label: "4+", value: 4, stars: 4 },
-  { label: "4.5+", value: 4.5, stars: 4.5 },
-  { label: "5", value: 5, stars: 5 },
-];
-
-const COUNTRIES_MVP = [
-  { label: "France", value: "france" },
-  { label: "Belgique", value: "belgique" },
+  { label: "4+", value: 4 },
+  { label: "4.5+", value: 4.5 },
+  { label: "5", value: 5 },
 ];
 
 function FilterSection({ title, icon, children, defaultOpen = true, badge }: { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; badge?: number }) {
@@ -97,41 +84,12 @@ function CheckboxItem({ label, checked, onChange, count }: { label: string; chec
 }
 
 export function FilterSidebar({
-  filters, updateFilter, resetFilters, categories, villes, cultures, langues,
-  geo, radius, setRadius, onToggleGeo, onSetGeoLocation,
-  hasActiveFilters, categoryCounts, onClose, isMobile, hideCategories, initialSubSlugs,
+  filters, updateFilter, resetFilters, categories, cultures,
+  hasActiveFilters, categoryCounts, onClose, isMobile, hideCategories,
 }: FilterSidebarProps) {
-  const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
-  const [selectedSubs, setSelectedSubs] = useState<Set<string>>(new Set());
-  const [countries, setCountries] = useState<{ id: string; name: string }[]>([]);
-
-  useEffect(() => {
-    const fetchSubs = async () => {
-      const { data } = await supabase.from('sub_categories').select('id, name, slug, category_id, sort_order').order('sort_order', { ascending: true });
-      if (data) setSubCategories(data);
-    };
-    const fetchCountries = async () => {
-      const { data } = await supabase.from('countries').select('id, name').order('priority', { ascending: false });
-      if (data) setCountries(data);
-    };
-    fetchSubs();
-    fetchCountries();
-  }, []);
-
-  useEffect(() => {
-    if (initialSubSlugs && initialSubSlugs.length > 0 && subCategories.length > 0) {
-      const matchingIds = subCategories.filter(s => initialSubSlugs.includes(s.slug)).map(s => s.id);
-      if (matchingIds.length > 0) setSelectedSubs(new Set(matchingIds));
-    }
-  }, [initialSubSlugs, subCategories]);
-
-  const relevantSubs = filters.categorie
-    ? subCategories.filter(s => s.category_id === filters.categorie)
-    : subCategories;
 
   const activeFilterCount = [
-    filters.categorie, filters.culture.length > 0, filters.country, filters.langue.length > 0,
-    filters.noteMin > 0, selectedSubs.size > 0,
+    filters.categorie, filters.culture.length > 0, filters.noteMin > 0,
   ].filter(Boolean).length;
 
   return (
@@ -152,7 +110,7 @@ export function FilterSidebar({
         <div className="flex items-center gap-1.5">
           {hasActiveFilters && (
             <button
-              onClick={() => { resetFilters(); setSelectedSubs(new Set()); }}
+              onClick={resetFilters}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-body text-[11px] text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all"
             >
               <RotateCcw size={11} />
@@ -167,7 +125,7 @@ export function FilterSidebar({
         </div>
       </div>
 
-      {/* 1. Category */}
+      {/* 1. Catégorie */}
       {!hideCategories && (
         <FilterSection title="Catégorie" icon={<Sparkles size={14} />} badge={filters.categorie ? 1 : 0}>
           <div className="space-y-0.5 max-h-52 overflow-y-auto scrollbar-thin pr-0.5">
@@ -185,75 +143,17 @@ export function FilterSidebar({
         </FilterSection>
       )}
 
-      {/* 2. Culture */}
+      {/* 2. Origine & culture */}
       <FilterSection title="Origine & culture" icon={<Globe size={14} />} badge={filters.culture.length || undefined}>
-        <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
-          <CheckboxItem label="Toutes les cultures" checked={filters.culture.length === 0} onChange={() => updateFilter('culture', [])} />
+        <div className="space-y-0.5 max-h-52 overflow-y-auto scrollbar-thin pr-0.5">
+          <CheckboxItem label="Toutes les origines" checked={filters.culture.length === 0} onChange={() => updateFilter('culture', [])} />
           {cultures.map((c) => (
             <CheckboxItem key={c} label={c} checked={filters.culture.includes(c)} onChange={(checked) => updateFilter('culture', checked ? [...filters.culture, c] : filters.culture.filter(x => x !== c))} />
           ))}
         </div>
       </FilterSection>
 
-      {/* 3. Pays du mariage */}
-      <FilterSection title="Pays du mariage" icon={<MapPin size={14} />} badge={filters.country ? 1 : 0}>
-        <div className="space-y-0.5">
-          <CheckboxItem label="Tous les pays" checked={!filters.country} onChange={() => updateFilter('country', '')} />
-          {countries.length > 0 ? (
-            countries.map((c) => (
-              <CheckboxItem
-                key={c.id}
-                label={c.name}
-                checked={filters.country === c.id}
-                onChange={() => updateFilter('country', filters.country === c.id ? '' : c.id)}
-              />
-            ))
-          ) : (
-            COUNTRIES_MVP.map((c) => (
-              <CheckboxItem
-                key={c.value}
-                label={c.label}
-                checked={filters.country === c.value}
-                onChange={() => updateFilter('country', filters.country === c.value ? '' : c.value)}
-              />
-            ))
-          )}
-        </div>
-      </FilterSection>
-
-      {/* 4. Langue */}
-      <FilterSection title="Langue" icon={<MessageSquare size={14} />} defaultOpen={false} badge={filters.langue.length || undefined}>
-        <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
-          <CheckboxItem label="Toutes les langues" checked={filters.langue.length === 0} onChange={() => updateFilter('langue', [])} />
-          {langues.map((l) => (
-            <CheckboxItem key={l} label={l} checked={filters.langue.includes(l)} onChange={(checked) => updateFilter('langue', checked ? [...filters.langue, l] : filters.langue.filter(x => x !== l))} />
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* 5. Sub-categories */}
-      {relevantSubs.length > 0 && (
-        <FilterSection title="Sous-catégorie" icon={<FolderOpen size={14} />} defaultOpen={!!filters.categorie} badge={selectedSubs.size || undefined}>
-          <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
-            {relevantSubs.map((sub) => (
-              <CheckboxItem
-                key={sub.id}
-                label={sub.name}
-                checked={selectedSubs.has(sub.id)}
-                onChange={(checked) => {
-                  setSelectedSubs(prev => {
-                    const next = new Set(prev);
-                    if (checked) next.add(sub.id); else next.delete(sub.id);
-                    return next;
-                  });
-                }}
-              />
-            ))}
-          </div>
-        </FilterSection>
-      )}
-
-      {/* Rating */}
+      {/* 3. Note minimum */}
       <FilterSection title="Note minimum" icon={<Star size={14} />} defaultOpen={false}>
         <div className="flex flex-wrap gap-1.5">
           <button
@@ -279,7 +179,7 @@ export function FilterSidebar({
         </div>
       </FilterSection>
 
-      {/* Sort */}
+      {/* 4. Trier par */}
       <FilterSection title="Trier par" icon={<BarChart3 size={14} />} defaultOpen={false}>
         <div className="flex flex-wrap gap-1.5">
           {[
