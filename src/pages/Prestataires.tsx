@@ -238,11 +238,18 @@ export default function Prestataires() {
                 </div>
               </div>
 
+              {/* Active filter chips */}
+              <ActiveFilterChips
+                filters={filters}
+                categories={categories}
+                updateFilter={updateFilter}
+                resetFilters={() => { resetFilters(); disableGeo(); }}
+              />
+
               {/* Results count */}
               <div className="flex items-center justify-between mb-6">
                 <p className="font-body text-sm text-muted-foreground">
                   <span className="font-medium text-foreground">{prestataires.length}</span> prestataire{prestataires.length !== 1 ? 's' : ''} trouvé{prestataires.length !== 1 ? 's' : ''}
-                  {geo.enabled && ` dans un rayon de ${radius} km`}
                 </p>
                 {totalPages > 1 && (
                   <p className="font-body text-xs text-muted-foreground">
