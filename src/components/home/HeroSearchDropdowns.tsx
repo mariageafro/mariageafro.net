@@ -6,10 +6,10 @@ import { supabase } from "@/integrations/supabase/client";
 
 /* ── Cultural origins for dropdown ── */
 const culturalOrigins = [
-  "Congolais", "Camerounais", "Sénégalais", "Ivoirien", "Nigérian",
+  "Congolais", "Ivoirien", "Camerounais", "Sénégalais", "Nigérian",
   "Ghanéen", "Malien", "Guinéen", "Togolais", "Béninois",
   "Haïtien", "Guadeloupéen", "Martiniquais", "Cap-verdien",
-  "Afro-américain", "Éthiopien", "Rwandais", "Burkinabè",
+  "Éthiopien", "Rwandais", "Burkinabè",
 ];
 
 /* ── Vendor type suggestions ── */
