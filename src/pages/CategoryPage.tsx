@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, MapPin, Globe, Search, Grid, List, SlidersHorizontal, ChevronLeft, ChevronRight, BadgeCheck, MessageCircle } from "lucide-react";
+import { Star, MapPin, Globe, Search, Grid, List, SlidersHorizontal, ChevronLeft, ChevronRight, BadgeCheck, MessageCircle, Plane } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePrestataires } from "@/hooks/use-prestataires";
 import { useGeolocation } from "@/hooks/use-geolocation";
@@ -10,6 +10,7 @@ import { FavoriteButton } from "@/components/prestataire/FavoriteButton";
 import { FilterSidebar, ActiveFilterChips } from "@/components/prestataire/FilterSidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import { getZoneShortLabel } from "@/lib/zone-disponibilite";
 
 import categoryDj from "@/assets/category-dj.jpg";
 import categoryPhoto from "@/assets/category-photo.jpg";
@@ -90,7 +91,7 @@ export default function CategoryPage() {
     else requestLocation();
   };
 
-  const hasActiveFilters = filters.search || filters.ville.length > 0 || filters.culture.length > 0 || filters.langue.length > 0 || filters.noteMin > 0 || filters.country || geo.enabled;
+  const hasActiveFilters = filters.search || filters.ville.length > 0 || filters.culture.length > 0 || filters.langue.length > 0 || filters.noteMin > 0 || filters.country || filters.zone || geo.enabled;
 
   // Pagination
   const totalPages = Math.ceil(prestataires.length / ITEMS_PER_PAGE);
@@ -283,10 +284,18 @@ export default function CategoryPage() {
                               </div>
                             )}
                             {p.origine_culturelle && (
-                              <p className="font-body text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+                              <p className="font-body text-xs text-muted-foreground mb-1 flex items-center gap-1.5">
                                 <Globe size={11} />{p.origine_culturelle}
                               </p>
                             )}
+                            {(() => {
+                              const zoneLabel = getZoneShortLabel((p as any).zone_disponibilite);
+                              return zoneLabel ? (
+                                <p className="font-body text-xs text-champagne-dark mb-2 flex items-center gap-1.5">
+                                  <Plane size={11} />{zoneLabel}
+                                </p>
+                              ) : null;
+                            })()}
                             <div className="flex items-center gap-1 mb-3">
                               {p.review_count > 0 ? (
                                 <>

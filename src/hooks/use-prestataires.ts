@@ -22,6 +22,7 @@ export type PrestatairesFilters = {
   noteMin: number;
   sort: 'pertinence' | 'note' | 'avis' | 'distance';
   country: string;
+  zone: string;
 };
 
 const defaultFilters: PrestatairesFilters = {
@@ -34,6 +35,7 @@ const defaultFilters: PrestatairesFilters = {
   noteMin: 0,
   sort: 'pertinence',
   country: '',
+  zone: '',
 };
 
 export function usePrestataires(initialFilters?: Partial<PrestatairesFilters>) {
@@ -95,6 +97,7 @@ export function usePrestataires(initialFilters?: Partial<PrestatairesFilters>) {
       if (filters.categorie) query = query.eq('categorie_id', filters.categorie);
       if (filters.sousCategorie) query = query.eq('sous_categorie', filters.sousCategorie);
       if (filters.country) query = query.eq('country_id', filters.country);
+      if (filters.zone) query = query.eq('zone_disponibilite', filters.zone);
       if (filters.search) query = query.or(`nom_entreprise.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       
       // Ranking: lifetime featured first, then score_ranking

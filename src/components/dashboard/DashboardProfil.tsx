@@ -7,9 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, Save, MapPin } from 'lucide-react';
+import { Loader2, Save, MapPin, Plane } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { PRIORITY_CITIES } from '@/lib/priority-cities';
+import { ZONES_DISPONIBILITE } from '@/lib/zone-disponibilite';
 
 const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/;
 
@@ -52,6 +53,7 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
     langues: prestataire?.langues?.join(', ') ?? 'Français',
     lat: prestataire?.lat?.toString() ?? '',
     lng: prestataire?.lng?.toString() ?? '',
+    zone_disponibilite: (prestataire as any)?.zone_disponibilite ?? '',
   });
 
   useEffect(() => {
@@ -137,6 +139,7 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
       slug,
       lat: form.lat ? parseFloat(form.lat) : null,
       lng: form.lng ? parseFloat(form.lng) : null,
+      zone_disponibilite: form.zone_disponibilite || null,
     };
 
     // Contacts payload
@@ -230,6 +233,28 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
           <div>
             <label className="block text-sm font-medium mb-1">Origine culturelle</label>
             <Input value={form.origine_culturelle} onChange={e => update('origine_culturelle', e.target.value)} />
+          </div>
+          <div className="md:col-span-2">
+            <label className="flex items-center gap-1.5 text-sm font-medium mb-2">
+              <Plane className="h-4 w-4 text-champagne" />
+              Zone de disponibilité
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {ZONES_DISPONIBILITE.map(z => (
+                <button
+                  key={z.value}
+                  type="button"
+                  onClick={() => update('zone_disponibilite', form.zone_disponibilite === z.value ? '' : z.value)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                    form.zone_disponibilite === z.value
+                      ? 'bg-champagne/15 border-champagne/30 text-foreground shadow-sm'
+                      : 'bg-background border-border text-muted-foreground hover:border-champagne/20 hover:bg-champagne/5'
+                  }`}
+                >
+                  {z.label}
+                </button>
+              ))}
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Latitude</label>

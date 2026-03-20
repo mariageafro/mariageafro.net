@@ -1,4 +1,4 @@
-import { X, RotateCcw, Star, ChevronDown, Sparkles, Globe, BarChart3, SlidersHorizontal, MapPin, FolderOpen, MessageSquare, Settings2 } from "lucide-react";
+import { X, RotateCcw, Star, ChevronDown, Sparkles, Globe, BarChart3, SlidersHorizontal, MapPin, FolderOpen, MessageSquare, Settings2, Plane } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { PrestatairesFilters } from "@/hooks/use-prestataires";
@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CULTURAL_ORIGINS } from "@/lib/cultural-origins";
+import { ZONES_DISPONIBILITE } from "@/lib/zone-disponibilite";
 
 interface SubCategory {
   id: string;
@@ -165,7 +166,7 @@ export function FilterSidebar({
 
   const activeFilterCount = [
     filters.categorie, filters.culture.length > 0, filters.country, filters.noteMin > 0,
-    filters.langue.length > 0, selectedSubs.size > 0,
+    filters.langue.length > 0, selectedSubs.size > 0, filters.zone,
   ].filter(Boolean).length;
 
   return (
@@ -256,6 +257,25 @@ export function FilterSidebar({
               }`}
             >
               {c.label}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* 3b. Zone de disponibilité */}
+      <FilterSection title="Zone de disponibilité" icon={<Plane size={14} />} badge={filters.zone ? 1 : 0}>
+        <div className="flex flex-wrap gap-1.5">
+          {ZONES_DISPONIBILITE.map((z) => (
+            <button
+              key={z.value}
+              onClick={() => updateFilter('zone', filters.zone === z.value ? '' : z.value)}
+              className={`px-3 py-1.5 rounded-full font-body text-[12px] transition-all border ${
+                filters.zone === z.value
+                  ? "bg-champagne/15 border-champagne/30 text-chocolate font-medium shadow-sm"
+                  : "bg-background border-border text-muted-foreground hover:border-champagne/20 hover:bg-champagne/5"
+              }`}
+            >
+              {z.label}
             </button>
           ))}
         </div>
@@ -387,6 +407,10 @@ export function ActiveFilterChips({
   }
   if (filters.noteMin > 0) {
     chips.push({ label: `★ ${filters.noteMin}+`, onRemove: () => updateFilter('noteMin', 0) });
+  }
+  if (filters.zone) {
+    const zoneItem = ZONES_DISPONIBILITE.find(z => z.value === filters.zone);
+    chips.push({ label: zoneItem?.label || filters.zone, onRemove: () => updateFilter('zone', '') });
   }
   for (const l of filters.langue) {
     chips.push({ label: l, onRemove: () => updateFilter('langue', filters.langue.filter(x => x !== l)) });
