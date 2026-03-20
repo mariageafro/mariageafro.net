@@ -11,6 +11,7 @@ import { DevenirPrestatairePopup } from "@/components/home/DevenirPrestatairePop
 import { FilterSidebar, ActiveFilterChips } from "@/components/prestataire/FilterSidebar";
 import { FavoriteButton } from "@/components/prestataire/FavoriteButton";
 import { supabase } from "@/integrations/supabase/client";
+import { getZoneShortLabel } from "@/lib/zone-disponibilite";
 
 import categoryVideaste from "@/assets/category-videaste.jpg";
 
