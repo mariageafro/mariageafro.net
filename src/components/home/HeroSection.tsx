@@ -45,7 +45,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="font-serif text-4xl sm:text-5xl md:text-6xl font-light text-ivory leading-[1.1] mb-4"
+            className="font-serif text-3xl sm:text-5xl md:text-6xl font-light text-ivory leading-[1.1] mb-4"
           >
             Trouvez vos prestataires
             <br />
