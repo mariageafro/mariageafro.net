@@ -7,9 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, Save, MapPin } from 'lucide-react';
+import { Loader2, Save, MapPin, Plane } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { PRIORITY_CITIES } from '@/lib/priority-cities';
+import { ZONES_DISPONIBILITE } from '@/lib/zone-disponibilite';
 
 const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/;
 
