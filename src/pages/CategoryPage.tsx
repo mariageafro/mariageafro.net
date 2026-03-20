@@ -10,6 +10,7 @@ import { FavoriteButton } from "@/components/prestataire/FavoriteButton";
 import { FilterSidebar, ActiveFilterChips } from "@/components/prestataire/FilterSidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import { getZoneShortLabel } from "@/lib/zone-disponibilite";
 
 import categoryDj from "@/assets/category-dj.jpg";
 import categoryPhoto from "@/assets/category-photo.jpg";
