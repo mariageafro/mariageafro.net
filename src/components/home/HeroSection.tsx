@@ -18,7 +18,7 @@ export function HeroSection() {
           alt="Couple afro en tenue de mariage traditionnelle"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-chocolate/50 via-chocolate/35 to-chocolate/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-chocolate/40 via-chocolate/25 to-chocolate/55 sm:from-chocolate/50 sm:via-chocolate/35 sm:to-chocolate/65" />
       </div>
 
       {/* Content */}
