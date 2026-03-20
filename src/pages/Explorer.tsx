@@ -46,9 +46,32 @@ export const defaultExplorerFilters: ExplorerFilters = {
 
 export default function Explorer() {
   const isMobile = useIsMobile();
+  const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState<ExplorerFilters>(defaultExplorerFilters);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const { prestataires, isLoading, categories } = useExplorerData(filters);
+
+  // Sync URL search params into filters on mount
+  useEffect(() => {
+    if (categories.length === 0) return;
+    const catSlug = searchParams.get('category') || searchParams.get('cat');
+    const searchQuery = searchParams.get('search');
+    const origineParam = searchParams.get('culture');
+
+    setFilters(prev => {
+      const next = { ...prev };
+      if (catSlug) {
+        const cat = categories.find(c => c.slug === catSlug);
+        if (cat) {
+          next.categorie = cat.id;
+          next.categorieLabel = cat.name;
+        }
+      }
+      if (searchQuery) next.search = searchQuery;
+      if (origineParam) next.origine = [origineParam];
+      return next;
+    });
+  }, [searchParams, categories]);
 
   const updateFilter = <K extends keyof ExplorerFilters>(key: K, value: ExplorerFilters[K]) => {
     setFilters(prev => ({ ...prev, [key]: value }));
