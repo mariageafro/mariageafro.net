@@ -1,14 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, MapPin, Shirt, Heart, Camera, Music, Utensils, Palette, Sparkles, Scissors, Church, Car } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, Heart, Camera, Music, Utensils, Palette, Sparkles, Scissors, Church, Car, Search, MapPin } from "lucide-react";
 import { mainCategories } from "@/components/layout/MegaMenuData";
-import { plannerItems } from "@/components/layout/MegaMenuPlannerData";
-import { marieeItems } from "@/components/layout/MegaMenuMarieeData";
-import { marieItems } from "@/components/layout/MegaMenuMarieData";
-import { robesCategories } from "@/components/layout/MegaMenuRobesData";
-import { ideesItems } from "@/components/layout/MegaMenuIdeesData";
-import { communauteThemes, communauteNewItems } from "@/components/layout/MegaMenuCommunauteData";
-import { lieuxItems } from "@/components/layout/MegaMenuLieuxData";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,51 +10,21 @@ import { useUserRole } from "@/hooks/use-user-role";
 import { useLanguage, translateUI } from "@/contexts/language-context";
 import { useFavorites } from "@/hooks/use-favorites";
 import { MegaMenu } from "@/components/layout/MegaMenu";
-import { MegaMenuPlanner } from "@/components/layout/MegaMenuPlanner";
-import { MegaMenuMariee } from "@/components/layout/MegaMenuMariee";
-import { MegaMenuMarie } from "@/components/layout/MegaMenuMarie";
-import { MegaMenuRobes } from "@/components/layout/MegaMenuRobes";
-import { MegaMenuIdees } from "@/components/layout/MegaMenuIdees";
-import { MegaMenuCommunaute } from "@/components/layout/MegaMenuCommunaute";
 import { MegaMenuPays } from "@/components/layout/MegaMenuPays";
-import { MegaMenuLieux } from "@/components/layout/MegaMenuLieux";
 import logo from "@/assets/logo-mariageafro.png";
 
-type MegaMenuKey = "prestataires" | "planner" | "mariee" | "marie" | "robes" | "idees" | "communaute" | "pays" | "lieux" | null;
+type MegaMenuKey = "prestataires" | "pays" | null;
 
 const navLinks = [
-  
   { key: "Prestataires", href: "/prestataires", megaMenu: "prestataires" as const },
-  { key: "Mon Mariage", href: "/mon-mariage", megaMenu: "planner" as const },
+  { key: "Catégories", href: "/prestataires", megaMenu: null },
   { key: "Par Pays", href: "/trouver-par-pays", megaMenu: "pays" as const },
-  { key: "Lieux", href: "/categories/decoration-lieux", megaMenu: "lieux" as const },
-  { key: "Mariée", href: "/categories/mode-tenues", megaMenu: "mariee" as const },
-  { key: "Marié", href: "/categories/mode-tenues", megaMenu: "marie" as const },
-  { key: "Robes", href: "/categories/mode-tenues", megaMenu: "robes" as const },
-  { key: "Idées", href: "/prestataires", megaMenu: "idees" as const },
-  { key: "Communauté", href: "/prestataires", megaMenu: "communaute" as const },
-];
-
-const featuredCategories = [
-  { name: "📸 Image & Souvenirs", slug: "image-souvenirs" },
-  { name: "🎶 Animation & Ambiance", slug: "animation-ambiance" },
-  { name: "👗 Mode & Tenues", slug: "mode-tenues" },
-  { name: "💄 Beauté", slug: "beaute" },
-  { name: "🍽️ Traiteurs & Gastronomie", slug: "traiteurs-gastronomie" },
-  { name: "🌸 Décoration & Lieux", slug: "decoration-lieux" },
-  { name: "⛪ Cérémonies & Coutumes", slug: "ceremonies-coutumes" },
+  { key: "Devenir Prestataire", href: "/devenir-prestataire", megaMenu: null },
 ];
 
 const megaMenuComponents: Record<Exclude<MegaMenuKey, null>, React.FC> = {
   prestataires: MegaMenu,
-  planner: MegaMenuPlanner,
-  mariee: MegaMenuMariee,
-  marie: MegaMenuMarie,
-  robes: MegaMenuRobes,
-  idees: MegaMenuIdees,
-  communaute: MegaMenuCommunaute,
   pays: MegaMenuPays,
-  lieux: MegaMenuLieux,
 };
 
 export function Header() {
@@ -121,9 +84,9 @@ export function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-4 xl:gap-5">
               {navLinks.map((link) => {
-                const hasMegaMenu = !!(link as any).megaMenu;
+                const hasMegaMenu = !!link.megaMenu;
                 if (hasMegaMenu) {
-                  const menuKey = (link as any).megaMenu as Exclude<MegaMenuKey, null>;
+                  const menuKey = link.megaMenu as Exclude<MegaMenuKey, null>;
                   return (
                     <div
                       key={link.key}
@@ -282,7 +245,7 @@ export function Header() {
         </AnimatePresence>
       </header>
 
-      {/* Mobile Menu — rendered OUTSIDE header to avoid stacking context issues */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -310,7 +273,7 @@ export function Header() {
   );
 }
 
-/* ───────── Mobile Menu with Expandable Sub-menus ───────── */
+/* ───────── Mobile Menu ───────── */
 
 interface MobileMenuContentProps {
   lang: "fr" | "en";
@@ -326,43 +289,26 @@ interface MobileMenuContentProps {
 
 function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, role, signOut, close, favCount }: MobileMenuContentProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const navigate = useNavigate();
 
-  const toggle = (key: string, href: string) => {
-    if (expandedSection === key) {
-      // Already open → just collapse it
-      setExpandedSection(null);
-    } else {
-      setExpandedSection(key);
-    }
+  const toggle = (key: string) => {
+    setExpandedSection(expandedSection === key ? null : key);
   };
 
   const mobileNavItems = [
     { key: "Prestataires", href: "/prestataires", hasChildren: true },
-    { key: "Mon Mariage", href: "/mon-mariage", hasChildren: true },
-    { key: "Lieux", href: "/categories/decoration-lieux", hasChildren: true },
-    { key: "Mariée", href: "/categories/mode-tenues", hasChildren: true },
-    { key: "Marié", href: "/categories/mode-tenues", hasChildren: true },
-    { key: "Robes", href: "/categories/mode-tenues", hasChildren: true },
-    { key: "Idées", href: "/prestataires", hasChildren: true },
-    { key: "Communauté", href: "/prestataires", hasChildren: true },
     { key: "Par Pays", href: "/trouver-par-pays", hasChildren: true },
-    { key: "Premium", href: "/prestataires-premium" },
-    { key: "Blog", href: "/blog" },
-    { key: "✨ Voir la démo", href: "/demo-mariage" },
     { key: "Devenir Prestataire", href: "/devenir-prestataire" },
   ];
 
   return (
     <nav className="flex flex-col">
-      {/* Nav items */}
       <div className="flex flex-col pt-2">
         {mobileNavItems.map((item) => (
           <div key={item.key} className="border-b border-border/50">
             {item.hasChildren ? (
               <>
                 <button
-                   onClick={() => toggle(item.key, item.href)}
+                   onClick={() => toggle(item.key)}
                    className="w-full flex items-center justify-between px-6 py-4 font-body text-base text-chocolate hover:text-champagne transition-colors"
                 >
                   <span>{translateUI(item.key, lang)}</span>
@@ -387,7 +333,6 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                           { label: "Décorateur", href: "/categories/decoration-lieux?sub=decorateur", icon: Palette },
                           { label: "Maquilleuse afro", href: "/categories/beaute?sub=maquilleuse-afro", icon: Sparkles },
                           { label: "Coiffeuse afro", href: "/categories/beaute?sub=coiffeuse-afro", icon: Scissors },
-                          { label: "Wedding Cake", href: "/categories/traiteurs-gastronomie?sub=wedding-cake", icon: Utensils },
                           { label: "Wedding Planner", href: "/categories/ceremonies-coutumes?sub=wedding-planner", icon: Church },
                           { label: "Transport", href: "/categories/logistique-services?sub=transport-mariage", icon: Car },
                         ].map(cat => (
@@ -404,101 +349,6 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                         <Link to="/prestataires" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1 border-t border-border/30 pt-3">
                           Voir toutes les catégories →
                         </Link>
-                      </div>
-                    )}
-
-                    {item.key === "Lieux" && (
-                      <div className="px-6 py-3 space-y-1">
-                        {lieuxItems.map(li => (
-                          <Link
-                            key={li.label}
-                            to={li.href}
-                            onClick={close}
-                            className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
-                          >
-                            {li.icon && <li.icon size={14} className="text-champagne shrink-0" />}
-                            {li.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.key === "Mon Mariage" && (
-                      <div className="px-6 py-3 space-y-1">
-                        {plannerItems.map(pi => (
-                          <Link
-                            key={pi.href + pi.label}
-                            to={pi.href}
-                            onClick={close}
-                            className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
-                          >
-                            <pi.icon size={16} className="text-champagne shrink-0" />
-                            <div>
-                              <span className="block">{pi.label}</span>
-                              <span className="block text-[11px] text-muted-foreground">{pi.description}</span>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.key === "Mariée" && (
-                      <div className="px-6 py-3 space-y-1">
-                        {marieeItems.map(mi => (
-                          <Link key={mi.label} to={mi.href} onClick={close} className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
-                            <Shirt size={14} className="text-champagne shrink-0" />
-                            {mi.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.key === "Marié" && (
-                      <div className="px-6 py-3 space-y-1">
-                        {marieItems.map(mi => (
-                          <Link key={mi.label} to={mi.href} onClick={close} className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
-                            <Shirt size={14} className="text-champagne shrink-0" />
-                            {mi.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.key === "Robes" && (
-                      <div className="px-6 py-3 space-y-1">
-                        {robesCategories.map(r => (
-                          <Link key={r.label} to={r.href} onClick={close} className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
-                            <Shirt size={14} className="text-champagne shrink-0" />
-                            {r.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.key === "Idées" && (
-                      <div className="px-6 py-3 space-y-1">
-                        {ideesItems.map(i => (
-                          <Link key={i.label} to={i.href} onClick={close} className="block py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
-                            {i.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.key === "Communauté" && (
-                      <div className="px-6 py-3 space-y-1">
-                        <p className="text-xs uppercase tracking-widest text-muted-foreground px-3 py-1">Groupes par thème</p>
-                        {communauteThemes.slice(0, 8).map(c => (
-                          <Link key={c.label} to={c.href} onClick={close} className="block py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
-                            {c.label}
-                          </Link>
-                        ))}
-                        <p className="text-xs uppercase tracking-widest text-muted-foreground px-3 py-1 mt-2">Nouveautés</p>
-                        {communauteNewItems.map(c => (
-                          <Link key={c.label} to={c.href} onClick={close} className="block py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors">
-                            {c.label}
-                          </Link>
-                        ))}
                       </div>
                     )}
 
