@@ -17,7 +17,7 @@ const vendorSuggestions = [
   "Photographe", "Vidéaste", "DJ", "MC",
   "Wedding Planner", "Coordinatrice",
   "Maquilleuse afro", "Coiffeuse afro",
-  "Traiteur africain", "Wedding Cake",
+  "Traiteur", "Wedding Cake",
   "Salles de réception", "Déco",
   "Tenues traditionnelles", "Robe",
   "Location voiture",
