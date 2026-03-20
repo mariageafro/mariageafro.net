@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 const culturalOrigins = [
   "Congolais", "Camerounais", "Sénégalais", "Ivoirien", "Malien",
   "Guinéen", "Béninois", "Ghanéen", "Nigérian", "Haïtien",
-  "Antillais", "Afro-américain", "Afro",
+  "Antillais", "Afro-américain",
 ];
 
 /* ── Vendor type suggestions ── */
@@ -80,7 +80,7 @@ export function HeroSearchDropdowns() {
     : vendorSuggestions;
 
   // Merge DB cultures with predefined, keep predefined order first
-  const allCultures = [...new Set([...culturalOrigins, ...cultures])].filter((c) => c.toLowerCase() !== "africain");
+  const allCultures = [...new Set([...culturalOrigins, ...cultures])].filter((c) => !["africain", "afro"].includes(c.toLowerCase()));
   const filteredCultures = culture
     ? allCultures.filter((c) => c.toLowerCase().includes(culture.toLowerCase()))
     : allCultures;
