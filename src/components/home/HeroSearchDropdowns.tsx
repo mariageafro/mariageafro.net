@@ -213,10 +213,10 @@ export function HeroSearchDropdowns() {
       </div>
 
       {/* ─── Mobile ─── */}
-      <div className="sm:hidden space-y-5 px-2">
+      <div className="sm:hidden space-y-4 px-2">
         {/* Vendor type */}
         <div ref={vendorRef} className="relative">
-          <p className="font-body text-xs text-ivory font-semibold uppercase tracking-[0.18em] mb-1.5 drop-shadow-md">Catégorie</p>
+          <p className="font-body text-xs text-ivory font-semibold uppercase tracking-[0.18em] mb-1.5 drop-shadow-md">Type de prestataire</p>
           <div className="flex items-center gap-2 border-b border-ivory/30 pb-2">
             <Search size={14} className="text-champagne shrink-0" />
             <input
@@ -224,7 +224,7 @@ export function HeroSearchDropdowns() {
               value={vendorType}
               onChange={(e) => { setVendorType(e.target.value); setShowVendorDrop(true); }}
               onFocus={() => { closeAll(); setShowVendorDrop(true); }}
-              placeholder="Nom ou catégorie de prestataires"
+              placeholder="Photographe, DJ, vidéaste..."
               className="w-full bg-transparent font-body text-base font-medium text-ivory placeholder:text-ivory/70 focus:outline-none drop-shadow-sm"
             />
           </div>
@@ -245,11 +245,9 @@ export function HeroSearchDropdowns() {
           )}
         </div>
 
-        {/* Separator */}
-        <p className="font-body text-xs text-ivory/60 font-semibold uppercase tracking-[0.18em] text-center drop-shadow-md">ou</p>
-
         {/* Location */}
         <div ref={locRef} className="relative">
+          <p className="font-body text-xs text-ivory font-semibold uppercase tracking-[0.18em] mb-1.5 drop-shadow-md">Ville du mariage</p>
           <div className="flex items-center gap-2 border-b border-ivory/30 pb-2">
             <MapPin size={14} className="text-champagne shrink-0" />
             <input
@@ -257,7 +255,7 @@ export function HeroSearchDropdowns() {
               value={location}
               onChange={(e) => { setLocation(e.target.value); setShowLocDrop(true); }}
               onFocus={() => { closeAll(); setShowLocDrop(true); }}
-              placeholder="Ville ou pays"
+              placeholder="Paris, Lyon, Bruxelles..."
               className="w-full bg-transparent font-body text-base font-medium text-ivory placeholder:text-ivory/70 focus:outline-none drop-shadow-sm"
             />
           </div>
@@ -269,6 +267,37 @@ export function HeroSearchDropdowns() {
                   onClick={() => { setLocation(c); setShowLocDrop(false); }}
                   className={`w-full text-left px-4 py-2.5 text-sm font-body transition-colors hover:bg-champagne/5 ${
                     location === c ? "text-champagne bg-champagne/10" : "text-chocolate"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Cultural origin */}
+        <div ref={cultureRef} className="relative">
+          <p className="font-body text-xs text-ivory font-semibold uppercase tracking-[0.18em] mb-1.5 drop-shadow-md">Origine culturelle</p>
+          <div className="flex items-center gap-2 border-b border-ivory/30 pb-2">
+            <Globe size={14} className="text-champagne shrink-0" />
+            <input
+              type="text"
+              value={culture}
+              onChange={(e) => { setCulture(e.target.value); setShowCultureDrop(true); }}
+              onFocus={() => { closeAll(); setShowCultureDrop(true); }}
+              placeholder="Congolais, Ivoirien..."
+              className="w-full bg-transparent font-body text-base font-medium text-ivory placeholder:text-ivory/70 focus:outline-none drop-shadow-sm"
+            />
+          </div>
+          {showCultureDrop && filteredCultures.length > 0 && (
+            <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-2xl border border-border z-[9999] w-full max-h-[200px] overflow-y-auto">
+              {filteredCultures.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => { setCulture(c); setShowCultureDrop(false); }}
+                  className={`w-full text-left px-4 py-2.5 text-sm font-body transition-colors hover:bg-champagne/5 ${
+                    culture === c ? "text-champagne bg-champagne/10" : "text-chocolate"
                   }`}
                 >
                   {c}
