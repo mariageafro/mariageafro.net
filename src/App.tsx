@@ -89,13 +89,13 @@ const App = () => (
                 <DashboardPrestataire />
               </ProtectedRoute>
             } />
-            <Route path="/prestataires" element={<Prestataires />} />
+            <Route path="/prestataires" element={<PrestatairesRedirect />} />
             <Route path="/mes-favoris" element={<MesFavoris />} />
             <Route path="/explorer" element={<Explorer />} />
-            <Route path="/lieux" element={<Lieux />} />
+            <Route path="/lieux" element={<Navigate to="/explorer" replace />} />
             <Route path="/prestataires/ville/:city" element={<CityPage />} />
             <Route path="/prestataires/:id" element={<ProfilPrestataire />} />
-            <Route path="/categories/:slug" element={<CategoryPage />} />
+            <Route path="/categories/:slug" element={<CategoryRedirect />} />
             <Route path="/trouver-par-pays" element={<TrouverParPays />} />
             <Route path="/prestataires-premium" element={<PreatairesPremium />} />
             <Route path="/outils-maries" element={<OutilsMaries />} />
