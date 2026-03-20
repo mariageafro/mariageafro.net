@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { ExplorerHeader } from '@/components/explorer/ExplorerHeader';
 import { ExplorerSearchBar } from '@/components/explorer/ExplorerSearchBar';
@@ -9,6 +9,7 @@ import { ExplorerMobileFilters } from '@/components/explorer/ExplorerMobileFilte
 import { ExplorerEmptyState } from '@/components/explorer/ExplorerEmptyState';
 import { useExplorerData } from '@/hooks/use-explorer-data';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
