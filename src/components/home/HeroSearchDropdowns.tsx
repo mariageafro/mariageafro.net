@@ -216,7 +216,7 @@ export function HeroSearchDropdowns() {
       <div className="sm:hidden space-y-5 px-2">
         {/* Vendor type */}
         <div ref={vendorRef} className="relative">
-          <p className="font-body text-[10px] text-ivory/60 font-medium uppercase tracking-[0.15em] mb-1">Catégorie</p>
+          <p className="font-body text-xs text-ivory font-semibold uppercase tracking-[0.18em] mb-1.5 drop-shadow-md">Catégorie</p>
           <div className="flex items-center gap-2 border-b border-ivory/30 pb-2">
             <Search size={14} className="text-champagne shrink-0" />
             <input
