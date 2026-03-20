@@ -20,6 +20,7 @@ const vendorSuggestions = [
   "Traiteur africain", "Wedding Cake",
   "Salles de réception", "Déco",
   "Tenues traditionnelles", "Robe",
+  "Location voiture",
 ];
 
 /* ── Countries for MVP ── */
