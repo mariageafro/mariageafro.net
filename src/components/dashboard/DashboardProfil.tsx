@@ -234,6 +234,28 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
             <label className="block text-sm font-medium mb-1">Origine culturelle</label>
             <Input value={form.origine_culturelle} onChange={e => update('origine_culturelle', e.target.value)} />
           </div>
+          <div className="md:col-span-2">
+            <label className="flex items-center gap-1.5 text-sm font-medium mb-2">
+              <Plane className="h-4 w-4 text-champagne" />
+              Zone de disponibilité
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {ZONES_DISPONIBILITE.map(z => (
+                <button
+                  key={z.value}
+                  type="button"
+                  onClick={() => update('zone_disponibilite', form.zone_disponibilite === z.value ? '' : z.value)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                    form.zone_disponibilite === z.value
+                      ? 'bg-champagne/15 border-champagne/30 text-foreground shadow-sm'
+                      : 'bg-background border-border text-muted-foreground hover:border-champagne/20 hover:bg-champagne/5'
+                  }`}
+                >
+                  {z.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div>
             <label className="block text-sm font-medium mb-1">Latitude</label>
             <Input value={form.lat} onChange={e => update('lat', e.target.value)} placeholder="Auto ou manuel" />
