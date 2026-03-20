@@ -8,7 +8,7 @@ import { usePrestataires } from "@/hooks/use-prestataires";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DevenirPrestatairePopup } from "@/components/home/DevenirPrestatairePopup";
-import { FilterSidebar } from "@/components/prestataire/FilterSidebar";
+import { FilterSidebar, ActiveFilterChips } from "@/components/prestataire/FilterSidebar";
 import { FavoriteButton } from "@/components/prestataire/FavoriteButton";
 import { supabase } from "@/integrations/supabase/client";
 
