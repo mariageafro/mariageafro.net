@@ -295,7 +295,7 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
   };
 
   const mobileNavItems = [
-    { key: "Prestataires", href: "/prestataires", hasChildren: true },
+    { key: "Prestataires", href: "/explorer", hasChildren: true },
     { key: "Explorer", href: "/explorer" },
     { key: "Origines & cultures", href: "/trouver-par-pays", hasChildren: true },
     { key: "Devenir Prestataire", href: "/devenir-prestataire" },
