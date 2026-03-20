@@ -42,6 +42,7 @@ import TemplatePreview from "./pages/wedding/TemplatePreview";
 import DemoMariage from "./pages/DemoMariage";
 import Lieux from "./pages/Lieux";
 import MesFavoris from "./pages/MesFavoris";
+import Explorer from "./pages/Explorer";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import AdminOverview from "./pages/admin/AdminOverview";
