@@ -80,7 +80,7 @@ export function HeroSearchDropdowns() {
     : vendorSuggestions;
 
   // Merge DB cultures with predefined, keep predefined order first
-  const allCultures = [...new Set([...culturalOrigins, ...cultures])];
+  const allCultures = [...new Set([...culturalOrigins, ...cultures])].filter((c) => c.toLowerCase() !== "africain");
   const filteredCultures = culture
     ? allCultures.filter((c) => c.toLowerCase().includes(culture.toLowerCase()))
     : allCultures;
