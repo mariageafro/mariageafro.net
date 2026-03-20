@@ -48,7 +48,7 @@ export function QuickSearchBar() {
     if (ville) params.set("ville", ville);
     if (categorie) params.set("category", categorie);
     if (geo.enabled) params.set("geo", "1");
-    navigate(`/prestataires${params.toString() ? `?${params}` : ""}`);
+    navigate(`/explorer${params.toString() ? `?${params}` : ""}`);
   };
 
   return (

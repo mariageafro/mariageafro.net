@@ -77,7 +77,7 @@ export function HeroSearchDropdowns() {
     if (vendorType) params.set("search", vendorType);
     if (location) params.set("ville", location);
     if (culture) params.set("culture", culture);
-    navigate(`/prestataires${params.toString() ? `?${params}` : ""}`);
+    navigate(`/explorer${params.toString() ? `?${params}` : ""}`);
   };
 
   const filteredVendors = vendorType
