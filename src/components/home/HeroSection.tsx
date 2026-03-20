@@ -22,7 +22,7 @@ export function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container-editorial pt-28 pb-12 overflow-visible">
+      <div className="relative z-10 container-editorial pt-28 sm:pt-28 pb-12 overflow-visible">
         <div className="max-w-4xl mx-auto text-center overflow-visible">
           {/* Badge */}
           <motion.div
