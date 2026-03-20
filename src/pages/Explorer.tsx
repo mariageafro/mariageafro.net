@@ -69,8 +69,8 @@ export default function Explorer() {
   return (
     <Layout>
       <div className="min-h-screen bg-background">
-        {/* Premium Header */}
-        <ExplorerHeader />
+        {/* Premium Header with search */}
+        <ExplorerHeader filters={filters} updateFilter={updateFilter} />
 
         {/* Search Bar */}
         <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border/50">

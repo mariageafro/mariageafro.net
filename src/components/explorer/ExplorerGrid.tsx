@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Star, MapPin, BadgeCheck, MessageCircle, Plane } from 'lucide-react';
+import { Star, MapPin, MessageCircle, Plane, Heart, BadgeCheck, ArrowUpRight } from 'lucide-react';
 import { FavoriteButton } from '@/components/prestataire/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
@@ -28,103 +28,99 @@ function VendorCard({ vendor, index }: { vendor: Vendor; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
+      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{
         duration: 0.5,
-        delay: Math.min(index * 0.06, 0.4),
+        delay: Math.min(index * 0.05, 0.35),
         ease: [0.16, 1, 0.3, 1],
       }}
     >
       <Link
         to={`/prestataires/${vendor.slug}`}
-        className="group block bg-card rounded-2xl border border-border/40 overflow-hidden shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elegant)] transition-all duration-300 hover:-translate-y-1"
+        className="group block bg-card rounded-2xl overflow-hidden border border-border/30 hover:border-champagne/30 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elegant)] transition-all duration-500 hover:-translate-y-1.5"
       >
-        {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+        {/* Image Container */}
+        <div className="relative aspect-[3/2] overflow-hidden bg-muted">
           {image ? (
             <img
               src={image}
               alt={vendor.nom_entreprise}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-[800ms] ease-out"
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-              <span className="font-serif text-2xl opacity-30">{vendor.nom_entreprise[0]}</span>
+            <div className="w-full h-full bg-gradient-to-br from-secondary to-warm-beige flex items-center justify-center">
+              <span className="font-serif text-4xl text-champagne/30">{vendor.nom_entreprise[0]}</span>
             </div>
           )}
 
-          {/* Overlay badges */}
+          {/* Dark gradient overlay at bottom for readability */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-chocolate/60 to-transparent" />
+
+          {/* Top badges row */}
           <div className="absolute top-3 left-3 flex gap-1.5">
             {isPremium && (
-              <span className="px-2.5 py-1 rounded-full bg-champagne/90 text-primary-foreground text-[10px] font-semibold tracking-wide uppercase backdrop-blur-sm">
+              <span className="px-2.5 py-1 rounded-lg bg-champagne/90 text-primary-foreground text-[10px] font-bold tracking-wide uppercase backdrop-blur-sm flex items-center gap-1">
+                <BadgeCheck className="w-3 h-3" />
                 Premium
+              </span>
+            )}
+            {vendor.zone_disponibilite && vendor.zone_disponibilite !== 'France' && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-chocolate/60 text-ivory text-[10px] font-medium backdrop-blur-sm">
+                <Plane className="w-3 h-3" />
+                {vendor.zone_disponibilite}
               </span>
             )}
           </div>
 
-          {/* Favorite */}
+          {/* Favorite button */}
           <div className="absolute top-3 right-3">
             <FavoriteButton prestataireId={vendor.id} />
           </div>
 
-          {/* Zone badge */}
-          {vendor.zone_disponibilite && (
-            <div className="absolute bottom-3 left-3">
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-chocolate/70 text-ivory text-[10px] font-medium backdrop-blur-sm">
-                <Plane className="w-3 h-3" />
-                {vendor.zone_disponibilite}
-              </span>
+          {/* Bottom info on image */}
+          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+            <div>
+              {vendor.categories?.name && (
+                <span className="inline-block px-2 py-0.5 rounded-md bg-ivory/20 backdrop-blur-sm text-ivory text-[10px] font-medium tracking-wide uppercase mb-1.5">
+                  {vendor.sous_categorie || vendor.categories.name}
+                </span>
+              )}
+              <h3 className="font-serif text-lg font-semibold text-ivory leading-tight drop-shadow-sm">
+                {vendor.nom_entreprise}
+              </h3>
             </div>
-          )}
+            {vendor.avg_rating > 0 && (
+              <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-ivory/20 backdrop-blur-sm shrink-0">
+                <Star className="w-3 h-3 fill-champagne text-champagne" />
+                <span className="text-[11px] font-semibold text-ivory">{vendor.avg_rating.toFixed(1)}</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          {/* Category */}
-          {vendor.categories?.name && (
-            <p className="text-[10px] font-medium tracking-wider uppercase text-champagne mb-1">
-              {vendor.sous_categorie || vendor.categories.name}
-            </p>
-          )}
-
-          {/* Name */}
-          <h3 className="font-serif text-lg font-semibold text-chocolate leading-tight group-hover:text-champagne-dark transition-colors">
-            {vendor.nom_entreprise}
-          </h3>
-
-          {/* Location & Origin */}
-          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-            {vendor.ville && (
-              <span className="inline-flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
-                {vendor.ville}
-              </span>
-            )}
-            {vendor.origine_culturelle && (
-              <span className="text-champagne">
-                {vendor.origine_culturelle}
-              </span>
-            )}
-          </div>
-
-          {/* Rating */}
-          {vendor.avg_rating > 0 && (
-            <div className="flex items-center gap-1.5 mt-2">
-              <Star className="w-3.5 h-3.5 fill-champagne text-champagne" />
-              <span className="text-xs font-medium text-foreground">{vendor.avg_rating.toFixed(1)}</span>
-              <span className="text-xs text-muted-foreground">({vendor.review_count} avis)</span>
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              {vendor.ville && (
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {vendor.ville}
+                </span>
+              )}
+              {vendor.origine_culturelle && (
+                <span className="text-champagne font-medium">
+                  {vendor.origine_culturelle}
+                </span>
+              )}
+              {vendor.review_count > 0 && (
+                <span>{vendor.review_count} avis</span>
+              )}
             </div>
-          )}
-
-          {/* CTAs */}
-          <div className="flex gap-2 mt-4">
-            <span className="flex-1 text-center py-2 rounded-lg bg-champagne/10 text-champagne-dark text-xs font-medium hover:bg-champagne/20 transition-colors">
-              Voir profil
-            </span>
-            <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-secondary hover:bg-warm-beige transition-colors">
-              <MessageCircle className="w-4 h-4 text-chocolate" />
+            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-champagne/10 text-champagne group-hover:bg-champagne group-hover:text-primary-foreground transition-all duration-300">
+              <ArrowUpRight className="w-4 h-4" />
             </span>
           </div>
         </div>
@@ -137,13 +133,16 @@ function LoadingSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {Array.from({ length: 9 }).map((_, i) => (
-        <div key={i} className="rounded-2xl border border-border/40 overflow-hidden">
-          <Skeleton className="aspect-[4/3] w-full" />
-          <div className="p-4 space-y-2">
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-3 w-28" />
-            <Skeleton className="h-3 w-16" />
+        <div key={i} className="rounded-2xl border border-border/30 overflow-hidden">
+          <Skeleton className="aspect-[3/2] w-full" />
+          <div className="px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1.5">
+                <Skeleton className="h-3 w-28" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+              <Skeleton className="w-8 h-8 rounded-lg" />
+            </div>
           </div>
         </div>
       ))}
@@ -161,9 +160,12 @@ export function ExplorerGrid({ prestataires, isLoading }: Props) {
 
   return (
     <div>
-      <p className="text-xs text-muted-foreground mb-4">
-        {prestataires.length} prestataire{prestataires.length !== 1 ? 's' : ''} trouvé{prestataires.length !== 1 ? 's' : ''}
-      </p>
+      <div className="flex items-center justify-between mb-5">
+        <p className="text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground tabular-nums">{prestataires.length}</span>
+          {' '}prestataire{prestataires.length !== 1 ? 's' : ''} trouvé{prestataires.length !== 1 ? 's' : ''}
+        </p>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {prestataires.map((vendor, i) => (
           <VendorCard key={vendor.id} vendor={vendor} index={i} />
