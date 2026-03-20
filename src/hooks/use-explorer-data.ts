@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { ExplorerFilters } from '@/pages/Explorer';
 
@@ -24,10 +24,28 @@ type ExplorerPrestataire = {
   cover_url: string | null;
 };
 
+const PAGE_SIZE = 50;
+
+async function fetchInBatches<T>(
+  ids: string[],
+  batchFn: (batchIds: string[]) => Promise<T[]>,
+  batchSize = 40
+): Promise<T[]> {
+  if (ids.length === 0) return [];
+  const results: T[] = [];
+  for (let i = 0; i < ids.length; i += batchSize) {
+    const batch = ids.slice(i, i + batchSize);
+    const data = await batchFn(batch);
+    results.push(...data);
+  }
+  return results;
+}
+
 export function useExplorerData(filters: ExplorerFilters) {
   const [prestataires, setPrestataires] = useState<ExplorerPrestataire[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
+  const fetchIdRef = useRef(0);
 
   // Fetch categories once
   useEffect(() => {
@@ -38,7 +56,9 @@ export function useExplorerData(filters: ExplorerFilters) {
 
   // Fetch vendors
   useEffect(() => {
-    const fetch = async () => {
+    const currentFetchId = ++fetchIdRef.current;
+
+    const doFetch = async () => {
       setIsLoading(true);
 
       let query = supabase
@@ -46,14 +66,14 @@ export function useExplorerData(filters: ExplorerFilters) {
         .select('*, categories(name, slug)')
         .eq('statut', 'actif')
         .not('photo_url', 'is', null)
-        .neq('photo_url', '');
+        .neq('photo_url', '')
+        .range(0, PAGE_SIZE - 1);
 
       if (filters.categorie) query = query.eq('categorie_id', filters.categorie);
       if (filters.sousCategorie) query = query.eq('sous_categorie', filters.sousCategorie);
       if (filters.search) query = query.or(`nom_entreprise.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       if (filters.zone) query = query.eq('zone_disponibilite', filters.zone);
 
-      // Map pays filter to country_id lookup
       if (filters.pays) {
         const { data: countryData } = await supabase
           .from('countries')
@@ -71,6 +91,7 @@ export function useExplorerData(filters: ExplorerFilters) {
         .order('created_at', { ascending: false });
 
       const { data, error } = await query;
+      if (currentFetchId !== fetchIdRef.current) return; // stale
       if (error) { console.error(error); setIsLoading(false); return; }
 
       const ids = (data ?? []).map(p => p.id);
@@ -78,25 +99,29 @@ export function useExplorerData(filters: ExplorerFilters) {
       let mediasMap: Record<string, string> = {};
 
       if (ids.length > 0) {
-        const [avisRes, mediasRes] = await Promise.all([
-          supabase.from('avis').select('prestataire_id, note').eq('approved', true).in('prestataire_id', ids),
-          supabase.from('medias').select('prestataire_id, url').eq('type', 'photo').in('prestataire_id', ids).order('ordre', { ascending: true }),
+        const [avisAll, mediasAll] = await Promise.all([
+          fetchInBatches(ids, async (batch) => {
+            const { data: d } = await supabase.from('avis').select('prestataire_id, note').eq('approved', true).in('prestataire_id', batch);
+            return d ?? [];
+          }),
+          fetchInBatches(ids, async (batch) => {
+            const { data: d } = await supabase.from('medias').select('prestataire_id, url').eq('type', 'photo').in('prestataire_id', batch).order('ordre', { ascending: true });
+            return d ?? [];
+          }),
         ]);
 
-        if (avisRes.data) {
-          for (const a of avisRes.data) {
-            if (!ratingsMap[a.prestataire_id]) ratingsMap[a.prestataire_id] = { avg: 0, count: 0 };
-            ratingsMap[a.prestataire_id].count++;
-            ratingsMap[a.prestataire_id].avg += a.note;
-          }
-          for (const key of Object.keys(ratingsMap)) {
-            ratingsMap[key].avg = ratingsMap[key].avg / ratingsMap[key].count;
-          }
+        if (currentFetchId !== fetchIdRef.current) return; // stale
+
+        for (const a of avisAll) {
+          if (!ratingsMap[a.prestataire_id]) ratingsMap[a.prestataire_id] = { avg: 0, count: 0 };
+          ratingsMap[a.prestataire_id].count++;
+          ratingsMap[a.prestataire_id].avg += a.note;
         }
-        if (mediasRes.data) {
-          for (const m of mediasRes.data) {
-            if (!mediasMap[m.prestataire_id]) mediasMap[m.prestataire_id] = m.url;
-          }
+        for (const key of Object.keys(ratingsMap)) {
+          ratingsMap[key].avg = ratingsMap[key].avg / ratingsMap[key].count;
+        }
+        for (const m of mediasAll) {
+          if (!mediasMap[m.prestataire_id]) mediasMap[m.prestataire_id] = m.url;
         }
       }
 
@@ -129,8 +154,6 @@ export function useExplorerData(filters: ExplorerFilters) {
         results.sort((a, b) => b.avg_rating - a.avg_rating);
       } else if (filters.sort === 'avis') {
         results.sort((a, b) => b.review_count - a.review_count);
-      } else if (filters.sort === 'nouveaux') {
-        // already sorted by created_at
       } else if (filters.sort === 'premium') {
         results.sort((a, b) => {
           if (a.is_lifetime_featured && !b.is_lifetime_featured) return -1;
@@ -145,7 +168,7 @@ export function useExplorerData(filters: ExplorerFilters) {
       setIsLoading(false);
     };
 
-    fetch();
+    doFetch();
   }, [filters]);
 
   return { prestataires, isLoading, categories };
