@@ -1,94 +1,67 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
-import { MapPin, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
-type Country = {
-  id: string;
-  name: string;
-  code: string;
-  flag_emoji: string | null;
-  priority: number;
-};
+const origins = [
+  { label: "Congo", flag: "🇨🇩", code: "cd" },
+  { label: "Cameroun", flag: "🇨🇲", code: "cm" },
+  { label: "Sénégal", flag: "🇸🇳", code: "sn" },
+  { label: "Côte d'Ivoire", flag: "🇨🇮", code: "ci" },
+  { label: "Mali", flag: "🇲🇱", code: "ml" },
+  { label: "Guinée", flag: "🇬🇳", code: "gn" },
+  { label: "Bénin", flag: "🇧🇯", code: "bj" },
+  { label: "Ghana", flag: "🇬🇭", code: "gh" },
+  { label: "Nigeria", flag: "🇳🇬", code: "ng" },
+  { label: "Haïti", flag: "🇭🇹", code: "ht" },
+  { label: "Antilles", flag: "🏝️", code: "antilles" },
+];
 
 export default function TrouverParPays() {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [counts, setCounts] = useState<Record<string, number>>({});
-
-  useEffect(() => {
-    const fetch = async () => {
-      const { data } = await supabase
-        .from("countries")
-        .select("*")
-        .order("priority", { ascending: true });
-      if (data) setCountries(data);
-
-      // Count prestataires per country
-      const { data: presta } = await supabase
-        .from("prestataires")
-        .select("country_id")
-        .eq("statut", "actif")
-        .not("country_id", "is", null);
-
-      if (presta) {
-        const map: Record<string, number> = {};
-        presta.forEach((p) => {
-          if (p.country_id) map[p.country_id] = (map[p.country_id] || 0) + 1;
-        });
-        setCounts(map);
-      }
-    };
-    fetch();
-  }, []);
-
   return (
     <Layout>
       <section className="pt-32 pb-12 bg-gradient-warm">
         <div className="container-editorial">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
             <h1 className="font-serif text-chocolate mb-4">
-              Trouver par <span className="text-gradient-gold italic">Pays</span>
+              Explorer les prestataires par{" "}
+              <span className="text-gradient-gold italic">origine & culture</span>
             </h1>
-            <p className="font-body text-muted-foreground">
-              Explorez les prestataires spécialisés dans les traditions de votre pays d'origine.
+            <p className="font-body text-muted-foreground max-w-xl mx-auto">
+              Trouvez des professionnels qui connaissent et célèbrent vos traditions.
             </p>
           </motion.div>
         </div>
       </section>
 
       <section className="section-padding bg-gradient-warm">
-        <div className="container-editorial">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {countries.map((country, index) => (
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {origins.map((o, i) => (
               <motion.div
-                key={country.id}
-                initial={{ opacity: 0, y: 30 }}
+                key={o.code}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.45, delay: i * 0.06 }}
               >
                 <Link
-                  to={`/prestataires?country=${country.id}`}
-                  className="group card-premium p-6 flex items-center gap-4 hover:shadow-elegant"
+                  to={`/prestataires?culture=${o.label}`}
+                  className="group card-premium p-5 flex items-center gap-4 hover:shadow-elegant transition-shadow"
                 >
-                  <span className="text-4xl">{country.flag_emoji}</span>
-                  <div className="flex-1">
-                    <h3 className="font-serif text-xl text-chocolate group-hover:text-champagne transition-colors">
-                      {country.name}
-                    </h3>
-                    <p className="font-body text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                      <MapPin size={14} />
-                      {counts[country.id] || 0} prestataire{(counts[country.id] || 0) !== 1 ? "s" : ""}
-                    </p>
-                  </div>
-                  <ArrowRight size={20} className="text-muted-foreground group-hover:text-champagne transition-colors" />
+                  <span className="text-3xl">{o.flag}</span>
+                  <span className="flex-1 font-serif text-lg text-chocolate group-hover:text-champagne transition-colors">
+                    {o.label}
+                  </span>
+                  <ArrowRight
+                    size={18}
+                    className="text-muted-foreground group-hover:text-champagne transition-colors"
+                  />
                 </Link>
               </motion.div>
             ))}
