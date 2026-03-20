@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Plane, ChevronRight, Crown } from "lucide-react";
+import { Plane, ChevronRight, Crown, Compass } from "lucide-react";
 import { megaMenuCategories } from "./MegaMenuData";
 
 export function MegaMenu() {
@@ -11,13 +11,22 @@ export function MegaMenu() {
           <h3 className="font-serif text-lg text-chocolate">
             Trouvez vos prestataires
           </h3>
-          <Link
-            to="/prestataires-premium"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-champagne to-champagne-dark text-white text-xs font-body font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all"
-          >
-            <Crown size={13} />
-            Prestataires Premium ✨
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/explorer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-champagne/30 text-champagne-dark text-xs font-body font-semibold hover:bg-champagne/5 transition-all"
+            >
+              <Compass size={13} />
+              Explorer
+            </Link>
+            <Link
+              to="/prestataires-premium"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-champagne to-champagne-dark text-white text-xs font-body font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all"
+            >
+              <Crown size={13} />
+              Prestataires Premium ✨
+            </Link>
+          </div>
         </div>
 
         {/* Categories grid – 3 columns */}
