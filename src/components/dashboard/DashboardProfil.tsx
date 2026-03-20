@@ -11,6 +11,8 @@ import { Loader2, Save, MapPin, Plane } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { PRIORITY_CITIES } from '@/lib/priority-cities';
 import { ZONES_DISPONIBILITE } from '@/lib/zone-disponibilite';
+import { getFieldConfigForCategory, type VendorField } from '@/lib/vendor-fields-config';
+import { CULTURAL_ORIGINS } from '@/lib/cultural-origins';
 
 const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/;
 
