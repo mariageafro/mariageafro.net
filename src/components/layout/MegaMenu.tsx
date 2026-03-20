@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Plane, ChevronRight, Crown } from "lucide-react";
+import { Plane, ChevronRight, Crown, Compass } from "lucide-react";
 import { megaMenuCategories } from "./MegaMenuData";
 
 export function MegaMenu() {
