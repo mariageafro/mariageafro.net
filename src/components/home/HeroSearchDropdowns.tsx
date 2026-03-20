@@ -213,7 +213,7 @@ export function HeroSearchDropdowns() {
       </div>
 
       {/* ─── Mobile ─── */}
-      <div className="sm:hidden bg-ivory/98 rounded-3xl p-5 shadow-elegant space-y-3">
+      <div className="sm:hidden bg-white rounded-3xl p-5 shadow-elegant space-y-4 border border-border/50">
         {/* Vendor type */}
         <div>
           <p className="font-body text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">Type de prestataire</p>
