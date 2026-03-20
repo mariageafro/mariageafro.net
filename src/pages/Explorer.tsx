@@ -162,7 +162,7 @@ export default function Explorer() {
               {!isLoading && prestataires.length === 0 ? (
                 <ExplorerEmptyState resetFilters={resetFilters} filters={filters} />
               ) : (
-                <ExplorerGrid prestataires={prestataires} isLoading={isLoading} isLoadingMore={isLoadingMore} hasMore={hasMore} totalCount={totalCount} onLoadMore={loadMore} />
+                <ExplorerGrid prestataires={prestataires} isLoading={isLoading} totalCount={totalCount} currentPage={currentPage} onPageChange={handlePageChange} />
               )}
             </div>
           </div>

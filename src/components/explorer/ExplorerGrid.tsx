@@ -1,10 +1,17 @@
-import { useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, MapPin, Plane, BadgeCheck, ArrowUpRight, Loader2 } from 'lucide-react';
+import { Star, MapPin, Plane, BadgeCheck, ArrowUpRight } from 'lucide-react';
 import { FavoriteButton } from '@/components/prestataire/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from '@/components/ui/pagination';
 
 interface Vendor {
   id: string;
@@ -34,7 +41,7 @@ function VendorCard({ vendor, index }: { vendor: Vendor; index: number }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: 0.5,
-        delay: Math.min((index % 30) * 0.04, 0.3),
+        delay: Math.min(index * 0.04, 0.3),
         ease: [0.16, 1, 0.3, 1],
       }}
     >
@@ -42,7 +49,6 @@ function VendorCard({ vendor, index }: { vendor: Vendor; index: number }) {
         to={`/prestataires/${vendor.slug}`}
         className="group block bg-card rounded-xl overflow-hidden border border-border/40 hover:border-champagne/40 shadow-sm hover:shadow-lg transition-all duration-400 hover:-translate-y-1"
       >
-        {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           {image ? (
             <img
@@ -56,34 +62,25 @@ function VendorCard({ vendor, index }: { vendor: Vendor; index: number }) {
               {vendor.nom_entreprise.charAt(0)}
             </div>
           )}
-
-          {/* Badge */}
           {isPremium && (
             <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-champagne/90 text-[11px] font-semibold uppercase tracking-wider text-foreground backdrop-blur-sm">
               <BadgeCheck className="w-3 h-3" /> Premium
             </span>
           )}
-
           {vendor.badge_type === 'FOUNDER' && (
             <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-600/90 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
               Fondateur
             </span>
           )}
-
-          {/* Zone dispo */}
           {vendor.zone_disponibilite && (
             <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-background/80 text-[10px] font-medium text-muted-foreground backdrop-blur-sm">
               <Plane className="w-2.5 h-2.5" /> {vendor.zone_disponibilite}
             </span>
           )}
-
-          {/* Favorite */}
           <div className="absolute bottom-2 right-2">
             <FavoriteButton prestataireId={vendor.id} />
           </div>
         </div>
-
-        {/* Info */}
         <div className="px-4 py-3.5">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
@@ -107,8 +104,6 @@ function VendorCard({ vendor, index }: { vendor: Vendor; index: number }) {
             </div>
             <ArrowUpRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-champagne shrink-0 transition-colors" />
           </div>
-
-          {/* Rating + category */}
           <div className="flex items-center justify-between mt-2.5 text-xs">
             <span className="text-muted-foreground font-medium truncate">
               {vendor.categories?.name ?? vendor.sous_categorie ?? '—'}
@@ -148,96 +143,98 @@ function LoadingSkeleton() {
   );
 }
 
-function LoadingMoreSkeleton() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-border/30 overflow-hidden">
-          <Skeleton className="aspect-[4/3] w-full" />
-          <div className="px-4 py-3.5">
-            <div className="space-y-1.5">
-              <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-3 w-16" />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+function getPageNumbers(current: number, total: number): (number | 'ellipsis')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages: (number | 'ellipsis')[] = [1];
+  if (current > 3) pages.push('ellipsis');
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  for (let i = start; i <= end; i++) pages.push(i);
+  if (current < total - 2) pages.push('ellipsis');
+  pages.push(total);
+  return pages;
 }
 
 interface Props {
   prestataires: Vendor[];
   isLoading: boolean;
-  isLoadingMore: boolean;
-  hasMore: boolean;
   totalCount: number;
-  onLoadMore: () => void;
+  currentPage: number;
+  onPageChange: (page: number) => void;
 }
 
-export function ExplorerGrid({ prestataires, isLoading, isLoadingMore, hasMore, totalCount, onLoadMore }: Props) {
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  // Infinite scroll with IntersectionObserver
-  useEffect(() => {
-    if (!sentinelRef.current || !hasMore || isLoading || isLoadingMore) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          onLoadMore();
-        }
-      },
-      { rootMargin: '400px' }
-    );
-
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [hasMore, isLoading, isLoadingMore, onLoadMore]);
+export function ExplorerGrid({ prestataires, isLoading, totalCount, currentPage, onPageChange }: Props) {
+  const PAGE_SIZE = 30;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   if (isLoading) return <LoadingSkeleton />;
+
+  const pageNumbers = getPageNumbers(currentPage, totalPages);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground">
-          <span className="font-bold text-foreground tabular-nums">{prestataires.length}</span>
-          {totalCount > prestataires.length && (
-            <span> sur <span className="font-semibold tabular-nums">{totalCount}</span></span>
-          )}
+          <span className="font-bold text-foreground tabular-nums">{totalCount}</span>
           {' '}prestataire{totalCount !== 1 ? 's' : ''} trouvé{totalCount !== 1 ? 's' : ''}
+          {totalPages > 1 && (
+            <span className="ml-1.5 text-muted-foreground/70">
+              — page <span className="font-semibold tabular-nums">{currentPage}</span> / {totalPages}
+            </span>
+          )}
         </p>
       </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {prestataires.map((vendor, i) => (
           <VendorCard key={vendor.id} vendor={vendor} index={i} />
         ))}
       </div>
 
-      {/* Loading more indicator */}
-      {isLoadingMore && <LoadingMoreSkeleton />}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-10 mb-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                  className={currentPage <= 1 ? 'pointer-events-none opacity-40' : 'cursor-pointer'}
+                />
+              </PaginationItem>
 
-      {/* Infinite scroll sentinel */}
-      {hasMore && !isLoadingMore && (
-        <div ref={sentinelRef} className="h-1" />
-      )}
+              {pageNumbers.map((p, i) =>
+                p === 'ellipsis' ? (
+                  <PaginationItem key={`e-${i}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={p}>
+                    <PaginationLink
+                      isActive={p === currentPage}
+                      onClick={() => onPageChange(p)}
+                      className="cursor-pointer"
+                    >
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              )}
 
-      {/* Manual fallback button */}
-      {hasMore && !isLoadingMore && (
-        <div className="flex justify-center mt-8">
-          <Button
-            variant="outline"
-            onClick={onLoadMore}
-            className="gap-2"
-          >
-            Voir plus de prestataires
-          </Button>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                  className={currentPage >= totalPages ? 'pointer-events-none opacity-40' : 'cursor-pointer'}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
 
-      {!hasMore && prestataires.length > 0 && (
+      {prestataires.length === 0 && (
         <p className="text-center text-sm text-muted-foreground mt-8">
-          Tous les prestataires sont affichés
+          Aucun prestataire sur cette page
         </p>
       )}
     </div>

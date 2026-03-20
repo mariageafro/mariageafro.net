@@ -80,15 +80,12 @@ function applyClientFilters(
   return results;
 }
 
-export function useExplorerData(filters: ExplorerFilters) {
+export function useExplorerData(filters: ExplorerFilters, page: number = 1) {
   const [prestataires, setPrestataires] = useState<ExplorerPrestataire[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const fetchIdRef = useRef(0);
-  const pageRef = useRef(0);
 
   // Fetch categories once
   useEffect(() => {
@@ -97,8 +94,8 @@ export function useExplorerData(filters: ExplorerFilters) {
     });
   }, []);
 
-  const buildQuery = useCallback(async (page: number) => {
-    const from = page * PAGE_SIZE;
+  const buildQuery = useCallback(async (pageNum: number) => {
+    const from = (pageNum - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
     let query = supabase
@@ -171,60 +168,30 @@ export function useExplorerData(filters: ExplorerFilters) {
     }));
   }, []);
 
-  // Initial fetch on filter change
+  // Fetch on filter or page change
   useEffect(() => {
     const currentFetchId = ++fetchIdRef.current;
-    pageRef.current = 0;
 
     const doFetch = async () => {
       setIsLoading(true);
-      setHasMore(true);
 
-      const query = await buildQuery(0);
+      const query = await buildQuery(page);
       const { data, error, count } = await query;
       if (currentFetchId !== fetchIdRef.current) return;
       if (error) { console.error(error); setIsLoading(false); return; }
 
-      const total = count ?? 0;
-      setTotalCount(total);
+      setTotalCount(count ?? 0);
 
       const enriched = await enrichWithRatingsAndMedia(data ?? []);
       if (currentFetchId !== fetchIdRef.current) return;
 
       const filtered = applyClientFilters(enriched, filters);
       setPrestataires(filtered);
-      setHasMore((data?.length ?? 0) >= PAGE_SIZE);
       setIsLoading(false);
     };
 
     doFetch();
-  }, [filters, buildQuery, enrichWithRatingsAndMedia]);
+  }, [filters, page, buildQuery, enrichWithRatingsAndMedia]);
 
-  // Load more
-  const loadMore = useCallback(async () => {
-    if (isLoadingMore || !hasMore) return;
-    setIsLoadingMore(true);
-
-    const nextPage = pageRef.current + 1;
-    pageRef.current = nextPage;
-
-    const query = await buildQuery(nextPage);
-    const { data, error } = await query;
-    if (error) { console.error(error); setIsLoadingMore(false); return; }
-
-    if (!data || data.length === 0) {
-      setHasMore(false);
-      setIsLoadingMore(false);
-      return;
-    }
-
-    const enriched = await enrichWithRatingsAndMedia(data);
-    const filtered = applyClientFilters(enriched, filters);
-
-    setPrestataires(prev => [...prev, ...filtered]);
-    setHasMore(data.length >= PAGE_SIZE);
-    setIsLoadingMore(false);
-  }, [isLoadingMore, hasMore, buildQuery, enrichWithRatingsAndMedia, filters]);
-
-  return { prestataires, isLoading, isLoadingMore, hasMore, totalCount, categories, loadMore };
+  return { prestataires, isLoading, totalCount, categories };
 }
