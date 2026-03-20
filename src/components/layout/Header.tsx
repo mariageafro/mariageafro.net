@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, Heart, Camera, Music, Utensils, Palette, Sparkles, Scissors, Church, Car, Gem } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, Heart, Camera, Music, Utensils, Palette, Sparkles, Scissors, Church, Car, Search, MapPin } from "lucide-react";
+import { mainCategories } from "@/components/layout/MegaMenuData";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,21 +9,21 @@ import { useAuthContext } from "@/contexts/auth-context";
 import { useUserRole } from "@/hooks/use-user-role";
 import { useLanguage, translateUI } from "@/contexts/language-context";
 import { useFavorites } from "@/hooks/use-favorites";
-import { MegaMenuCategories } from "@/components/layout/MegaMenuCategories";
+import { MegaMenu } from "@/components/layout/MegaMenu";
 import { MegaMenuPays } from "@/components/layout/MegaMenuPays";
 import logo from "@/assets/logo-mariageafro.png";
 
-type MegaMenuKey = "categories" | "pays" | null;
+type MegaMenuKey = "prestataires" | "pays" | null;
 
 const navLinks = [
-  { key: "Prestataires", href: "/prestataires", megaMenu: null },
-  { key: "Catégories", href: "/prestataires", megaMenu: "categories" as const },
+  { key: "Prestataires", href: "/prestataires", megaMenu: "prestataires" as const },
+  { key: "Catégories", href: "/prestataires", megaMenu: null },
   { key: "Origines & cultures", href: "/trouver-par-pays", megaMenu: "pays" as const },
   { key: "Devenir Prestataire", href: "/devenir-prestataire", megaMenu: null },
 ];
 
 const megaMenuComponents: Record<Exclude<MegaMenuKey, null>, React.FC> = {
-  categories: MegaMenuCategories,
+  prestataires: MegaMenu,
   pays: MegaMenuPays,
 };
 
@@ -294,10 +295,9 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
   };
 
   const mobileNavItems = [
-    { key: "Prestataires", href: "/prestataires", hasChildren: false },
-    { key: "Catégories", href: "/prestataires", hasChildren: true },
+    { key: "Prestataires", href: "/prestataires", hasChildren: true },
     { key: "Origines & cultures", href: "/trouver-par-pays", hasChildren: true },
-    { key: "Devenir Prestataire", href: "/devenir-prestataire", hasChildren: false },
+    { key: "Devenir Prestataire", href: "/devenir-prestataire" },
   ];
 
   return (
@@ -322,22 +322,23 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
 
                 {expandedSection === item.key && (
                   <div className="bg-muted/30">
-                    {item.key === "Catégories" && (
+                    {item.key === "Prestataires" && (
                       <div className="px-6 py-3 space-y-1">
+                        <p className="text-[11px] uppercase tracking-widest text-muted-foreground px-3 pb-1 font-semibold">Les essentiels</p>
                         {[
-                          { label: "Photographie & Vidéo", slug: "image-souvenirs", icon: Camera },
-                          { label: "DJ & Animation", slug: "animation-ambiance", icon: Music },
-                          { label: "Beauté", slug: "beaute", icon: Sparkles },
-                          { label: "Traiteurs & Gastronomie", slug: "traiteurs-gastronomie", icon: Utensils },
-                          { label: "Décoration & Lieux", slug: "decoration-lieux", icon: Palette },
-                          { label: "Mode & Tenues", slug: "mode-tenues", icon: Scissors },
-                          { label: "Coordination & Cérémonie", slug: "ceremonies-coutumes", icon: Church },
-                          { label: "Bijoux & Accessoires", slug: "bijoux-accessoires", icon: Gem },
-                          { label: "Logistique & Services", slug: "logistique-services", icon: Car },
+                          { label: "Photographe", href: "/categories/image-souvenirs?sub=photographe", icon: Camera },
+                          { label: "Vidéaste", href: "/categories/image-souvenirs?sub=videaste", icon: Camera },
+                          { label: "DJ Mariage", href: "/categories/animation-ambiance?sub=dj-mariage", icon: Music },
+                          { label: "Traiteur africain", href: "/categories/traiteurs-gastronomie?sub=traiteur-africain", icon: Utensils },
+                          { label: "Décorateur", href: "/categories/decoration-lieux?sub=decorateur", icon: Palette },
+                          { label: "Maquilleuse afro", href: "/categories/beaute?sub=maquilleuse-afro", icon: Sparkles },
+                          { label: "Coiffeuse afro", href: "/categories/beaute?sub=coiffeuse-afro", icon: Scissors },
+                          { label: "Wedding Planner", href: "/categories/ceremonies-coutumes?sub=wedding-planner", icon: Church },
+                          { label: "Transport", href: "/categories/logistique-services?sub=transport-mariage", icon: Car },
                         ].map(cat => (
                           <Link
-                            key={cat.slug}
-                            to={`/categories/${cat.slug}`}
+                            key={cat.href}
+                            to={cat.href}
                             onClick={close}
                             className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
                           >
@@ -346,7 +347,7 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                           </Link>
                         ))}
                         <Link to="/prestataires" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1 border-t border-border/30 pt-3">
-                          Voir tous les prestataires →
+                          Voir toutes les catégories →
                         </Link>
                       </div>
                     )}

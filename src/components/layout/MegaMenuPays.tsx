@@ -1,6 +1,19 @@
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
-import { CULTURAL_ORIGINS } from "@/lib/cultural-origins";
+
+const origins = [
+  { label: "Congo", flag: "🇨🇩", code: "cd" },
+  { label: "Cameroun", flag: "🇨🇲", code: "cm" },
+  { label: "Sénégal", flag: "🇸🇳", code: "sn" },
+  { label: "Côte d'Ivoire", flag: "🇨🇮", code: "ci" },
+  { label: "Mali", flag: "🇲🇱", code: "ml" },
+  { label: "Guinée", flag: "🇬🇳", code: "gn" },
+  { label: "Bénin", flag: "🇧🇯", code: "bj" },
+  { label: "Ghana", flag: "🇬🇭", code: "gh" },
+  { label: "Nigeria", flag: "🇳🇬", code: "ng" },
+  { label: "Haïti", flag: "🇭🇹", code: "ht" },
+  { label: "Antilles", flag: "🏝️", code: "antilles" },
+];
 
 export function MegaMenuPays() {
   return (
@@ -11,10 +24,10 @@ export function MegaMenuPays() {
         </h3>
 
         <div className="grid grid-cols-4 gap-x-6 gap-y-1">
-          {CULTURAL_ORIGINS.map((o) => (
+          {origins.map((o) => (
             <Link
-              key={o.label}
-              to={`/prestataires?culture=${encodeURIComponent(o.filter[0])}`}
+              key={o.code}
+              to={`/trouver-par-pays?pays=${o.code}`}
               className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all"
             >
               <span className="text-base flex-shrink-0">{o.flag}</span>

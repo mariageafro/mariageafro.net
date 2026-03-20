@@ -1,12 +1,11 @@
-import { X, RotateCcw, Star, ChevronDown, Sparkles, Globe, BarChart3, SlidersHorizontal, MapPin, FolderOpen, MessageSquare, Settings2, Plane } from "lucide-react";
+import { X, RotateCcw, Navigation, Loader2, Star, ChevronDown, Sparkles, MapPin, Globe, MessageSquare, FolderOpen, BarChart3, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PRIORITY_CITIES, RADIUS_OPTIONS } from "@/lib/priority-cities";
 import type { PrestatairesFilters } from "@/hooks/use-prestataires";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CULTURAL_ORIGINS } from "@/lib/cultural-origins";
-import { ZONES_DISPONIBILITE } from "@/lib/zone-disponibilite";
 
 interface SubCategory {
   id: string;
@@ -36,21 +35,16 @@ interface FilterSidebarProps {
   initialSubSlugs?: string[];
 }
 
-const POPULAR_ORIGINS_COUNT = 6;
-
-const COUNTRIES_MVP = [
-  { label: "France", value: "france" },
-  { label: "Belgique", value: "belgique" },
+const ratingOptions = [
+  { label: "4+", value: 4, stars: 4 },
+  { label: "4.5+", value: 4.5, stars: 4.5 },
+  { label: "5", value: 5, stars: 5 },
 ];
 
-/* ---------- Shared sub-components ---------- */
-
-function FilterSection({ title, icon, children, defaultOpen = true, badge }: {
-  title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; badge?: number;
-}) {
+function FilterSection({ title, icon, children, defaultOpen = true, badge }: { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; badge?: number }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div>
+    <div className="group/section">
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2.5 w-full py-3 px-1 text-left transition-colors"
@@ -84,9 +78,7 @@ function FilterSection({ title, icon, children, defaultOpen = true, badge }: {
   );
 }
 
-function CheckboxItem({ label, checked, onChange, count }: {
-  label: string; checked: boolean; onChange: (v: boolean) => void; count?: number;
-}) {
+function CheckboxItem({ label, checked, onChange, count }: { label: string; checked: boolean; onChange: (v: boolean) => void; count?: number }) {
   return (
     <label className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl cursor-pointer transition-all duration-150 ${checked ? "bg-champagne/8 shadow-[inset_0_0_0_1px_hsl(var(--champagne)/0.2)]" : "hover:bg-secondary/80"}`}>
       <Checkbox checked={checked} onCheckedChange={onChange} className="border-border data-[state=checked]:bg-champagne data-[state=checked]:border-champagne" />
@@ -100,33 +92,17 @@ function CheckboxItem({ label, checked, onChange, count }: {
   );
 }
 
-function OriginChip({ label, flag, active, onClick }: {
-  label: string; flag: string; active: boolean; onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-body text-[12px] transition-all duration-150 border ${
-        active
-          ? "bg-champagne/15 border-champagne/30 text-chocolate font-medium shadow-sm"
-          : "bg-background border-border text-muted-foreground hover:border-champagne/20 hover:bg-champagne/5"
-      }`}
-    >
-      <span className="text-sm leading-none">{flag}</span>
-      {label}
-    </button>
-  );
-}
-
-/* ---------- Main component ---------- */
-
 export function FilterSidebar({
-  filters, updateFilter, resetFilters, categories, cultures, langues, villes,
+  filters, updateFilter, resetFilters, categories, villes, cultures, langues,
+  geo, radius, setRadius, onToggleGeo, onSetGeoLocation,
   hasActiveFilters, categoryCounts, onClose, isMobile, hideCategories, initialSubSlugs,
 }: FilterSidebarProps) {
+  const availablePriorityCities = PRIORITY_CITIES.filter(c => villes.includes(c.name));
+  const priorityCityNames = availablePriorityCities.map(c => c.name);
+  const otherVilles = villes.filter(v => !PRIORITY_CITIES.some(pc => pc.name === v));
+
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [selectedSubs, setSelectedSubs] = useState<Set<string>>(new Set());
-  const [showAllOrigins, setShowAllOrigins] = useState(false);
 
   useEffect(() => {
     const fetchSubs = async () => {
@@ -145,28 +121,11 @@ export function FilterSidebar({
 
   const relevantSubs = filters.categorie
     ? subCategories.filter(s => s.category_id === filters.categorie)
-    : [];
-
-  // Check if an origin is active (any of its filter values match)
-  const isOriginActive = (origin: typeof CULTURAL_ORIGINS[0]) =>
-    origin.filter.some(f => filters.culture.includes(f));
-
-  const toggleOrigin = (origin: typeof CULTURAL_ORIGINS[0]) => {
-    const active = isOriginActive(origin);
-    if (active) {
-      updateFilter('culture', filters.culture.filter(c => !origin.filter.includes(c)));
-    } else {
-      updateFilter('culture', [...filters.culture, origin.filter[0]]);
-    }
-  };
-
-  const visibleOrigins = showAllOrigins
-    ? CULTURAL_ORIGINS
-    : CULTURAL_ORIGINS.slice(0, POPULAR_ORIGINS_COUNT);
+    : subCategories;
 
   const activeFilterCount = [
-    filters.categorie, filters.culture.length > 0, filters.country, filters.noteMin > 0,
-    filters.langue.length > 0, selectedSubs.size > 0, filters.zone,
+    filters.ville.length > 0, filters.categorie, filters.culture.length > 0, filters.langue.length > 0,
+    filters.noteMin > 0, filters.country, geo.enabled,
   ].filter(Boolean).length;
 
   return (
@@ -187,7 +146,7 @@ export function FilterSidebar({
         <div className="flex items-center gap-1.5">
           {hasActiveFilters && (
             <button
-              onClick={() => { resetFilters(); setSelectedSubs(new Set()); setShowAllOrigins(false); }}
+              onClick={() => { resetFilters(); setSelectedSubs(new Set()); }}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-body text-[11px] text-muted-foreground hover:text-champagne hover:bg-champagne/5 transition-all"
             >
               <RotateCcw size={11} />
@@ -202,7 +161,60 @@ export function FilterSidebar({
         </div>
       </div>
 
-      {/* 1. Catégorie */}
+      {/* Geolocation */}
+      <FilterSection title="Localisation" icon={<MapPin size={14} />} badge={filters.ville.length || (geo.enabled ? 1 : 0)}>
+        <div className="space-y-3">
+          <Button
+            variant={geo.enabled ? "default" : "outline"}
+            size="sm"
+            onClick={onToggleGeo}
+            className={`w-full gap-2 rounded-xl text-xs h-9 ${geo.enabled ? "bg-champagne text-primary-foreground hover:bg-champagne-dark border-champagne" : "border-dashed"}`}
+            disabled={geo.loading}
+          >
+            {geo.loading ? <Loader2 size={14} className="animate-spin" /> : <Navigation size={14} />}
+            Autour de moi
+          </Button>
+          {geo.error && <p className="text-[11px] font-body text-destructive">{geo.error}</p>}
+          {geo.enabled && (
+            <div className="flex flex-wrap gap-1.5">
+              {RADIUS_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => { setRadius(opt.value); onSetGeoLocation({ lat: geo.lat!, lng: geo.lng!, radius: opt.value }); }}
+                  className={`px-3 py-1.5 rounded-xl font-body text-[11px] transition-all ${
+                    radius === opt.value
+                      ? "bg-champagne text-primary-foreground shadow-sm font-medium"
+                      : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10 hover:text-champagne"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
+            <CheckboxItem label="Toutes les villes" checked={filters.ville.length === 0} onChange={() => updateFilter('ville', [])} />
+            {availablePriorityCities.map((c) => (
+              <CheckboxItem
+                key={c.name}
+                label={`${c.name} · ${c.country}`}
+                checked={filters.ville.includes(c.name)}
+                onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, c.name] : filters.ville.filter(v => v !== c.name))}
+              />
+            ))}
+            {otherVilles.length > 0 && (
+              <>
+                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mt-3 mb-1.5 px-2.5 font-body">Autres villes</p>
+                {otherVilles.map((v) => (
+                  <CheckboxItem key={v} label={v} checked={filters.ville.includes(v)} onChange={(checked) => updateFilter('ville', checked ? [...filters.ville, v] : filters.ville.filter(x => x !== v))} />
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      </FilterSection>
+
+      {/* Category */}
       {!hideCategories && (
         <FilterSection title="Catégorie" icon={<Sparkles size={14} />} badge={filters.categorie ? 1 : 0}>
           <div className="space-y-0.5 max-h-52 overflow-y-auto scrollbar-thin pr-0.5">
@@ -220,72 +232,80 @@ export function FilterSidebar({
         </FilterSection>
       )}
 
-      {/* 2. Origine & culture — chips */}
-      <FilterSection title="Origine & culture" icon={<Globe size={14} />} badge={filters.culture.length || undefined}>
-        <div className="flex flex-wrap gap-1.5">
-          {visibleOrigins.map((o) => (
-            <OriginChip
-              key={o.label}
-              label={o.label}
-              flag={o.flag}
-              active={isOriginActive(o)}
-              onClick={() => toggleOrigin(o)}
-            />
+      {/* Sub-categories */}
+      {relevantSubs.length > 0 && (
+        <FilterSection title="Sous-catégorie" icon={<FolderOpen size={14} />} defaultOpen={!!filters.categorie} badge={selectedSubs.size || undefined}>
+          <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
+            {relevantSubs.map((sub) => (
+              <CheckboxItem
+                key={sub.id}
+                label={sub.name}
+                checked={selectedSubs.has(sub.id)}
+                onChange={(checked) => {
+                  setSelectedSubs(prev => {
+                    const next = new Set(prev);
+                    if (checked) next.add(sub.id); else next.delete(sub.id);
+                    return next;
+                  });
+                }}
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
+
+      {/* Culture */}
+      <FilterSection title="Culture" icon={<Globe size={14} />} defaultOpen={false} badge={filters.culture.length || undefined}>
+        <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
+          <CheckboxItem label="Toutes les cultures" checked={filters.culture.length === 0} onChange={() => updateFilter('culture', [])} />
+          {cultures.map((c) => (
+            <CheckboxItem key={c} label={c} checked={filters.culture.includes(c)} onChange={(checked) => updateFilter('culture', checked ? [...filters.culture, c] : filters.culture.filter(x => x !== c))} />
           ))}
         </div>
-        {CULTURAL_ORIGINS.length > POPULAR_ORIGINS_COUNT && (
+      </FilterSection>
+
+      {/* Langue */}
+      <FilterSection title="Langue" icon={<MessageSquare size={14} />} defaultOpen={false} badge={filters.langue.length || undefined}>
+        <div className="space-y-0.5 max-h-44 overflow-y-auto scrollbar-thin pr-0.5">
+          <CheckboxItem label="Toutes les langues" checked={filters.langue.length === 0} onChange={() => updateFilter('langue', [])} />
+          {langues.map((l) => (
+            <CheckboxItem key={l} label={l} checked={filters.langue.includes(l)} onChange={(checked) => updateFilter('langue', checked ? [...filters.langue, l] : filters.langue.filter(x => x !== l))} />
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Rating */}
+      <FilterSection title="Note minimum" icon={<Star size={14} />}>
+        <div className="flex flex-wrap gap-1.5">
           <button
-            onClick={() => setShowAllOrigins(!showAllOrigins)}
-            className="mt-2 font-body text-[11px] text-champagne hover:text-champagne-dark transition-colors"
+            onClick={() => updateFilter('noteMin', 0)}
+            className={`px-3 py-2 rounded-xl font-body text-[12px] transition-all ${
+              filters.noteMin === 0 ? "bg-champagne text-primary-foreground shadow-sm font-medium" : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10"
+            }`}
           >
-            {showAllOrigins ? "Voir moins" : `Voir tout (${CULTURAL_ORIGINS.length})`}
+            Toutes
           </button>
-        )}
-      </FilterSection>
-
-      {/* 3. Pays du mariage */}
-      <FilterSection title="Pays du mariage" icon={<MapPin size={14} />} badge={filters.country ? 1 : 0}>
-        <div className="flex gap-2">
-          {COUNTRIES_MVP.map((c) => (
+          {ratingOptions.map((opt) => (
             <button
-              key={c.value}
-              onClick={() => updateFilter('country', filters.country === c.value ? '' : c.value)}
-              className={`flex-1 py-2 rounded-xl font-body text-[12px] text-center transition-all border ${
-                filters.country === c.value
-                  ? "bg-champagne/15 border-champagne/30 text-chocolate font-medium shadow-sm"
-                  : "bg-background border-border text-muted-foreground hover:border-champagne/20"
+              key={opt.value}
+              onClick={() => updateFilter('noteMin', filters.noteMin === opt.value ? 0 : opt.value)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-body text-[12px] transition-all ${
+                filters.noteMin === opt.value ? "bg-champagne text-primary-foreground shadow-sm font-medium" : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10"
               }`}
             >
-              {c.label}
+              <Star size={11} className={filters.noteMin === opt.value ? "fill-primary-foreground" : "fill-gold text-gold"} />
+              {opt.label}
             </button>
           ))}
         </div>
       </FilterSection>
 
-      {/* 3b. Zone de disponibilité */}
-      <FilterSection title="Zone de disponibilité" icon={<Plane size={14} />} badge={filters.zone ? 1 : 0}>
-        <div className="flex flex-wrap gap-1.5">
-          {ZONES_DISPONIBILITE.map((z) => (
-            <button
-              key={z.value}
-              onClick={() => updateFilter('zone', filters.zone === z.value ? '' : z.value)}
-              className={`px-3 py-1.5 rounded-full font-body text-[12px] transition-all border ${
-                filters.zone === z.value
-                  ? "bg-champagne/15 border-champagne/30 text-chocolate font-medium shadow-sm"
-                  : "bg-background border-border text-muted-foreground hover:border-champagne/20 hover:bg-champagne/5"
-              }`}
-            >
-              {z.label}
-            </button>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* 4. Trier par */}
-      <FilterSection title="Trier par" icon={<BarChart3 size={14} />} defaultOpen={false}>
+      {/* Sort */}
+      <FilterSection title="Trier par" icon={<BarChart3 size={14} />}>
         <div className="flex flex-wrap gap-1.5">
           {[
             { value: 'pertinence', label: 'Pertinence' },
+            ...(geo.enabled ? [{ value: 'distance', label: 'Distance' }] : []),
             { value: 'note', label: 'Meilleure note' },
             { value: 'avis', label: 'Plus d\'avis' },
           ].map((opt) => (
@@ -302,73 +322,6 @@ export function FilterSidebar({
         </div>
       </FilterSection>
 
-      {/* 5. Filtres avancés (collapsed) */}
-      <FilterSection title="Filtres avancés" icon={<Settings2 size={14} />} defaultOpen={false}>
-        <div className="space-y-4">
-          {/* Sub-categories — only when a category is selected */}
-          {relevantSubs.length > 0 && (
-            <div>
-              <p className="font-body text-[11px] text-muted-foreground uppercase tracking-wider mb-2">Sous-catégorie</p>
-              <div className="space-y-0.5 max-h-36 overflow-y-auto scrollbar-thin pr-0.5">
-                {relevantSubs.map((sub) => (
-                  <CheckboxItem
-                    key={sub.id}
-                    label={sub.name}
-                    checked={selectedSubs.has(sub.id)}
-                    onChange={(checked) => {
-                      setSelectedSubs(prev => {
-                        const next = new Set(prev);
-                        if (checked) next.add(sub.id); else next.delete(sub.id);
-                        return next;
-                      });
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Langue */}
-          {langues.length > 0 && (
-            <div>
-              <p className="font-body text-[11px] text-muted-foreground uppercase tracking-wider mb-2">Langue</p>
-              <div className="space-y-0.5 max-h-36 overflow-y-auto scrollbar-thin pr-0.5">
-                {langues.map((l) => (
-                  <CheckboxItem key={l} label={l} checked={filters.langue.includes(l)} onChange={(checked) => updateFilter('langue', checked ? [...filters.langue, l] : filters.langue.filter(x => x !== l))} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Note minimum */}
-          <div>
-            <p className="font-body text-[11px] text-muted-foreground uppercase tracking-wider mb-2">Note minimum</p>
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                onClick={() => updateFilter('noteMin', 0)}
-                className={`px-3 py-1.5 rounded-xl font-body text-[12px] transition-all ${
-                  filters.noteMin === 0 ? "bg-champagne text-primary-foreground shadow-sm font-medium" : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10"
-                }`}
-              >
-                Toutes
-              </button>
-              {[4, 4.5, 5].map((val) => (
-                <button
-                  key={val}
-                  onClick={() => updateFilter('noteMin', filters.noteMin === val ? 0 : val)}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-xl font-body text-[12px] transition-all ${
-                    filters.noteMin === val ? "bg-champagne text-primary-foreground shadow-sm font-medium" : "bg-secondary/80 text-muted-foreground hover:bg-champagne/10"
-                  }`}
-                >
-                  <Star size={10} className={filters.noteMin === val ? "fill-primary-foreground" : "fill-gold text-gold"} />
-                  {val === 5 ? "5" : `${val}+`}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </FilterSection>
-
       {/* Mobile apply button */}
       {isMobile && onClose && (
         <div className="pt-5">
@@ -377,69 +330,6 @@ export function FilterSidebar({
           </Button>
         </div>
       )}
-    </div>
-  );
-}
-
-/* ---------- Active filter chips (exported for use above the grid) ---------- */
-
-export function ActiveFilterChips({
-  filters, categories, updateFilter, resetFilters,
-}: {
-  filters: PrestatairesFilters;
-  categories: { id: string; name: string; slug: string }[];
-  updateFilter: <K extends keyof PrestatairesFilters>(key: K, value: PrestatairesFilters[K]) => void;
-  resetFilters: () => void;
-}) {
-  const chips: { label: string; onRemove: () => void }[] = [];
-
-  if (filters.categorie) {
-    const cat = categories.find(c => c.id === filters.categorie);
-    if (cat) chips.push({ label: cat.name, onRemove: () => updateFilter('categorie', '') });
-  }
-  for (const c of filters.culture) {
-    const origin = CULTURAL_ORIGINS.find(o => o.filter.includes(c));
-    chips.push({ label: origin?.label || c, onRemove: () => updateFilter('culture', filters.culture.filter(x => x !== c)) });
-  }
-  if (filters.country) {
-    const label = filters.country === 'france' ? 'France' : filters.country === 'belgique' ? 'Belgique' : filters.country;
-    chips.push({ label, onRemove: () => updateFilter('country', '') });
-  }
-  if (filters.noteMin > 0) {
-    chips.push({ label: `★ ${filters.noteMin}+`, onRemove: () => updateFilter('noteMin', 0) });
-  }
-  if (filters.zone) {
-    const zoneItem = ZONES_DISPONIBILITE.find(z => z.value === filters.zone);
-    chips.push({ label: zoneItem?.label || filters.zone, onRemove: () => updateFilter('zone', '') });
-  }
-  for (const l of filters.langue) {
-    chips.push({ label: l, onRemove: () => updateFilter('langue', filters.langue.filter(x => x !== l)) });
-  }
-
-  if (chips.length === 0) return null;
-
-  return (
-    <div className="flex flex-wrap items-center gap-2 mb-4">
-      {chips.map((chip, i) => (
-        <span
-          key={i}
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-champagne/10 border border-champagne/20 font-body text-[12px] text-chocolate"
-        >
-          {chip.label}
-          <button
-            onClick={chip.onRemove}
-            className="hover:text-champagne transition-colors"
-          >
-            <X size={12} />
-          </button>
-        </span>
-      ))}
-      <button
-        onClick={resetFilters}
-        className="font-body text-[11px] text-muted-foreground hover:text-champagne transition-colors ml-1"
-      >
-        Effacer tout
-      </button>
     </div>
   );
 }

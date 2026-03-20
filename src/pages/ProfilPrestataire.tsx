@@ -1,7 +1,6 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { MapPin, Star, Plane } from "lucide-react";
-import { getZoneLabel } from "@/lib/zone-disponibilite";
+import { MapPin, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePrestaireDetail } from "@/hooks/use-prestataire-detail";
 import { PrestaireGallery } from "@/components/prestataire/PrestaireGallery";
@@ -107,13 +106,8 @@ export default function ProfilPrestataire() {
                   </div>
                 </div>
 
-                {/* Zone de disponibilité + Cultures & Languages */}
+                {/* Cultures & Languages */}
                 <div className="flex flex-wrap gap-2 mt-6">
-                  {/* Zone de disponibilité */}
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-champagne/10 border border-champagne/20 text-chocolate font-body text-sm">
-                    <Plane size={13} className="text-champagne" />
-                    {getZoneLabel((prestataire as any).zone_disponibilite)}
-                  </span>
                   {prestataire.origine_culturelle && (
                     <span className="px-3 py-1 rounded-full bg-secondary text-chocolate font-body text-sm">
                       {prestataire.origine_culturelle}

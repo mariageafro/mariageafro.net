@@ -8,7 +8,6 @@ import { DashboardProfil } from '@/components/dashboard/DashboardProfil';
 import { DashboardMedia } from '@/components/dashboard/DashboardMedia';
 import { DashboardAbonnement } from '@/components/dashboard/DashboardAbonnement';
 import { DashboardAvis } from '@/components/dashboard/DashboardAvis';
-import { VendorOnboarding } from '@/components/onboarding/VendorOnboarding';
 import { Loader2, LayoutDashboard, User, Image, CreditCard, Star } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -44,13 +43,11 @@ export default function DashboardPrestataire() {
   if (!prestataire) {
     return (
       <Layout>
-        <div className="min-h-screen pt-24 pb-16">
-          <div className="container-editorial">
-            <div className="text-center mb-10">
-              <h1 className="font-serif text-3xl md:text-4xl text-foreground mb-2">Créez votre profil prestataire</h1>
-              <p className="text-muted-foreground font-body">Quelques étapes pour rejoindre la plateforme MariageAfro.</p>
-            </div>
-            <VendorOnboarding userId={user!.id} onComplete={(p) => setPrestataire(p)} />
+        <div className="min-h-screen flex items-center justify-center pt-24">
+          <div className="text-center space-y-4">
+            <h2 className="text-2xl">Créez votre profil prestataire</h2>
+            <p className="text-muted-foreground">Votre profil n'existe pas encore. Complétez les informations ci-dessous.</p>
+            <DashboardProfil prestataire={null} userId={user!.id} onUpdate={(p) => setPrestataire(p)} />
           </div>
         </div>
       </Layout>
