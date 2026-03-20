@@ -2,13 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth-context";
 import { LanguageProvider } from "@/contexts/language-context";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Prestataires from "./pages/Prestataires";
 import ProfilPrestataire from "./pages/ProfilPrestataire";
 import Blog from "./pages/Blog";
 import Inspiration from "./pages/Inspiration";
@@ -25,7 +24,6 @@ import BudgetPage from "./pages/tools/BudgetPage";
 import WishlistPage from "./pages/tools/WishlistPage";
 import RemindersPage from "./pages/tools/RemindersPage";
 import DashboardHub from "./pages/tools/DashboardHub";
-import CategoryPage from "./pages/CategoryPage";
 import CityPage from "./pages/CityPage";
 import DevenirPrestataire from "./pages/DevenirPrestataire";
 import WeddingOnboarding from "./pages/wedding/WeddingOnboarding";
@@ -40,7 +38,6 @@ import WeddingSiteEditor from "./pages/wedding/WeddingSiteEditor";
 import WeddingTemplates from "./pages/wedding/WeddingTemplates";
 import TemplatePreview from "./pages/wedding/TemplatePreview";
 import DemoMariage from "./pages/DemoMariage";
-import Lieux from "./pages/Lieux";
 import MesFavoris from "./pages/MesFavoris";
 import Explorer from "./pages/Explorer";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
@@ -54,6 +51,24 @@ import AdminImport from "./pages/admin/AdminImport";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
+
+function CategoryRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/explorer?cat=${slug}`} replace />;
+}
+
+function PrestatairesRedirect() {
+  const [searchParams] = useSearchParams();
+  const params = new URLSearchParams();
+  const category = searchParams.get('category');
+  const search = searchParams.get('search');
+  const culture = searchParams.get('culture');
+  if (category) params.set('category', category);
+  if (search) params.set('search', search);
+  if (culture) params.set('culture', culture);
+  const qs = params.toString();
+  return <Navigate to={`/explorer${qs ? `?${qs}` : ''}`} replace />;
+}
 
 const queryClient = new QueryClient();
 
