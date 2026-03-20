@@ -222,6 +222,14 @@ export default function CategoryPage() {
                 </div>
               </div>
 
+              {/* Active filter chips */}
+              <ActiveFilterChips
+                filters={filters}
+                categories={categories}
+                updateFilter={updateFilter}
+                resetFilters={() => { resetFilters(); disableGeo(); }}
+              />
+
               {/* Results count */}
               <div className="flex items-center justify-between mb-6">
                 <p className="font-body text-sm text-muted-foreground">
