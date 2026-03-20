@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { ExplorerHeader } from '@/components/explorer/ExplorerHeader';
 import { ExplorerSearchBar } from '@/components/explorer/ExplorerSearchBar';
@@ -25,7 +25,6 @@ export type ExplorerFilters = {
   sousCategorie: string;
   ville: string[];
   noteMin: number;
-  // profession-specific
   professionFilters: Record<string, string[]>;
 };
 
@@ -69,12 +68,12 @@ export default function Explorer() {
   return (
     <Layout>
       <div className="min-h-screen bg-background">
-        {/* Premium Header with search */}
+        {/* Premium Header with integrated search */}
         <ExplorerHeader filters={filters} updateFilter={updateFilter} />
 
-        {/* Search Bar */}
-        <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border/50">
-          <div className="max-w-7xl mx-auto px-4 py-4">
+        {/* Filter Bar */}
+        <div className="sticky top-0 z-30 bg-background/90 backdrop-blur-lg border-b border-border/30">
+          <div className="max-w-7xl mx-auto px-4 py-3">
             <ExplorerSearchBar
               filters={filters}
               updateFilter={updateFilter}
@@ -84,38 +83,40 @@ export default function Explorer() {
         </div>
 
         {/* Active Filters + Mobile Toggle */}
-        <div className="max-w-7xl mx-auto px-4 pt-4">
-          <div className="flex items-center gap-3">
-            {isMobile && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setMobileFiltersOpen(true)}
-                className="shrink-0 gap-2 border-champagne/30 text-chocolate"
-              >
-                <SlidersHorizontal className="w-4 h-4" />
-                Filtres
-                {activeFilterCount > 0 && (
-                  <span className="w-5 h-5 rounded-full bg-champagne text-primary-foreground text-xs flex items-center justify-center">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </Button>
-            )}
-            <ExplorerActiveFilters filters={filters} updateFilter={updateFilter} resetFilters={resetFilters} />
+        {(activeFilterCount > 0 || isMobile) && (
+          <div className="max-w-7xl mx-auto px-4 pt-4">
+            <div className="flex items-center gap-3">
+              {isMobile && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setMobileFiltersOpen(true)}
+                  className="shrink-0 gap-2 border-champagne/30 text-chocolate rounded-xl"
+                >
+                  <SlidersHorizontal className="w-4 h-4" />
+                  Filtres
+                  {activeFilterCount > 0 && (
+                    <span className="w-5 h-5 rounded-full bg-champagne text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </Button>
+              )}
+              <ExplorerActiveFilters filters={filters} updateFilter={updateFilter} resetFilters={resetFilters} />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 pb-16 pt-6">
+        <div className="max-w-7xl mx-auto px-4 pb-20 pt-6">
           <div className="flex gap-8">
             {/* Sidebar - Desktop only */}
             {!isMobile && (
               <motion.aside
-                initial={{ opacity: 0, x: -16 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -16, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="w-72 shrink-0"
+                className="w-[280px] shrink-0"
               >
                 <ExplorerSidebar
                   filters={filters}
