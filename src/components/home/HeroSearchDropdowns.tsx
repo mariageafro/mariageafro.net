@@ -79,15 +79,15 @@ export function HeroSearchDropdowns() {
     ? vendorSuggestions.filter((v) => v.toLowerCase().includes(vendorType.toLowerCase()))
     : vendorSuggestions;
 
-  const filteredCities = location
-    ? cities.filter((c) => c.toLowerCase().includes(location.toLowerCase()))
-    : cities.slice(0, 12);
-
-  // Merge DB cultures with predefined, deduplicate
-  const allCultures = [...new Set([...culturalOrigins, ...cultures])].sort();
+  // Merge DB cultures with predefined, keep predefined order first
+  const allCultures = [...new Set([...culturalOrigins, ...cultures])];
   const filteredCultures = culture
     ? allCultures.filter((c) => c.toLowerCase().includes(culture.toLowerCase()))
-    : allCultures.slice(0, 15);
+    : allCultures;
+
+  const filteredCountries = location
+    ? countryOptions.filter((c) => c.toLowerCase().includes(location.toLowerCase()))
+    : countryOptions;
 
   return (
     <div className="max-w-4xl mx-auto relative z-[9999]">
