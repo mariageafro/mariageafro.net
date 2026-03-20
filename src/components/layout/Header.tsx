@@ -291,21 +291,37 @@ export function Header() {
   );
 }
 
-/* ───────── Lightweight Origines Dropdown ───────── */
+/* ───────── Premium Origines Dropdown ───────── */
 function OriginesDropdown() {
   return (
-    <div className="w-full bg-popover/95 backdrop-blur-lg shadow-[0_8px_30px_-4px_rgba(0,0,0,0.12)] border-b border-border/40">
-      <div className="max-w-4xl mx-auto px-6 py-6">
-        <h3 className="font-serif text-base text-chocolate mb-4">Explorer par origine & culture</h3>
-        <div className="grid grid-cols-4 gap-x-4 gap-y-0.5">
+    <div className="w-full bg-popover/95 backdrop-blur-xl shadow-elegant border-b border-champagne/10">
+      <div className="max-w-5xl mx-auto px-8 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="font-serif text-lg text-chocolate tracking-tight">
+            Explorer par origine & culture
+          </h3>
+          <Link
+            to="/trouver-par-pays"
+            className="text-xs font-body font-semibold text-champagne hover:text-champagne-dark transition-colors flex items-center gap-1.5"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Voir toutes les origines →
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-4 gap-3">
           {origins.map((o) => (
             <Link
               key={o.code}
               to={`/trouver-par-pays?pays=${o.code}`}
-              className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne-dark hover:bg-champagne/5 transition-all"
+              className="group flex items-center gap-3.5 px-4 py-3 rounded-xl border border-transparent bg-secondary/40 hover:bg-champagne/8 hover:border-champagne/20 hover:shadow-soft transition-all duration-300"
             >
-              <span className="text-base shrink-0">{o.flag}</span>
-              {o.name}
+              <span className="text-2xl shrink-0 drop-shadow-sm group-hover:scale-110 transition-transform duration-300">
+                {o.flag}
+              </span>
+              <span className="font-body text-sm font-medium text-chocolate-light group-hover:text-champagne-dark transition-colors">
+                {o.name}
+              </span>
             </Link>
           ))}
         </div>
