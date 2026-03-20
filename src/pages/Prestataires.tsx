@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Star, Heart, Grid, List, SlidersHorizontal, Globe, ChevronLeft, ChevronRight, BadgeCheck, MessageCircle } from "lucide-react";
+import { Search, MapPin, Star, Heart, Grid, List, SlidersHorizontal, Globe, ChevronLeft, ChevronRight, BadgeCheck, MessageCircle, Plane } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useSearchParams } from "react-router-dom";
 import { usePrestataires } from "@/hooks/use-prestataires";
