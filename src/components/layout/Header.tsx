@@ -291,31 +291,6 @@ export function Header() {
   );
 }
 
-/* ───────── Lightweight Categories Dropdown ───────── */
-function CategoriesDropdown() {
-  return (
-    <div className="w-full bg-popover/95 backdrop-blur-lg shadow-[0_8px_30px_-4px_rgba(0,0,0,0.12)] border-b border-border/40">
-      <div className="max-w-4xl mx-auto px-6 py-6">
-        <h3 className="font-serif text-base text-chocolate mb-4">Nos catégories</h3>
-        <div className="grid grid-cols-3 gap-x-6 gap-y-0.5">
-          {categoryFamilies.map((cat) => (
-            <Link
-              key={cat.href}
-              to={cat.href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne-dark hover:bg-champagne/5 transition-all group"
-            >
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-champagne/8 text-champagne group-hover:bg-champagne/15 transition-colors shrink-0">
-                <cat.icon size={13} />
-              </span>
-              {cat.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ───────── Lightweight Origines Dropdown ───────── */
 function OriginesDropdown() {
   return (
