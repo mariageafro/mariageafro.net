@@ -1,4 +1,4 @@
-import { X, RotateCcw, Star, ChevronDown, Sparkles, Globe, BarChart3, SlidersHorizontal, MapPin, FolderOpen, MessageSquare, Settings2 } from "lucide-react";
+import { X, RotateCcw, Star, ChevronDown, Sparkles, Globe, BarChart3, SlidersHorizontal, MapPin, FolderOpen, MessageSquare, Settings2, Plane } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { PrestatairesFilters } from "@/hooks/use-prestataires";
@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CULTURAL_ORIGINS } from "@/lib/cultural-origins";
+import { ZONES_DISPONIBILITE } from "@/lib/zone-disponibilite";
 
 interface SubCategory {
   id: string;
