@@ -262,6 +262,25 @@ export function FilterSidebar({
         </div>
       </FilterSection>
 
+      {/* 3b. Zone de disponibilité */}
+      <FilterSection title="Zone de disponibilité" icon={<Plane size={14} />} badge={filters.zone ? 1 : 0}>
+        <div className="flex flex-wrap gap-1.5">
+          {ZONES_DISPONIBILITE.map((z) => (
+            <button
+              key={z.value}
+              onClick={() => updateFilter('zone', filters.zone === z.value ? '' : z.value)}
+              className={`px-3 py-1.5 rounded-full font-body text-[12px] transition-all border ${
+                filters.zone === z.value
+                  ? "bg-champagne/15 border-champagne/30 text-chocolate font-medium shadow-sm"
+                  : "bg-background border-border text-muted-foreground hover:border-champagne/20 hover:bg-champagne/5"
+              }`}
+            >
+              {z.label}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
       {/* 4. Trier par */}
       <FilterSection title="Trier par" icon={<BarChart3 size={14} />} defaultOpen={false}>
         <div className="flex flex-wrap gap-1.5">
