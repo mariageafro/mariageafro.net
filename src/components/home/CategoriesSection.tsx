@@ -65,7 +65,7 @@ export function CategoriesSection() {
             Explorer par catégorie
           </h2>
           <p className="font-body text-muted-foreground max-w-lg mx-auto">
-            Les meilleurs professionnels du mariage afro & caribéen
+            Les meilleurs professionnels du mariage afro & caribéen, par métier.
           </p>
         </motion.div>
 
@@ -84,25 +84,25 @@ export function CategoriesSection() {
               >
                 <Link
                   to={`/prestataires/${cat.slug}`}
-                  className="group relative block rounded-xl overflow-hidden aspect-[4/3]"
+                  className="group relative block rounded-2xl overflow-hidden aspect-[4/3]"
                 >
                   <img
                     src={cat.image}
                     alt={cat.label}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent group-hover:from-black/80 transition-all duration-500" />
+                  <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
                     <div>
-                      <h3 className="font-serif text-white text-sm md:text-base font-semibold leading-tight">
+                      <h3 className="font-serif text-white text-sm md:text-base font-semibold leading-tight drop-shadow-sm">
                         {cat.label}
                       </h3>
                       {count > 0 && (
                         <p className="text-white/60 text-xs font-body mt-0.5">{count} prestataires</p>
                       )}
                     </div>
-                    <div className="w-8 h-8 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="w-8 h-8 rounded-lg bg-champagne/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0 translate-x-1">
                       <Icon size={14} className="text-white" />
                     </div>
                   </div>
@@ -114,7 +114,7 @@ export function CategoriesSection() {
 
         <div className="text-center mt-10">
           <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-            <Link to="/prestataires">
+            <Link to="/explorer">
               Voir tous les prestataires <ArrowRight size={16} className="ml-2" />
             </Link>
           </Button>

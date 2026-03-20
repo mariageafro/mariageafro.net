@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, Heart, Camera, Music, Utensils, Palette, Sparkles, Scissors, Church, Car, Search, MapPin } from "lucide-react";
-import { mainCategories } from "@/components/layout/MegaMenuData";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, LogOut, LayoutDashboard, Shield, Globe, ChevronDown, ChevronRight, Heart, Camera, Music, Utensils, Palette, Sparkles, Scissors, Church, Car, Gem, Search, MapPin } from "lucide-react";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,29 +8,49 @@ import { useAuthContext } from "@/contexts/auth-context";
 import { useUserRole } from "@/hooks/use-user-role";
 import { useLanguage, translateUI } from "@/contexts/language-context";
 import { useFavorites } from "@/hooks/use-favorites";
-import { MegaMenu } from "@/components/layout/MegaMenu";
-import { MegaMenuPays } from "@/components/layout/MegaMenuPays";
 import logo from "@/assets/logo-mariageafro.png";
 
-type MegaMenuKey = "prestataires" | "pays" | null;
-
-const navLinks = [
-  { key: "Prestataires", href: "/explorer", megaMenu: "prestataires" as const },
-  { key: "Explorer", href: "/explorer", megaMenu: null },
-  { key: "Origines & cultures", href: "/trouver-par-pays", megaMenu: "pays" as const },
-  { key: "Devenir Prestataire", href: "/devenir-prestataire", megaMenu: null },
+/* ── Lightweight category list for dropdown ── */
+const categoryFamilies = [
+  { label: "Photographie & Vidéo", href: "/explorer?cat=image-souvenirs", icon: Camera },
+  { label: "DJ & Animation", href: "/explorer?cat=animation-ambiance", icon: Music },
+  { label: "Beauté", href: "/explorer?cat=beaute", icon: Sparkles },
+  { label: "Traiteurs & Gastronomie", href: "/explorer?cat=traiteurs-gastronomie", icon: Utensils },
+  { label: "Décoration & Lieux", href: "/explorer?cat=decoration-lieux", icon: Palette },
+  { label: "Mode & Tenues", href: "/explorer?cat=mode-tenues", icon: Scissors },
+  { label: "Coordination & Cérémonie", href: "/explorer?cat=ceremonies-coutumes", icon: Church },
+  { label: "Bijoux & Accessoires", href: "/explorer?cat=bijoux-accessoires", icon: Gem },
+  { label: "Logistique & Services", href: "/explorer?cat=logistique-services", icon: Car },
 ];
 
-const megaMenuComponents: Record<Exclude<MegaMenuKey, null>, React.FC> = {
-  prestataires: MegaMenu,
-  pays: MegaMenuPays,
-};
+const origins = [
+  { flag: "🇨🇩", name: "Congo", code: "cd" },
+  { flag: "🇨🇲", name: "Cameroun", code: "cm" },
+  { flag: "🇸🇳", name: "Sénégal", code: "sn" },
+  { flag: "🇨🇮", name: "Côte d'Ivoire", code: "ci" },
+  { flag: "🇲🇱", name: "Mali", code: "ml" },
+  { flag: "🇬🇳", name: "Guinée", code: "gn" },
+  { flag: "🇧🇯", name: "Bénin", code: "bj" },
+  { flag: "🇬🇭", name: "Ghana", code: "gh" },
+  { flag: "🇳🇬", name: "Nigeria", code: "ng" },
+  { flag: "🇭🇹", name: "Haïti", code: "ht" },
+  { flag: "🏝️", name: "Antilles", code: "antilles" },
+];
+
+type DropdownKey = "categories" | "origines" | null;
+
+const navLinks = [
+  { key: "Prestataires", href: "/explorer", dropdown: null as DropdownKey },
+  { key: "Catégories", href: "/explorer", dropdown: "categories" as DropdownKey },
+  { key: "Origines & cultures", href: "/trouver-par-pays", dropdown: "origines" as DropdownKey },
+  { key: "Devenir Prestataire", href: "/devenir-prestataire", dropdown: null as DropdownKey },
+];
 
 export function Header() {
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeMegaMenu, setActiveMegaMenu] = useState<MegaMenuKey>(null);
-  const megaMenuTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<DropdownKey>(null);
+  const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useAuthContext();
   const { role } = useUserRole(user?.id);
@@ -48,13 +67,13 @@ export function Header() {
   const isHomePage = location.pathname === "/";
   const showSolid = isScrolled || !isHomePage;
 
-  const openMegaMenu = (key: MegaMenuKey) => {
-    if (megaMenuTimeout.current) clearTimeout(megaMenuTimeout.current);
-    setActiveMegaMenu(key);
+  const openDropdown = (key: DropdownKey) => {
+    if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);
+    setActiveDropdown(key);
   };
 
-  const closeMegaMenuDelayed = () => {
-    megaMenuTimeout.current = setTimeout(() => setActiveMegaMenu(null), 200);
+  const closeDropdownDelayed = () => {
+    dropdownTimeout.current = setTimeout(() => setActiveDropdown(null), 200);
   };
 
   return (
@@ -84,22 +103,22 @@ export function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-4 xl:gap-5">
               {navLinks.map((link) => {
-                const hasMegaMenu = !!link.megaMenu;
-                if (hasMegaMenu) {
-                  const menuKey = link.megaMenu as Exclude<MegaMenuKey, null>;
+                const hasDropdown = !!link.dropdown;
+                if (hasDropdown) {
+                  const menuKey = link.dropdown as Exclude<DropdownKey, null>;
                   return (
                     <div
                       key={link.key}
                       className="flex items-center"
-                      onMouseEnter={() => openMegaMenu(menuKey)}
-                      onMouseLeave={closeMegaMenuDelayed}
+                      onMouseEnter={() => openDropdown(menuKey)}
+                      onMouseLeave={closeDropdownDelayed}
                     >
                       <Link
                         to={link.href}
                         className={`font-body text-[11px] xl:text-[12px] tracking-widest uppercase transition-all duration-300 hover:text-champagne flex items-center gap-1 ${
                           showSolid ? "text-chocolate" : "text-ivory"
                         } ${
-                          activeMegaMenu === menuKey ? "text-champagne" : ""
+                          activeDropdown === menuKey ? "text-champagne" : ""
                         } ${
                           location.pathname === link.href ? "text-champagne font-medium" : "font-normal"
                         }`}
@@ -223,23 +242,21 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mega Menu Panels */}
+        {/* Lightweight Dropdown Panels */}
         <AnimatePresence>
-          {activeMegaMenu && (
+          {activeDropdown && (
             <motion.div
-              key={activeMegaMenu}
+              key={activeDropdown}
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.2 }}
               className="hidden lg:block"
-              onMouseEnter={() => openMegaMenu(activeMegaMenu)}
-              onMouseLeave={closeMegaMenuDelayed}
+              onMouseEnter={() => openDropdown(activeDropdown)}
+              onMouseLeave={closeDropdownDelayed}
             >
-              {(() => {
-                const Component = megaMenuComponents[activeMegaMenu];
-                return <Component />;
-              })()}
+              {activeDropdown === "categories" && <CategoriesDropdown />}
+              {activeDropdown === "origines" && <OriginesDropdown />}
             </motion.div>
           )}
         </AnimatePresence>
@@ -273,6 +290,54 @@ export function Header() {
   );
 }
 
+/* ───────── Lightweight Categories Dropdown ───────── */
+function CategoriesDropdown() {
+  return (
+    <div className="w-full bg-popover/95 backdrop-blur-lg shadow-[0_8px_30px_-4px_rgba(0,0,0,0.12)] border-b border-border/40">
+      <div className="max-w-4xl mx-auto px-6 py-6">
+        <h3 className="font-serif text-base text-chocolate mb-4">Nos catégories</h3>
+        <div className="grid grid-cols-3 gap-x-6 gap-y-0.5">
+          {categoryFamilies.map((cat) => (
+            <Link
+              key={cat.href}
+              to={cat.href}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne-dark hover:bg-champagne/5 transition-all group"
+            >
+              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-champagne/8 text-champagne group-hover:bg-champagne/15 transition-colors shrink-0">
+                <cat.icon size={13} />
+              </span>
+              {cat.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────── Lightweight Origines Dropdown ───────── */
+function OriginesDropdown() {
+  return (
+    <div className="w-full bg-popover/95 backdrop-blur-lg shadow-[0_8px_30px_-4px_rgba(0,0,0,0.12)] border-b border-border/40">
+      <div className="max-w-4xl mx-auto px-6 py-6">
+        <h3 className="font-serif text-base text-chocolate mb-4">Explorer par origine & culture</h3>
+        <div className="grid grid-cols-4 gap-x-4 gap-y-0.5">
+          {origins.map((o) => (
+            <Link
+              key={o.code}
+              to={`/trouver-par-pays?pays=${o.code}`}
+              className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-body text-muted-foreground hover:text-champagne-dark hover:bg-champagne/5 transition-all"
+            >
+              <span className="text-base shrink-0">{o.flag}</span>
+              {o.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ───────── Mobile Menu ───────── */
 
 interface MobileMenuContentProps {
@@ -295,8 +360,8 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
   };
 
   const mobileNavItems = [
-    { key: "Prestataires", href: "/explorer", hasChildren: true },
-    { key: "Explorer", href: "/explorer" },
+    { key: "Prestataires", href: "/explorer" },
+    { key: "Catégories", href: "/explorer", hasChildren: true },
     { key: "Origines & cultures", href: "/trouver-par-pays", hasChildren: true },
     { key: "Devenir Prestataire", href: "/devenir-prestataire" },
   ];
@@ -323,20 +388,9 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
 
                 {expandedSection === item.key && (
                   <div className="bg-muted/30">
-                    {item.key === "Prestataires" && (
-                      <div className="px-6 py-3 space-y-1">
-                        <p className="text-[11px] uppercase tracking-widest text-muted-foreground px-3 pb-1 font-semibold">Les essentiels</p>
-                        {[
-                          { label: "Photographe", href: "/categories/image-souvenirs?sub=photographe", icon: Camera },
-                          { label: "Vidéaste", href: "/categories/image-souvenirs?sub=videaste", icon: Camera },
-                          { label: "DJ Mariage", href: "/categories/animation-ambiance?sub=dj-mariage", icon: Music },
-                          { label: "Traiteur africain", href: "/categories/traiteurs-gastronomie?sub=traiteur-africain", icon: Utensils },
-                          { label: "Décorateur", href: "/categories/decoration-lieux?sub=decorateur", icon: Palette },
-                          { label: "Maquilleuse afro", href: "/categories/beaute?sub=maquilleuse-afro", icon: Sparkles },
-                          { label: "Coiffeuse afro", href: "/categories/beaute?sub=coiffeuse-afro", icon: Scissors },
-                          { label: "Wedding Planner", href: "/categories/ceremonies-coutumes?sub=wedding-planner", icon: Church },
-                          { label: "Transport", href: "/categories/logistique-services?sub=transport-mariage", icon: Car },
-                        ].map(cat => (
+                    {item.key === "Catégories" && (
+                      <div className="px-6 py-3 space-y-0.5">
+                        {categoryFamilies.map(cat => (
                           <Link
                             key={cat.href}
                             to={cat.href}
@@ -347,30 +401,15 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                             {cat.label}
                           </Link>
                         ))}
-                        <Link to="/explorer" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1 border-t border-border/30 pt-3">
-                          Voir toutes les catégories →
-                        </Link>
                       </div>
                     )}
 
                     {item.key === "Origines & cultures" && (
-                      <div className="px-6 py-3 space-y-1">
-                        {[
-                          { flag: "🇨🇩", name: "Congo", code: "cd" },
-                          { flag: "🇨🇲", name: "Cameroun", code: "cm" },
-                          { flag: "🇸🇳", name: "Sénégal", code: "sn" },
-                          { flag: "🇨🇮", name: "Côte d'Ivoire", code: "ci" },
-                          { flag: "🇲🇱", name: "Mali", code: "ml" },
-                          { flag: "🇬🇳", name: "Guinée", code: "gn" },
-                          { flag: "🇧🇯", name: "Bénin", code: "bj" },
-                          { flag: "🇬🇭", name: "Ghana", code: "gh" },
-                          { flag: "🇳🇬", name: "Nigeria", code: "ng" },
-                          { flag: "🇭🇹", name: "Haïti", code: "ht" },
-                          { flag: "🏝️", name: "Antilles", code: "antilles" },
-                        ].map(origin => (
+                      <div className="px-6 py-3 space-y-0.5">
+                        {origins.map(origin => (
                           <Link
                             key={origin.code}
-                            to={`/prestataires?culture=${origin.name}`}
+                            to={`/trouver-par-pays?pays=${origin.code}`}
                             onClick={close}
                             className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-chocolate hover:bg-champagne/10 transition-colors"
                           >
