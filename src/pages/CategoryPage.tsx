@@ -284,10 +284,18 @@ export default function CategoryPage() {
                               </div>
                             )}
                             {p.origine_culturelle && (
-                              <p className="font-body text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+                              <p className="font-body text-xs text-muted-foreground mb-1 flex items-center gap-1.5">
                                 <Globe size={11} />{p.origine_culturelle}
                               </p>
                             )}
+                            {(() => {
+                              const zoneLabel = getZoneShortLabel((p as any).zone_disponibilite);
+                              return zoneLabel ? (
+                                <p className="font-body text-xs text-champagne-dark mb-2 flex items-center gap-1.5">
+                                  <Plane size={11} />{zoneLabel}
+                                </p>
+                              ) : null;
+                            })()}
                             <div className="flex items-center gap-1 mb-3">
                               {p.review_count > 0 ? (
                                 <>
