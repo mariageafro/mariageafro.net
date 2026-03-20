@@ -182,6 +182,22 @@ export function DashboardProfil({ prestataire, userId, onUpdate }: DashboardProf
   };
 
   const update = (key: string, value: string) => setForm(f => ({ ...f, [key]: value }));
+  const updateMeta = (key: string, value: any) => setForm(f => ({
+    ...f,
+    vendor_metadata: { ...f.vendor_metadata, [key]: value },
+  }));
+
+  const selectedCategorySlug = categories.find(c => c.id === form.categorie_id)?.slug;
+  const fieldConfig = getFieldConfigForCategory(selectedCategorySlug ?? null);
+
+  const toggleMetaChip = (key: string, value: string) => {
+    const current: string[] = form.vendor_metadata[key] ?? [];
+    if (current.includes(value)) {
+      updateMeta(key, current.filter((v: string) => v !== value));
+    } else {
+      updateMeta(key, [...current, value]);
+    }
+  };
 
   return (
     <Card className="card-premium max-w-3xl">
