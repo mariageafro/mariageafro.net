@@ -7,9 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 /* ── Cultural origins for dropdown ── */
 const culturalOrigins = [
-  "Congolais", "Camerounais", "Sénégalais", "Ivoirien", "Malien",
-  "Guinéen", "Béninois", "Ghanéen", "Nigérian", "Haïtien",
-  "Antillais", "Afro-américain",
+  "Congo", "Cameroun", "Sénégal", "Côte d'Ivoire", "Mali",
+  "Guinée", "Bénin", "Ghana", "Nigeria", "Haïti",
+  "Antilles",
 ];
 
 /* ── Vendor type suggestions ── */
