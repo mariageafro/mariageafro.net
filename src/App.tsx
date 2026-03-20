@@ -76,6 +76,7 @@ const App = () => (
             } />
             <Route path="/prestataires" element={<Prestataires />} />
             <Route path="/mes-favoris" element={<MesFavoris />} />
+            <Route path="/explorer" element={<Explorer />} />
             <Route path="/lieux" element={<Lieux />} />
             <Route path="/prestataires/ville/:city" element={<CityPage />} />
             <Route path="/prestataires/:id" element={<ProfilPrestataire />} />
