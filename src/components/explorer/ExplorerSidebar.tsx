@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ChevronDown, Star, Zap, TrendingUp, Clock, Crown, Globe, MapPin, Plane } from 'lucide-react';
+import { ChevronDown, ChevronRight, Star, Zap, TrendingUp, Clock, Crown, Globe, MapPin, Plane, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ExplorerFilters } from '@/pages/Explorer';
 import { ExplorerProfessionFilters } from './ExplorerProfessionFilters';
+import { megaMenuCategories } from '@/components/layout/MegaMenuData';
 
 const POPULAR_ORIGINS = ['Congo', 'Cameroun', 'Sénégal', 'Côte d\'Ivoire', 'Nigeria', 'Antilles'];
 const MORE_ORIGINS = ['Mali', 'Guinée', 'Bénin', 'Ghana', 'Haïti'];
@@ -84,6 +85,128 @@ function Chip({ label, active, onClick, count }: { label: string; active: boolea
   );
 }
 
+function CategoryTree({ filters, updateFilter, categories }: Props) {
+  const [expandedCat, setExpandedCat] = useState<string | null>(null);
+
+  const handleCategoryClick = (catSlug: string, catName: string, catId: string) => {
+    const isActive = filters.categorie === catId;
+    if (isActive) {
+      updateFilter('categorie', '');
+      updateFilter('categorieLabel', '');
+      updateFilter('search', '');
+      setExpandedCat(null);
+    } else {
+      updateFilter('categorie', catId);
+      updateFilter('categorieLabel', catName);
+      updateFilter('search', '');
+      setExpandedCat(catSlug);
+    }
+  };
+
+  const handleSubClick = (subLabel: string, catId: string, catName: string) => {
+    // Set the parent category + search by subcategory name
+    if (filters.categorie !== catId) {
+      updateFilter('categorie', catId);
+      updateFilter('categorieLabel', catName);
+    }
+    updateFilter('search', filters.search === subLabel ? '' : subLabel);
+  };
+
+  // Match mega menu categories to DB categories
+  const getDbCat = (megaSlug: string) => categories.find(c => c.slug === megaSlug);
+
+  return (
+    <div className="space-y-0.5">
+      {/* "Toutes" option */}
+      <button
+        onClick={() => {
+          updateFilter('categorie', '');
+          updateFilter('categorieLabel', '');
+          updateFilter('search', '');
+          setExpandedCat(null);
+        }}
+        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 active:scale-[0.97] ${
+          !filters.categorie
+            ? 'bg-champagne/15 text-champagne-dark border border-champagne/20'
+            : 'hover:bg-secondary/60 text-foreground border border-transparent'
+        }`}
+      >
+        <span className="w-5 h-5 rounded-md bg-secondary flex items-center justify-center text-[10px]">✦</span>
+        Toutes les catégories
+      </button>
+
+      {megaMenuCategories.map((megaCat) => {
+        const dbCat = getDbCat(megaCat.slug);
+        if (!dbCat) return null;
+
+        const isActive = filters.categorie === dbCat.id;
+        const isExpanded = expandedCat === megaCat.slug || isActive;
+        const Icon = megaCat.icon;
+
+        return (
+          <div key={megaCat.slug}>
+            {/* Parent category */}
+            <button
+              onClick={() => handleCategoryClick(megaCat.slug, dbCat.name, dbCat.id)}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 active:scale-[0.97] group ${
+                isActive
+                  ? 'bg-champagne/15 text-champagne-dark border border-champagne/20'
+                  : 'hover:bg-secondary/60 text-foreground border border-transparent'
+              }`}
+            >
+              <span className={`w-5 h-5 rounded-md flex items-center justify-center ${
+                isActive ? 'bg-champagne/20 text-champagne' : 'bg-secondary text-muted-foreground group-hover:text-foreground'
+              }`}>
+                <Icon className="w-3 h-3" />
+              </span>
+              <span className="flex-1 text-left truncate">{megaCat.label}</span>
+              <ChevronRight className={`w-3 h-3 text-muted-foreground/40 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
+            </button>
+
+            {/* Subcategories */}
+            <AnimatePresence initial={false}>
+              {isExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="pl-5 pr-1 py-1 space-y-0.5">
+                    {megaCat.subs.map((sub, i) => {
+                      const SubIcon = sub.icon;
+                      const isSubActive = filters.search === sub.label && isActive;
+
+                      return (
+                        <motion.button
+                          key={sub.slug}
+                          initial={{ opacity: 0, x: -6 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.2, delay: i * 0.02, ease: [0.16, 1, 0.3, 1] }}
+                          onClick={() => handleSubClick(sub.label, dbCat.id, dbCat.name)}
+                          className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] transition-all duration-150 active:scale-[0.97] ${
+                            isSubActive
+                              ? 'bg-champagne text-primary-foreground font-semibold shadow-sm'
+                              : 'hover:bg-secondary/80 text-muted-foreground hover:text-foreground font-medium'
+                          }`}
+                        >
+                          {SubIcon && <SubIcon className="w-3 h-3 shrink-0" />}
+                          <span className="truncate">{sub.label}</span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function ExplorerSidebar({ filters, updateFilter, categories }: Props) {
   const [showMoreOrigins, setShowMoreOrigins] = useState(false);
 
@@ -93,32 +216,18 @@ export function ExplorerSidebar({ filters, updateFilter, categories }: Props) {
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border/50 shadow-[var(--shadow-card)] sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+    <div className="bg-card rounded-2xl border border-border/50 shadow-[var(--shadow-card)] sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-champagne/30 scrollbar-track-transparent">
       {/* Header */}
       <div className="px-5 pt-5 pb-3 border-b border-border/40">
         <p className="text-[10px] font-semibold tracking-widest uppercase text-champagne">Affiner la recherche</p>
       </div>
 
       <div className="p-5 space-y-0">
-        {/* Catégorie */}
-        <SidebarSection title="Catégorie">
-          <div className="flex flex-wrap gap-1.5">
-            <Chip label="Toutes" active={!filters.categorie} onClick={() => { updateFilter('categorie', ''); updateFilter('categorieLabel', ''); }} />
-            {categories.map(cat => (
-              <Chip
-                key={cat.id}
-                label={cat.name}
-                active={filters.categorie === cat.id}
-                onClick={() => {
-                  updateFilter('categorie', filters.categorie === cat.id ? '' : cat.id);
-                  updateFilter('categorieLabel', filters.categorie === cat.id ? '' : cat.name);
-                }}
-              />
-            ))}
-          </div>
+        {/* Full Category Tree */}
+        <SidebarSection title="Catégorie & Prestation" icon={Sparkles} accent>
+          <CategoryTree filters={filters} updateFilter={updateFilter} categories={categories} />
         </SidebarSection>
 
-        {/* Divider */}
         <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent mb-4" />
 
         {/* Origine & culture */}
