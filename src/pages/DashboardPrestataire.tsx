@@ -8,6 +8,7 @@ import { DashboardProfil } from '@/components/dashboard/DashboardProfil';
 import { DashboardMedia } from '@/components/dashboard/DashboardMedia';
 import { DashboardAbonnement } from '@/components/dashboard/DashboardAbonnement';
 import { DashboardAvis } from '@/components/dashboard/DashboardAvis';
+import { VendorOnboarding } from '@/components/onboarding/VendorOnboarding';
 import { Loader2, LayoutDashboard, User, Image, CreditCard, Star } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 
