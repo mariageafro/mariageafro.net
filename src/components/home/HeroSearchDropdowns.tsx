@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 const culturalOrigins = [
   "Congolais", "Camerounais", "Sénégalais", "Ivoirien", "Malien",
   "Guinéen", "Béninois", "Ghanéen", "Nigérian", "Haïtien",
-  "Antillais", "Afro", "Afro-américain",
+  "Antillais", "Afro-américain", "Afro",
 ];
 
 /* ── Vendor type suggestions ── */
