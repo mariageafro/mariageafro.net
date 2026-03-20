@@ -76,9 +76,15 @@ export default function Explorer() {
 
   const updateFilter = <K extends keyof ExplorerFilters>(key: K, value: ExplorerFilters[K]) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
   };
 
-  const resetFilters = () => setFilters(defaultExplorerFilters);
+  const resetFilters = () => { setFilters(defaultExplorerFilters); setCurrentPage(1); };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
