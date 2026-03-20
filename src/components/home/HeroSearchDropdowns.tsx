@@ -246,7 +246,7 @@ export function HeroSearchDropdowns() {
         </div>
 
         {/* Separator */}
-        <p className="font-body text-[10px] text-ivory/40 uppercase tracking-[0.15em] text-center">ou</p>
+        <p className="font-body text-xs text-ivory/60 font-semibold uppercase tracking-[0.18em] text-center drop-shadow-md">ou</p>
 
         {/* Location */}
         <div ref={locRef} className="relative">
