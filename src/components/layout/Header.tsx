@@ -18,7 +18,7 @@ type MegaMenuKey = "prestataires" | "pays" | null;
 const navLinks = [
   { key: "Prestataires", href: "/prestataires", megaMenu: "prestataires" as const },
   { key: "Catégories", href: "/prestataires", megaMenu: null },
-  { key: "Par Pays", href: "/trouver-par-pays", megaMenu: "pays" as const },
+  { key: "Origines & cultures", href: "/trouver-par-pays", megaMenu: "pays" as const },
   { key: "Devenir Prestataire", href: "/devenir-prestataire", megaMenu: null },
 ];
 
