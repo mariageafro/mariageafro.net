@@ -10,7 +10,7 @@ const stats = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center z-0 overflow-visible">
+    <section className="relative min-h-[100svh] sm:min-h-[85vh] flex items-center justify-center z-0 overflow-visible">
       {/* Background Image */}
       <div className="absolute inset-0 overflow-hidden">
         <img
@@ -18,11 +18,11 @@ export function HeroSection() {
           alt="Couple afro en tenue de mariage traditionnelle"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-chocolate/50 via-chocolate/35 to-chocolate/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-chocolate/40 via-chocolate/25 to-chocolate/55 sm:from-chocolate/50 sm:via-chocolate/35 sm:to-chocolate/65" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container-editorial pt-28 pb-12 overflow-visible">
+      <div className="relative z-10 container-editorial pt-24 sm:pt-28 pb-8 sm:pb-12 overflow-visible">
         <div className="max-w-4xl mx-auto text-center overflow-visible">
           {/* Badge */}
           <motion.div
@@ -45,7 +45,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="font-serif text-4xl sm:text-5xl md:text-6xl font-light text-ivory leading-[1.1] mb-4"
+            className="font-serif text-3xl sm:text-5xl md:text-6xl font-light text-ivory leading-[1.1] mb-4"
           >
             Trouvez vos prestataires
             <br />
