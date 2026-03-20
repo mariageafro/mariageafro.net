@@ -166,7 +166,7 @@ export function FilterSidebar({
 
   const activeFilterCount = [
     filters.categorie, filters.culture.length > 0, filters.country, filters.noteMin > 0,
-    filters.langue.length > 0, selectedSubs.size > 0,
+    filters.langue.length > 0, selectedSubs.size > 0, filters.zone,
   ].filter(Boolean).length;
 
   return (
