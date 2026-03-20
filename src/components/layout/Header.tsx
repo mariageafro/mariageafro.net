@@ -16,9 +16,8 @@ import logo from "@/assets/logo-mariageafro.png";
 type MegaMenuKey = "prestataires" | "pays" | null;
 
 const navLinks = [
-  { key: "Prestataires", href: "/prestataires", megaMenu: "prestataires" as const },
+  { key: "Prestataires", href: "/explorer", megaMenu: "prestataires" as const },
   { key: "Explorer", href: "/explorer", megaMenu: null },
-  { key: "Catégories", href: "/prestataires", megaMenu: null },
   { key: "Origines & cultures", href: "/trouver-par-pays", megaMenu: "pays" as const },
   { key: "Devenir Prestataire", href: "/devenir-prestataire", megaMenu: null },
 ];
