@@ -145,5 +145,5 @@ export const megaMenuCategories: MegaMenuCategory[] = [
 export const mainCategories = megaMenuCategories.map(c => ({
   label: `${c.emoji} ${c.label}`,
   icon: c.icon,
-  href: `/categories/${c.slug}`,
+  href: `/explorer?cat=${c.slug}`,
 }));

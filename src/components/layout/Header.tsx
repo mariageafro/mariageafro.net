@@ -347,7 +347,7 @@ function MobileMenuContent({ lang, setLang, location, isAuthenticated, user, rol
                             {cat.label}
                           </Link>
                         ))}
-                        <Link to="/prestataires" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1 border-t border-border/30 pt-3">
+                        <Link to="/explorer" onClick={close} className="block text-center text-xs text-champagne font-medium py-2 mt-1 border-t border-border/30 pt-3">
                           Voir toutes les catégories →
                         </Link>
                       </div>
